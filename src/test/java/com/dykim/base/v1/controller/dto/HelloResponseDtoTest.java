@@ -10,13 +10,13 @@ public class HelloResponseDtoTest {
     void 롬복_기능_테스트() {
         // given
         String name = "test";
-        int amount = 1000;
+        String email = "test@email.com";
 
         // when
-        HelloResponseDto rspDto = new HelloResponseDto(name, amount);
+        HelloResponseDto rspDto = new HelloResponseDto(name, email);
 
         // then
         assertThat(rspDto.getName()).isEqualTo(name);
-        assertThat(rspDto.getAmount()).isEqualTo(amount);
+        assertThat(rspDto.getEmail()).isEqualTo(email);
     }
 }
