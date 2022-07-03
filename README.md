@@ -52,9 +52,10 @@
      - ***이슈 처리 과정에서 커밋되는 코드들을 관리하기 위함이기 때문에 반드시 이슈 발행 후 브랜치 작성할 것.***
 
 
-## 1. 스웨거
-- swagger-ui 3.0 예정
-- TBD
+## 1. API 문서
+- swagger-ui 3.0 / springdocs 디펜던시로 구현
+- Spring Boot 2.6 이후 ControllerHandler 매핑 전략 기본값이 ant_path_matcher -> path_pattern_parser 로 변경됨에 따라 springfox 디펜던시 기본 설정으로는 사용 불가
+- 추가 설정없이 사용가능한 sprigdocs 로 swagger3 구현함.
 
 ## 2. 테스트 코드
 - Spring Boot 2.7.0 기준 spring-starter-test 에 JUnit5 가 내장되어 있어 JUnit5를 사용합니다.
