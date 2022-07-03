@@ -1,6 +1,5 @@
-package com.dykim.base.v1.config;
+package com.dykim.base.hello.v1.config;
 
-import io.swagger.v3.core.jackson.PathsSerializer;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
