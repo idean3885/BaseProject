@@ -5,33 +5,43 @@ import com.dykim.base.hello.v1.controller.advice.HelloControllerAdvice;
 import com.dykim.base.hello.v1.controller.advice.exception.HelloException;
 import com.dykim.base.hello.v1.service.HelloService;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.BDDMockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-@ExtendWith(SpringExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(MockitoExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class HelloControllerAdviceTest {
+
+    @Mock
+    private HelloService helloService;
+
+    @InjectMocks
+    private HelloController helloController;
 
     private MockMvc mockMvc;
 
-    @BeforeAll
+    @BeforeEach
     public void setMockMvc() {
         this.mockMvc = MockMvcBuilders
-                .standaloneSetup(new HelloController(new HelloService()))
+                .standaloneSetup(helloController)
                 .setControllerAdvice(new HelloControllerAdvice())
                 .build();
     }
@@ -39,11 +49,15 @@ public class HelloControllerAdviceTest {
     @Order(1)
     @Test
     public void _1_HelloException_발생() throws Exception {
+        // when
+        when(helloController.occurException(anyBoolean())).thenThrow(new HelloException("Exception!"));
+
+        // then
         mockMvc.perform(get("/hello/v1/occurException")
                         .param("isOccur", "true")
                 )
                 .andExpect(status().isServiceUnavailable())
-                .andExpect(result -> Assertions.assertThat(getApiResultExceptionClass(result)).isEqualTo(HelloException.class))
+                .andExpect(result -> assertThat(getApiResultExceptionClass(result)).isEqualTo(HelloException.class))
                 .andDo(handler -> log.debug("result: {}", handler.getResponse().getContentAsString()));
     }
 

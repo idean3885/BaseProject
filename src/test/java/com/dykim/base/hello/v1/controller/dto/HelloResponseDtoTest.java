@@ -1,6 +1,5 @@
 package com.dykim.base.hello.v1.controller.dto;
 
-import com.dykim.base.hello.v1.controller.dto.HelloResponseDto;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
