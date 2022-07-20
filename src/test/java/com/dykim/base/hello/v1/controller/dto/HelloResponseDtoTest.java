@@ -19,4 +19,5 @@ public class HelloResponseDtoTest {
         assertThat(rspDto.getName()).isEqualTo(name);
         assertThat(rspDto.getEmail()).isEqualTo(email);
     }
+
 }

@@ -1,10 +1,7 @@
 package com.dykim.base.hello.v1.controller;
 
 import com.dykim.base.hello.v1.service.HelloService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,6 +11,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HelloControllerTest {
@@ -29,7 +27,7 @@ public class HelloControllerTest {
 
     @Order(1)
     @Test
-    public void _1_헬로출력() throws Exception{
+    public void 헬로출력() throws Exception{
         String hello = "hello!";
 
         mockMvc.perform(get("/hello/v1/helloPrint"))
@@ -39,7 +37,7 @@ public class HelloControllerTest {
 
     @Order(2)
     @Test
-    public void _2_헬로_응답_DTO() throws Exception {
+    public void 헬로_응답_DTO() throws Exception {
         var name = "name";
         var email = "test@email.com";
 

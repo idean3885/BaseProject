@@ -5,10 +5,7 @@ import com.dykim.base.hello.v1.controller.advice.HelloControllerAdvice;
 import com.dykim.base.hello.v1.controller.advice.exception.HelloException;
 import com.dykim.base.hello.v1.service.HelloService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class HelloControllerAdviceTest {
@@ -48,7 +46,7 @@ public class HelloControllerAdviceTest {
 
     @Order(1)
     @Test
-    public void _1_HelloException_발생() throws Exception {
+    public void HelloException_발생() throws Exception {
         // when
         when(helloController.occurException(anyBoolean())).thenThrow(new HelloException("Exception!"));
 
