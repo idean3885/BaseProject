@@ -13,7 +13,7 @@ public class HelloResponseDtoTest {
         String email = "test@email.com";
 
         // when
-        HelloResponseDto rspDto = new HelloResponseDto(name, email);
+        HelloRspDto rspDto = new HelloRspDto(name, email);
 
         // then
         assertThat(rspDto.getName()).isEqualTo(name);

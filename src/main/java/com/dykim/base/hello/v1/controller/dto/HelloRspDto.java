@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 
-@Schema(name = "HelloResponseDto", description = "테스트용 응답 Dto")
+@Schema(name = "HelloRspDto", description = "테스트용 응답 Dto")
 @Getter
 @RequiredArgsConstructor
-public class HelloResponseDto {
+public class HelloRspDto {
 
     @Schema(name = "이름", required = true, example = "kdy")
     private final String name;
