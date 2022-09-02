@@ -57,10 +57,13 @@ public class HelloController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success",
-                    content = @Content(schema = @Schema(implementation = HelloInsertRspDto.class)))
+                    content = @Content(schema = @Schema(implementation = HelloInsertRspDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters or invalid insert data.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class)))
     })
+    @Operation(summary = "Insert Hello", description = "Insert hello")
     @PostMapping
-    public ApiResult<HelloInsertRspDto> insert(HelloInsertReqDto reqDto) {
+    public ApiResult<HelloInsertRspDto> insert(@RequestBody HelloInsertReqDto reqDto) {
         return ok(helloService.insert(reqDto));
     }
 

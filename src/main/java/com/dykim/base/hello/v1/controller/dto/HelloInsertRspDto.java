@@ -1,6 +1,6 @@
 package com.dykim.base.hello.v1.controller.dto;
 
-import com.dykim.base.hello.v1.domain.Hello;
+import com.dykim.base.hello.v1.entity.Hello;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 

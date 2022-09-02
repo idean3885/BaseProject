@@ -1,10 +1,12 @@
-package com.dykim.base.hello.v1.domain;
+package com.dykim.base.hello.v1.entity;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
+
+import javax.validation.ConstraintViolationException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -117,7 +119,7 @@ public class HelloRepositoryTest {
                 .build();
 
         // when
-        assertThrows(DataIntegrityViolationException.class,
+        assertThrows(ConstraintViolationException.class,
                 () -> hellosRepository.save(hello)
         );
     }
