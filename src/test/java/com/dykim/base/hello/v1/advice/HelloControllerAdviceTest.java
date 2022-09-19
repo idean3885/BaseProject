@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -38,7 +40,7 @@ public class HelloControllerAdviceTest {
 
     @BeforeEach
     public void setMockMvc() {
-        this.mockMvc = MockMvcBuilders
+        mockMvc = MockMvcBuilders
                 .standaloneSetup(helloController)
                 .setControllerAdvice(new HelloControllerAdvice())
                 .build();
@@ -55,6 +57,7 @@ public class HelloControllerAdviceTest {
                         .param("isOccur", "true")
                 )
                 .andExpect(status().isServiceUnavailable())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(result -> assertThat(getApiResultExceptionClass(result)).isEqualTo(HelloException.class))
                 .andDo(handler -> log.debug("result: {}", handler.getResponse().getContentAsString()));
     }

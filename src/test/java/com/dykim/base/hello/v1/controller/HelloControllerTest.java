@@ -17,9 +17,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -45,7 +48,7 @@ public class HelloControllerTest {
 
     @BeforeAll
     public void setup() {
-        this.mockMvc = MockMvcBuilders
+        mockMvc = MockMvcBuilders
                 .standaloneSetup(new HelloController(helloService))
                 .build();
 
@@ -80,10 +83,10 @@ public class HelloControllerTest {
 
     @Order(3)
     @Test
-    public void 헬로추가() throws Exception {
+    public void 헬로추가_성공() throws Exception {
         // given
         var helloInsertReqDto = HelloInsertReqDto.builder()
-                .email("email")
+                .email("email@base.com")
                 .name("name")
                 .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(helloInsertReqDto);
@@ -106,6 +109,47 @@ public class HelloControllerTest {
                 .andDo(this::printRspDto);
     }
 
+    @Order(4)
+    @Test
+    public void 헬로추가_실패_이메일형식() throws Exception {
+        // given
+        var helloInsertReqDto = HelloInsertReqDto.builder()
+                .email("email")
+                .name("name")
+                .build();
+        var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(helloInsertReqDto);
+
+        // then
+        mockMvc.perform(post("/hello/v1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(reqJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                        .isEqualTo(MethodArgumentNotValidException.class)
+                )
+                .andDo(this::printExceptionMessage);
+    }
+
+    @Order(5)
+    @Test
+    public void 헬로추가_실패_이름없음() throws Exception {
+        // given
+        var helloInsertReqDto = HelloInsertReqDto.builder()
+                .email("email@base.com")
+                .build();
+        var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(helloInsertReqDto);
+
+        // then
+        mockMvc.perform(post("/hello/v1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(reqJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                        .isEqualTo(MethodArgumentNotValidException.class)
+                )
+                .andDo(this::printExceptionMessage);
+    }
+
     private void printRspDto(MvcResult handler) {
         try {
             log.debug("result: {}", handler.getResponse().getContentAsString());
@@ -116,6 +160,14 @@ public class HelloControllerTest {
 
     private String getRspName(Class rspDtoClass) {
         return rspDtoClass.getSimpleName();
+    }
+
+    private Class<? extends Exception> getApiResultExceptionClass(MvcResult result) {
+        return Objects.requireNonNull(result.getResolvedException()).getClass();
+    }
+
+    private void printExceptionMessage(MvcResult result) {
+        log.debug("result: {}", Objects.requireNonNull(result.getResolvedException()).getLocalizedMessage());
     }
 
 }

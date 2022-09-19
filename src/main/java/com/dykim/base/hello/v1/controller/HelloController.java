@@ -13,8 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 import static com.dykim.base.hello.v1.controller.dto.ApiResult.ok;
 
@@ -63,7 +64,7 @@ public class HelloController {
     })
     @Operation(summary = "Insert Hello", description = "Insert hello")
     @PostMapping
-    public ApiResult<HelloInsertRspDto> insert(@RequestBody HelloInsertReqDto reqDto) {
+    public ApiResult<HelloInsertRspDto> insert(@Valid @RequestBody HelloInsertReqDto reqDto) {
         return ok(helloService.insert(reqDto));
     }
 

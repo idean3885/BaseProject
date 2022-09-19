@@ -8,9 +8,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.Objects;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 @Validated
 @Getter
@@ -22,7 +19,7 @@ public class Hello {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Email(message = "{custom.message}")
+    @Email
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 
@@ -35,9 +32,6 @@ public class Hello {
 
     @Builder
     public Hello(String email, String name, String birthday) {
-//        checkArgument(Objects.nonNull(email), "TODO: 메시지소스 설정");
-//        checkArgument(Objects.nonNull(name), "TODO: 메시지소스 설정");
-
         this.email = email;
         this.name = name;
         this.birthday = birthday;
