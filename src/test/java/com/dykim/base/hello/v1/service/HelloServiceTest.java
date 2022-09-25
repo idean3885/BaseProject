@@ -60,6 +60,8 @@ public class HelloServiceTest {
         );
     }
 
+    // TODO: JPA Repository 에러지만 캐치하지 않아 서비스에서도 발생하는 오류 -> 여기서도 잡는게 맞는가?
+    // TODO: 괜히 테스트케이스만 더 늘리는게 아닌지...(given 데이터 미스는 잡을 수 있으나 코드가 너무 길어질수도?)
     @Order(3)
     @Test
     public void 헬로추가_실패_잘못된이메일형식() {
@@ -71,10 +73,9 @@ public class HelloServiceTest {
                 .build();
 
         // when
-//        assertThrows(ConstraintViolationException.class,
-//                () -> helloService.insert(reqDto)
-//        );
-        helloService.insert(reqDto);
+        assertThrows(ConstraintViolationException.class,
+                () -> helloService.insert(reqDto)
+        );
     }
 
     @Order(4)
@@ -87,7 +88,7 @@ public class HelloServiceTest {
                 .build();
 
         // when
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ConstraintViolationException.class,
                 () -> helloService.insert(reqDto)
         );
     }
