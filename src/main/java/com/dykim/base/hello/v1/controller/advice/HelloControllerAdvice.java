@@ -40,6 +40,7 @@ public class HelloControllerAdvice {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException e) {
         // @Validated(AOP) 또는 validator.validate() 등 벨리데이터를 직접사용하는 경우 발생한다.
+        // 또한 JPA Entity 작업 전 AOPProxy 객체의 PreInsert() 를 통해 검증 예외 발생 시, 해당 예외가 발생한다. -> AOP
         return new ResponseEntity<>(error(e), HttpStatus.BAD_REQUEST);
     }
 
@@ -63,6 +64,12 @@ public class HelloControllerAdvice {
         log.error(builder.toString());
 
         return new ResponseEntity<>(error(e), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handleRuntimeException(RuntimeException e) {
+        return new ResponseEntity<>(error(e), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

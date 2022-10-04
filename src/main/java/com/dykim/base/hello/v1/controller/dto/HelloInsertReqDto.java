@@ -22,7 +22,8 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class HelloInsertReqDto {
 
-    @Email(message = "{invalid.message}")
+    @NotBlank
+    @Email
     @Schema(description = "이메일", required = true, example = "test@email.com")
     private String email;
 

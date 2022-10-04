@@ -60,6 +60,8 @@ public class HelloController {
             @ApiResponse(responseCode = "200", description = "success",
                     content = @Content(schema = @Schema(implementation = HelloInsertRspDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request parameters or invalid insert data.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
                     content = @Content(schema = @Schema(implementation = ApiResult.class)))
     })
     @Operation(summary = "Insert Hello", description = "Insert hello")
