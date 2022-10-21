@@ -1,5 +1,6 @@
 package com.dykim.base.hello.v1.controller;
 
+import com.dykim.base.hello.v1.controller.dto.HelloFindRspDto;
 import com.dykim.base.hello.v1.controller.dto.HelloInsertReqDto;
 import com.dykim.base.hello.v1.controller.dto.HelloInsertRspDto;
 import com.dykim.base.hello.v1.controller.dto.HelloRspDto;
@@ -7,20 +8,28 @@ import com.dykim.base.hello.v1.entity.Hello;
 import com.dykim.base.hello.v1.entity.HelloRepository;
 import com.dykim.base.hello.v1.service.HelloService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -53,6 +62,7 @@ public class HelloControllerTest {
                 .build();
 
         objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
     @Order(1)
@@ -85,14 +95,26 @@ public class HelloControllerTest {
     @Test
     public void 헬로추가_성공() throws Exception {
         // given
-        var helloInsertReqDto = HelloInsertReqDto.builder()
+        var localDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        var localDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
+        var birthday = LocalDate.parse("1993-07-24", localDateFormat);
+        var yyyyMMddHHmmssSSS = LocalDateTime.parse(
+                LocalDateTime.now().format(localDateTimeFormat), localDateTimeFormat
+        );
+        var reqDto = HelloInsertReqDto.builder()
                 .email("email@base.com")
                 .name("name")
+                .birthday(birthday)
+                .yyyyMMddHHmmssSSS(yyyyMMddHHmmssSSS)
                 .build();
-        var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(helloInsertReqDto);
+        var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
         var hello = Hello.builder()
-                .email(helloInsertReqDto.getEmail())
-                .name(helloInsertReqDto.getName()).build();
+                .email(reqDto.getEmail())
+                .name(reqDto.getName())
+                .birthday(reqDto.getBirthday())
+                .yyyyMMddHHmmssSSS(yyyyMMddHHmmssSSS)
+                .build();
 
         // when
         when(helloRepository.save(any())).thenReturn(hello);
@@ -100,12 +122,17 @@ public class HelloControllerTest {
         // then
         mockMvc.perform(post("/hello/v1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(reqJson))
+                        .content(reqJson)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name", is(getRspName(HelloInsertRspDto.class))))
-                .andExpect(jsonPath("$.data.name", is(helloInsertReqDto.getName())))
-                .andExpect(jsonPath("$.data.email", is(helloInsertReqDto.getEmail())))
+                .andExpect(jsonPath("$.data.name", is(reqDto.getName())))
+                .andExpect(jsonPath("$.data.email", is(reqDto.getEmail())))
+                .andExpect(jsonPath("$.data.birthday", is(reqDto.getBirthday().format(localDateFormat))))
+                .andExpect(jsonPath("$.data.yyyyMMddHHmmssSSS",
+                        is(reqDto.getYyyyMMddHHmmssSSS().format(localDateTimeFormat)))
+                )
                 .andDo(this::printRspDto);
     }
 
@@ -122,7 +149,8 @@ public class HelloControllerTest {
         // then
         mockMvc.perform(post("/hello/v1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(reqJson))
+                        .content(reqJson)
+                )
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertThat(getApiResultExceptionClass(result))
                         .isEqualTo(MethodArgumentNotValidException.class)
@@ -142,10 +170,107 @@ public class HelloControllerTest {
         // then
         mockMvc.perform(post("/hello/v1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(reqJson))
+                        .content(reqJson)
+                )
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertThat(getApiResultExceptionClass(result))
                         .isEqualTo(MethodArgumentNotValidException.class)
+                )
+                .andDo(this::printExceptionMessage);
+    }
+
+    @Order(6)
+    @Test
+    public void 헬로추가_실패_잘못된생일양식() throws Exception {
+        // given
+        var map = new HashMap<String, String>();
+        map.put("birthday", "19930724");
+        var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
+
+        // then
+        mockMvc.perform(post("/hello/v1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(reqJson)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                        .isEqualTo(HttpMessageNotReadableException.class)
+                )
+                .andDo(this::printExceptionMessage);
+    }
+
+    @Order(7)
+    @Test
+    public void 헬로추가_실패_잘못된yyyyMMddHHmmssSSS() throws Exception {
+        // given
+        var map = new HashMap<String, String>();
+        map.put("yyyyMMddHHmmssSSS", "20221022000700111");
+        var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
+
+        // then
+        mockMvc.perform(post("/hello/v1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(reqJson)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                        .isEqualTo(HttpMessageNotReadableException.class)
+                )
+                .andDo(this::printExceptionMessage);
+    }
+
+    @Order(8)
+    @Test
+    public void 헬로조회_성공() throws Exception {
+        // given
+        var localDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        var localDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
+        var birthday = LocalDate.parse("1993-07-24", localDateFormat);
+        var yyyyMMddHHmmssSSS = LocalDateTime.parse(
+                LocalDateTime.now().format(localDateTimeFormat), localDateTimeFormat
+        );
+        var reqDto = HelloInsertReqDto.builder()
+                .email("email@base.com")
+                .name("name")
+                .birthday(birthday)
+                .yyyyMMddHHmmssSSS(yyyyMMddHHmmssSSS)
+                .build();
+        var hello = Hello.builder()
+                .email(reqDto.getEmail())
+                .name(reqDto.getName())
+                .birthday(reqDto.getBirthday())
+                .yyyyMMddHHmmssSSS(yyyyMMddHHmmssSSS)
+                .build();
+        final var ANY_HELLO_ID = 1;
+
+        // when
+        when(helloRepository.findById(any())).thenReturn(Optional.of(hello));
+
+        // then
+        mockMvc.perform(get("/hello/v1/" + ANY_HELLO_ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.name", is(getRspName(HelloFindRspDto.class))))
+                .andExpect(jsonPath("$.data.name", is(reqDto.getName())))
+                .andExpect(jsonPath("$.data.email", is(reqDto.getEmail())))
+                .andExpect(jsonPath("$.data.birthday", is(reqDto.getBirthday().format(localDateFormat))))
+                .andExpect(jsonPath("$.data.yyyyMMddHHmmssSSS",
+                        is(reqDto.getYyyyMMddHHmmssSSS().format(localDateTimeFormat)))
+                )
+                .andDo(this::printRspDto);
+    }
+
+    @Order(9)
+    @Test
+    public void 헬로조회_실패_id_자료형다름() throws Exception {
+        // given
+        final var WRONG_HELLO_ID = "Wrong Hello Id";
+        // then
+        mockMvc.perform(get("/hello/v1/" + WRONG_HELLO_ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                        .isEqualTo(MethodArgumentTypeMismatchException.class)
                 )
                 .andDo(this::printExceptionMessage);
     }

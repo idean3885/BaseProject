@@ -8,6 +8,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import javax.validation.ConstraintViolationException;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -27,7 +29,7 @@ public class HelloRepositoryTest {
         mockHello1 = hellosRepository.save(Hello.builder()
                 .email("mock1@email.com")
                 .name("mockName1")
-                .birthday("19930724")
+                .birthday(LocalDate.parse("19930724"))
                 .build());
         mockHello2 = hellosRepository.save(Hello.builder()
                 .email("mock2@email.com")
@@ -80,7 +82,7 @@ public class HelloRepositoryTest {
         var hello = Hello.builder()
                 .email("insertEmail@email.com")
                 .name("insertName")
-                .birthday("19990101")
+                .birthday(LocalDate.parse("19930724"))
                 .build();
 
         // when
@@ -100,7 +102,7 @@ public class HelloRepositoryTest {
         var hello = Hello.builder()
                 .email(mockHello1.getEmail())
                 .name("insertName")
-                .birthday("19990101")
+                .birthday(LocalDate.parse("19930724"))
                 .build();
 
         // when
@@ -115,7 +117,7 @@ public class HelloRepositoryTest {
         // given
         var hello = Hello.builder()
                 .email("insertNameTest@email.com")
-                .birthday("19990101")
+                .birthday(LocalDate.parse("19930724"))
                 .build();
 
         // when

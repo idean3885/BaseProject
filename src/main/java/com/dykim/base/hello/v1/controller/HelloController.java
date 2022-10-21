@@ -1,9 +1,6 @@
 package com.dykim.base.hello.v1.controller;
 
-import com.dykim.base.hello.v1.controller.dto.ApiResult;
-import com.dykim.base.hello.v1.controller.dto.HelloInsertReqDto;
-import com.dykim.base.hello.v1.controller.dto.HelloInsertRspDto;
-import com.dykim.base.hello.v1.controller.dto.HelloRspDto;
+import com.dykim.base.hello.v1.controller.dto.*;
 import com.dykim.base.hello.v1.service.HelloService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -68,6 +65,20 @@ public class HelloController {
     @PostMapping
     public ApiResult<HelloInsertRspDto> insert(@Valid @RequestBody HelloInsertReqDto reqDto) {
         return ok(helloService.insert(reqDto));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(schema = @Schema(implementation = HelloFindRspDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters or invalid insert data.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class)))
+    })
+    @Operation(summary = "find Hello", description = "find hello")
+    @GetMapping("/{id}")
+    public ApiResult<HelloFindRspDto> find(@PathVariable Long id) {
+        return ok(helloService.find(id));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.dykim.base.hello.v1.service;
 
 import com.dykim.base.hello.v1.controller.advice.exception.HelloException;
+import com.dykim.base.hello.v1.controller.dto.HelloFindRspDto;
 import com.dykim.base.hello.v1.controller.dto.HelloInsertReqDto;
 import com.dykim.base.hello.v1.controller.dto.HelloInsertRspDto;
 import com.dykim.base.hello.v1.entity.Hello;
@@ -29,9 +30,15 @@ public class HelloService {
         return "param(isOccur) is false. HelloException is not occurred.";
     }
 
-    // 서비스 메서드에서 Dto 검증 확인을 위해 빈 벨리데이터 설정함.
+    // 서비스 메서드에서 Dto 검증 확인을 위해 Bean Validation 설정
     public HelloInsertRspDto insert(@Valid HelloInsertReqDto reqDto) {
         return new HelloInsertRspDto(helloRepository.save(reqDto.toEntity()));
+    }
+
+    public HelloFindRspDto find(Long id) {
+        return helloRepository.findById(id)
+                .map(HelloFindRspDto::new)
+                .orElseGet(HelloFindRspDto::new);
     }
 
     public List<Hello> findAll() {

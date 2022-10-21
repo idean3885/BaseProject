@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Hello 엔티티<p/>
@@ -33,14 +35,18 @@ public class Hello {
     @Column(length = 50, nullable = false)
     private String name;
 
-    @Column(length = 8)
-    private String birthday;
+    @Column(length = 10)
+    private LocalDate birthday;
+
+    @Column(length = 23, nullable = false)
+    private LocalDateTime yyyyMMddHHmmssSSS;
 
     @Builder
-    public Hello(String email, String name, String birthday) {
+    public Hello(String email, String name, LocalDate birthday, LocalDateTime yyyyMMddHHmmssSSS) {
         this.email = email;
         this.name = name;
         this.birthday = birthday;
+        this.yyyyMMddHHmmssSSS = yyyyMMddHHmmssSSS;
     }
 
 }
