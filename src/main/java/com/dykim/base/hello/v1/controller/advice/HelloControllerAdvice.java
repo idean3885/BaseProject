@@ -2,6 +2,7 @@ package com.dykim.base.hello.v1.controller.advice;
 
 import com.dykim.base.hello.v1.controller.HelloController;
 import com.dykim.base.hello.v1.controller.advice.exception.HelloException;
+import com.dykim.base.hello.v1.controller.advice.exception.HelloNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -83,6 +84,12 @@ public class HelloControllerAdvice {
         log.error(builder.toString());
 
         return new ResponseEntity<>(error(e), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(HelloNotFoundException.class)
+    public ResponseEntity<?> handleHelloNotFoundException(HelloNotFoundException e) {
+        return new ResponseEntity<>(error(e), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -1,7 +1,7 @@
 package com.dykim.base.hello.v1.service;
 
 import com.dykim.base.hello.v1.controller.dto.HelloInsertReqDto;
-import com.dykim.base.hello.v1.controller.dto.HelloInsertRspDto;
+import com.dykim.base.hello.v1.controller.dto.HelloUpdateReqDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,26 +26,14 @@ public class HelloServiceTest {
 
     private final HelloService helloService;
 
-    private HelloInsertRspDto mockHelloInsertRspDto1;
-
     @Autowired
     public HelloServiceTest(HelloService helloService) {
         this.helloService = helloService;
     }
 
-    @BeforeAll
-    public void setMockData() {
-        mockHelloInsertRspDto1 = this.helloService.insert(HelloInsertReqDto.builder()
-                .email("mock1@email.com")
-                .name("mock1")
-                .birthday(parseBirthday("1993-07-24"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build());
-    }
-
     @Order(1)
     @Test
-    public void 헬로추가_성공() {
+    public void insert_return_HelloInsertRspDto() {
         // given
         var reqDto = HelloInsertReqDto.builder()
                 .email("success@email.com")
@@ -65,7 +53,7 @@ public class HelloServiceTest {
 
     @Order(2)
     @Test
-    public void 헬로추가_실패_이메일없음() {
+    public void insert_with_empty_email_throw_ConstraintViolationException() {
         // given
         var reqDto = HelloInsertReqDto.builder()
                 .name("name")
@@ -73,7 +61,7 @@ public class HelloServiceTest {
                 .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
                 .build();
 
-        // when
+        // when-then
         assertThrows(ConstraintViolationException.class,
                 () -> helloService.insert(reqDto)
         );
@@ -81,7 +69,7 @@ public class HelloServiceTest {
 
     @Order(3)
     @Test
-    public void 헬로추가_실패_잘못된이메일형식() {
+    public void insert_invalid_email_format_throw_ConstraintViolationException() {
         // given
         var reqDto = HelloInsertReqDto.builder()
                 .email("email.com")
@@ -90,7 +78,7 @@ public class HelloServiceTest {
                 .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
                 .build();
 
-        // when
+        // when-then
         assertThrows(ConstraintViolationException.class,
                 () -> helloService.insert(reqDto)
         );
@@ -98,7 +86,7 @@ public class HelloServiceTest {
 
     @Order(4)
     @Test
-    public void 헬로추가_실패_이름없음() {
+    public void insert_with_empty_name_throw_ConstraintViolationException() {
         // given
         var reqDto = HelloInsertReqDto.builder()
                 .email("email.com")
@@ -106,7 +94,7 @@ public class HelloServiceTest {
                 .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
                 .build();
 
-        // when
+        // when-then
         assertThrows(ConstraintViolationException.class,
                 () -> helloService.insert(reqDto)
         );
@@ -114,33 +102,41 @@ public class HelloServiceTest {
 
     @Order(5)
     @Test
-    public void 헬로조회_성공() {
+    public void find_by_id_return_HelloFindRspDto() {
+        // setup
+        var mockHelloInsertRspDto = helloService.insert(HelloInsertReqDto.builder()
+                .email("mock1@email.com")
+                .name("mock1")
+                .birthday(parseBirthday("1993-07-24"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .build());
         // given
-        var helloId = mockHelloInsertRspDto1.getId();
+        var helloId = mockHelloInsertRspDto.getId();
 
         // when
         var helloFindRspDto = helloService.find(helloId);
 
         // then
-        assertThat(helloFindRspDto.getName()).isEqualTo(mockHelloInsertRspDto1.getName());
-        assertThat(helloFindRspDto.getEmail()).isEqualTo(mockHelloInsertRspDto1.getEmail());
-        assertThat(helloFindRspDto.getBirthday()).isEqualTo(mockHelloInsertRspDto1.getBirthday());
-        assertThat(helloFindRspDto.getYyyyMMddHHmmssSSS()).isEqualTo(mockHelloInsertRspDto1.getYyyyMMddHHmmssSSS());
+        assertThat(helloFindRspDto.getName()).isEqualTo(mockHelloInsertRspDto.getName());
+        assertThat(helloFindRspDto.getEmail()).isEqualTo(mockHelloInsertRspDto.getEmail());
+        assertThat(helloFindRspDto.getBirthday()).isEqualTo(mockHelloInsertRspDto.getBirthday());
+        assertThat(helloFindRspDto.getYyyyMMddHHmmssSSS()).isEqualTo(mockHelloInsertRspDto.getYyyyMMddHHmmssSSS());
     }
 
     /**
      * <h3>JPA null find 예외 테스트</h3>
+     * <pre>
      * id 에 null 이 입력되는 케이스를 테스트한다.
-     * 실제 컨트롤러를 통해 진입 시, PathVariable 로 입력받고 <br/>
-     * 자료형 검증도 이루어지기 떄문에 발생할 가능성은 없지만 샘플 케이스로서 작성함.<br/>
-     * <br/>
+     * 실제 컨트롤러를 통해 진입 시, PathVariable 로 입력받고
+     * 자료형 검증도 이루어지기 때문에 발생할 가능성은 없지만 샘플 케이스로서 작성함.
+     * </pre>
      * <b>참고</b>
      * <pre>
      * JPA Repository.find(null) 실행 시 명세와 달리
      * InvalidDataAccessApiUsageException 이 발생한다.
      *
      * 이는 EntityManagerFactoryUtils 이 내부적으로
-     * IllegalArgumentException 을 변경시키기 떄문이다.
+     * IllegalArgumentException 을 변경시키기 때문이다.
      *
      * 스프링 내에서 JPA 는 AOP 로 동작하게 되며 JdkDynamicAopProxy 로
      * 실행하는 과정에서 위 오류 발생 시 예외를 변경시켜주고 있다.
@@ -148,12 +144,38 @@ public class HelloServiceTest {
      */
     @Order(6)
     @Test
-    public void 헬로조회_실패_id_null() {
+    public void find_with_null_id_throw_InvalidDataAccessApiUsageException() {
         // given
         Long helloId = null;
 
-        // when
+        // when-then
         assertThrows(InvalidDataAccessApiUsageException.class, () -> helloService.find(helloId));
+    }
+
+    @Order(7)
+    @Test
+    public void update_with_DynamicUpdate_return_HelloUpdateRspDto() {
+        // setup
+        var helloInsertRspDto = helloService.insert(HelloInsertReqDto.builder()
+                .email("mock@email.com")
+                .name("mock")
+                .birthday(parseBirthday("1900-01-01"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .build());
+
+        // given
+        var helloUpdateReqDto = HelloUpdateReqDto.builder()
+                .name("update name")
+                .birthday(parseBirthday("1993-07-24"))
+                .build();
+
+        // when
+        var helloUpdateRspDto = helloService.update(helloInsertRspDto.getId(), helloUpdateReqDto);
+
+        // then
+        assertThat(helloUpdateRspDto.getName()).isEqualTo(helloUpdateReqDto.getName());
+        assertThat(helloUpdateRspDto.getBirthday()).isEqualTo(helloUpdateReqDto.getBirthday());
+        assertThat(helloUpdateRspDto.getEmail()).isEqualTo(helloInsertRspDto.getEmail());
     }
 
     private LocalDate parseBirthday(String formatDate) {

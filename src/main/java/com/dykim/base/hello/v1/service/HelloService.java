@@ -1,9 +1,8 @@
 package com.dykim.base.hello.v1.service;
 
 import com.dykim.base.hello.v1.controller.advice.exception.HelloException;
-import com.dykim.base.hello.v1.controller.dto.HelloFindRspDto;
-import com.dykim.base.hello.v1.controller.dto.HelloInsertReqDto;
-import com.dykim.base.hello.v1.controller.dto.HelloInsertRspDto;
+import com.dykim.base.hello.v1.controller.advice.exception.HelloNotFoundException;
+import com.dykim.base.hello.v1.controller.dto.*;
 import com.dykim.base.hello.v1.entity.Hello;
 import com.dykim.base.hello.v1.entity.HelloRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +42,13 @@ public class HelloService {
 
     public List<Hello> findAll() {
         return helloRepository.findAll();
+    }
+
+    public HelloUpdateRspDto update(Long id, HelloUpdateReqDto reqDto) {
+        return helloRepository.findById(id)
+                .map(hello -> hello.update(reqDto))
+                .map(HelloUpdateRspDto::new)
+                .orElseThrow(() -> new HelloNotFoundException("Not Found Hello. id: " + id));
     }
 
 }

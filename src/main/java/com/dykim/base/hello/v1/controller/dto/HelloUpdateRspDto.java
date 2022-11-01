@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Schema(name = "HelloFindRspDto", description = "Hello 조회 응답 Dto")
+@Schema(name = "HelloUpdateRspDto", description = "Hello 수정 응답 Dto")
 @Getter
 @NoArgsConstructor
-public class HelloFindRspDto {
+public class HelloUpdateRspDto {
 
     @Schema(description = "id", required = true, example = "1")
     private Long id;
@@ -31,7 +31,7 @@ public class HelloFindRspDto {
     @Schema(description = "생성시간 샘플", example = "2022-10-07 15:16:50.599")
     private LocalDateTime yyyyMMddHHmmssSSS;
 
-    public HelloFindRspDto(Hello hello) {
+    public HelloUpdateRspDto(Hello hello) {
         id = hello.getId();
         email = hello.getEmail();
         name = hello.getName();

@@ -56,7 +56,7 @@ public class HelloControllerAdviceTest {
 
     @Order(1)
     @Test
-    public void HelloException_발생() throws Exception {
+    public void call_occurException_always_throw_HelloException() throws Exception {
         // when
         when(helloController.occurException(anyBoolean())).thenThrow(new HelloException("Exception!"));
 
@@ -72,7 +72,7 @@ public class HelloControllerAdviceTest {
 
     @Order(2)
     @Test
-    public void MethodArgumentNotValidException_이메일형식() throws Exception {
+    public void Call_HelloInsert_with_invalid_email_throw_MethodArgumentNotValidException() throws Exception {
         // given
         var helloInsertReqDto = HelloInsertReqDto.builder()
                 .email("invalid.email.com")
