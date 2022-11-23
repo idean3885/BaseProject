@@ -1,9 +1,9 @@
 package com.dykim.base.hello.v1.service;
 
+import com.dykim.base.hello.v1.controller.advice.exception.HelloAlreadyExistException;
 import com.dykim.base.hello.v1.controller.advice.exception.HelloException;
-import com.dykim.base.hello.v1.controller.dto.HelloFindRspDto;
-import com.dykim.base.hello.v1.controller.dto.HelloInsertReqDto;
-import com.dykim.base.hello.v1.controller.dto.HelloInsertRspDto;
+import com.dykim.base.hello.v1.controller.advice.exception.HelloNotFoundException;
+import com.dykim.base.hello.v1.controller.dto.*;
 import com.dykim.base.hello.v1.entity.Hello;
 import com.dykim.base.hello.v1.entity.HelloRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +30,31 @@ public class HelloService {
         return "param(isOccur) is false. HelloException is not occurred.";
     }
 
-    // 서비스 메서드에서 Dto 검증 확인을 위해 Bean Validation 설정
+    /**
+     * <h3>Hello 삽입</h3>
+     * <pre>
+     *  - 검색 - 검증 - 인서트 방식으로 진행
+     *  - 총 두번의 쿼리를 실행하지만 인서트 오류를 명확히 설정하기 위해 위와 같이 작업함.
+     *  - 인서트 도중 예외가 발생하는 경우 DataIntegrityViolationException 이 발생
+     *  - 이 예외는 인서트, 업데이트 중 발생하는 포괄적인 예외이기 때문에 다른 작업 중에도 발생할 수 있음.
+     *  - 따라서 인서트 예외를 특정하여 사이드 이펙트를 줄이기 위해 커스텀 예외를 발생시킨다.
+     * </pre>
+     * 참고) 서비스 메서드에서 Dto 검증 확인을 위해 Bean Validation 설정
+     *
+     * @param reqDto Hello 추가 요청 Dto
+     * @return Hello 추가 응답 Dto | HelloAlreadyExistException
+     */
     public HelloInsertRspDto insert(@Valid HelloInsertReqDto reqDto) {
-        return new HelloInsertRspDto(helloRepository.save(reqDto.toEntity()));
+        helloRepository.existsByEmailAndUseYn(reqDto.getEmail(), "Y")
+                .filter(isExists -> isExists)
+                .ifPresent(isExists -> {
+                    throw new HelloAlreadyExistException(
+                            String.format("Email '%s' already exists.", reqDto.getEmail()));
+                });
+
+
+        var hello = reqDto.toEntity().insert();
+        return new HelloInsertRspDto(helloRepository.save(hello));
     }
 
     public HelloFindRspDto find(Long id) {
@@ -43,6 +65,20 @@ public class HelloService {
 
     public List<Hello> findAll() {
         return helloRepository.findAll();
+    }
+
+    public HelloUpdateRspDto update(Long id, HelloUpdateReqDto reqDto) {
+        return helloRepository.findById(id)
+                .map(hello -> hello.update(reqDto))
+                .map(HelloUpdateRspDto::new)
+                .orElseThrow(() -> new HelloNotFoundException("Not Found Hello. id: " + id));
+    }
+
+    public HelloDeleteRspDto delete(Long id) {
+        return helloRepository.findById(id)
+                .map(Hello::delete)
+                .map(HelloDeleteRspDto::new)
+                .orElseThrow(() -> new HelloNotFoundException("Not Found Hello. id: " + id));
     }
 
 }

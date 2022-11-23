@@ -3,8 +3,8 @@ package com.dykim.base.hello.v1.controller.dto;
 import com.dykim.base.hello.v1.entity.Hello;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,12 +31,16 @@ public class HelloFindRspDto {
     @Schema(description = "생성시간 샘플", example = "2022-10-07 15:16:50.599")
     private LocalDateTime yyyyMMddHHmmssSSS;
 
+    @Schema(description = "사용여부", example = "Y")
+    private String useYn;
+
     public HelloFindRspDto(Hello hello) {
         id = hello.getId();
         email = hello.getEmail();
         name = hello.getName();
         birthday = hello.getBirthday();
         yyyyMMddHHmmssSSS = hello.getYyyyMMddHHmmssSSS();
+        useYn = hello.getUseYn();
     }
 
 }

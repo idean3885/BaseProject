@@ -8,9 +8,9 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Schema(name = "HelloInsertRspDto", description = "Hello 추가 응답 Dto")
+@Schema(name = "HelloDeleteRspDto", description = "Hello 삭제 응답 Dto")
 @Getter
-public class HelloInsertRspDto {
+public class HelloDeleteRspDto {
 
     @Schema(description = "id", required = true, example = "1")
     private final Long id;
@@ -26,13 +26,13 @@ public class HelloInsertRspDto {
     private final LocalDate birthday;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    @Schema(description = "생성시간 샘플", example = "2022-10-07 00:16:50.599")
+    @Schema(description = "생성시간 샘플", example = "2022-10-07 15:16:50.599")
     private final LocalDateTime yyyyMMddHHmmssSSS;
 
     @Schema(description = "사용여부", example = "Y")
     private final String useYn;
 
-    public HelloInsertRspDto(Hello hello) {
+    public HelloDeleteRspDto(Hello hello) {
         id = hello.getId();
         email = hello.getEmail();
         name = hello.getName();

@@ -1,5 +1,6 @@
 package com.dykim.base.hello.v1.entity;
 
+import com.dykim.base.hello.v1.controller.dto.HelloUpdateReqDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,8 +8,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.validation.ConstraintViolationException;
-
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,49 +21,59 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class HelloRepositoryTest {
 
     @Autowired
-    HelloRepository hellosRepository;
-
-    private Hello mockHello1;
-    private Hello mockHello2;
-
-    @BeforeEach
-    public void setup() {
-        mockHello1 = hellosRepository.save(Hello.builder()
-                .email("mock1@email.com")
-                .name("mockName1")
-                .birthday(LocalDate.parse("19930724"))
-                .build());
-        mockHello2 = hellosRepository.save(Hello.builder()
-                .email("mock2@email.com")
-                .name("mockName2")
-                .build());
-    }
+    HelloRepository helloRepository;
 
     @AfterEach
-    public void clear() {
-        hellosRepository.deleteAll();
+    public void clearAllHello() {
+        helloRepository.deleteAll();
     }
 
     @Order(1)
     @Test
-    public void 사용자조회_단일() {
+    public void findById_return_Hello() {
+        // given
+        var mockHello = helloRepository.save(Hello.builder()
+                .email("mock@email.com")
+                .name("mockName1")
+                .birthday(LocalDate.parse("1993-07-24"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .useYn("Y")
+                .build());
+
         // when
-        var helloOps = hellosRepository.findById(mockHello1.getId());
+        var helloOps = helloRepository.findById(mockHello.getId());
 
         // then
         assertThat(helloOps.isPresent()).isTrue();
 
         var hello = helloOps.get();
-        assertThat(hello.getEmail()).isEqualTo(mockHello1.getEmail());
-        assertThat(hello.getName()).isEqualTo(mockHello1.getName());
-        assertThat(hello.getBirthday()).isEqualTo(mockHello1.getBirthday());
+        assertThat(hello.getEmail()).isEqualTo(mockHello.getEmail());
+        assertThat(hello.getName()).isEqualTo(mockHello.getName());
+        assertThat(hello.getBirthday()).isEqualTo(mockHello.getBirthday());
     }
 
     @Order(2)
     @Test
-    public void 사용자조회_목록() {
+    public void findAll_return_Hello_list() {
+        // given
+        var mockHello1 = helloRepository.save(Hello.builder()
+                .email("mock1@email.com")
+                .name("mockName1")
+                .birthday(LocalDate.parse("1993-07-24"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .useYn("Y")
+                .build());
+
+        var mockHello2 = helloRepository.save(Hello.builder()
+                .email("mock2@email.com")
+                .name("mockName2")
+                .birthday(LocalDate.parse("1993-01-24"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .useYn("Y")
+                .build());
+
         // when
-        var helloList = hellosRepository.findAll();
+        var helloList = helloRepository.findAll();
 
         // then -> 인서트 순서에 맞춰 저장되고 조회되기 때문에 순서를 보장함.
         var hello1 = helloList.get(0);
@@ -77,16 +89,18 @@ public class HelloRepositoryTest {
 
     @Order(3)
     @Test
-    public void 사용자추가_성공() {
+    public void save_return_Hello() {
         // given
         var hello = Hello.builder()
                 .email("insertEmail@email.com")
                 .name("insertName")
-                .birthday(LocalDate.parse("19930724"))
+                .birthday(LocalDate.parse("1993-07-24"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .useYn("Y")
                 .build();
 
         // when
-        var insertedHello = hellosRepository.save(hello);
+        var insertedHello = helloRepository.save(hello);
 
         // then
         assertThat(insertedHello.getId()).isNotNull();
@@ -97,32 +111,113 @@ public class HelloRepositoryTest {
 
     @Order(4)
     @Test
-    public void 사용자추가_실패_중복된이메일() {
+    public void save_with_duplicate_email_throw_DataIntegrityViolationException() {
+        // setup
+        var mockHello = helloRepository.save(Hello.builder()
+                .email("mock@email.com")
+                .name("mockName1")
+                .birthday(LocalDate.parse("1993-07-24"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .useYn("Y")
+                .build());
+
         // given
         var hello = Hello.builder()
-                .email(mockHello1.getEmail())
+                .email(mockHello.getEmail())
                 .name("insertName")
-                .birthday(LocalDate.parse("19930724"))
+                .birthday(LocalDate.parse("1993-07-24"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .useYn("Y")
                 .build();
 
-        // when
+        // when-then
         assertThrows(DataIntegrityViolationException.class,
-                () -> hellosRepository.save(hello)
+                () -> helloRepository.save(hello)
         );
     }
 
     @Order(5)
     @Test
-    public void 사용자추가_실패_필수값누락_이름() {
+    public void save_with_empty_require_parameter_throw_ConstraintViolationException() {
         // given
         var hello = Hello.builder()
                 .email("insertNameTest@email.com")
-                .birthday(LocalDate.parse("19930724"))
+                .birthday(LocalDate.parse("1993-07-24"))
+                .build();
+
+        // when-then
+        assertThrows(ConstraintViolationException.class,
+                () -> helloRepository.save(hello)
+        );
+    }
+
+    @Order(6)
+    @Test
+    public void update_with_DynamicUpdate_return_HelloUpdateRspDto() {
+        // setup
+        var mockHello = helloRepository.save(Hello.builder()
+                .email("mock@email.com")
+                .name("mockName1")
+                .birthday(LocalDate.parse("1993-07-24"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .useYn("Y")
+                .build());
+
+        // given
+        var helloUpdateReqDto = HelloUpdateReqDto.builder()
+                .name("update Name")
+                .birthday(LocalDate.parse("1900-07-24"))
                 .build();
 
         // when
-        assertThrows(ConstraintViolationException.class,
-                () -> hellosRepository.save(hello)
+        var hello = helloRepository.save(mockHello.update(helloUpdateReqDto));
+
+        // then
+        assertThat(hello.getId()).isEqualTo(mockHello.getId());
+        assertThat(hello.getName()).isEqualTo(helloUpdateReqDto.getName());
+        assertThat(hello.getBirthday()).isEqualTo(helloUpdateReqDto.getBirthday());
+
+        var findHelloOps = helloRepository.findById(hello.getId());
+        assertThat(findHelloOps.isPresent()).isTrue();
+
+        var findHello = findHelloOps.get();
+        assertThat(findHello.getName()).isEqualTo(helloUpdateReqDto.getName());
+        assertThat(findHello.getBirthday()).isEqualTo(helloUpdateReqDto.getBirthday());
+    }
+
+    @Order(7)
+    @Test
+    public void delete_with_DynamicUpdate_return_Hello() {
+        // setup
+        var mockHello = helloRepository.save(Hello.builder()
+                .email("mock@email.com")
+                .name("mockName1")
+                .birthday(LocalDate.parse("1993-07-24"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .useYn("Y")
+                .build());
+
+        // given
+        mockHello.delete();
+
+        // when
+        var hello = helloRepository.save(mockHello);
+
+        // then
+        assertThat(hello.getId()).isEqualTo(mockHello.getId());
+        assertThat(hello.getUseYn()).isEqualTo("N");
+
+        var findHelloOps = helloRepository.findById(mockHello.getId());
+        assertThat(findHelloOps.isPresent()).isTrue();
+
+        var findHello = findHelloOps.get();
+        assertThat(findHello.getUseYn()).isEqualTo("N");
+    }
+
+    private LocalDateTime nowYyyyMMddHHmmssSSS() {
+        var localDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        return LocalDateTime.parse(
+                LocalDateTime.now().format(localDateTimeFormat), localDateTimeFormat
         );
     }
 

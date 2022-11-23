@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HelloResponseDtoTest {
 
     @Test
-    void 롬복_기능_테스트() {
+    void lombok_apply_test() {
         // given
         String name = "test";
         String email = "test@email.com";

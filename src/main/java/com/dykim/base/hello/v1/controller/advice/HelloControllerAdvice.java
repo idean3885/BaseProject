@@ -1,7 +1,9 @@
 package com.dykim.base.hello.v1.controller.advice;
 
 import com.dykim.base.hello.v1.controller.HelloController;
+import com.dykim.base.hello.v1.controller.advice.exception.HelloAlreadyExistException;
 import com.dykim.base.hello.v1.controller.advice.exception.HelloException;
+import com.dykim.base.hello.v1.controller.advice.exception.HelloNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -57,7 +60,8 @@ public class HelloControllerAdvice {
             DataIntegrityViolationException.class,
             ConstraintViolationException.class,
             MethodArgumentTypeMismatchException.class,
-            HttpMessageNotReadableException.class
+            HttpMessageNotReadableException.class,
+            HelloAlreadyExistException.class
     })
     public ResponseEntity<?> handleBadRequestException(Exception e) {
         return new ResponseEntity<>(error(e), HttpStatus.BAD_REQUEST);
@@ -83,6 +87,18 @@ public class HelloControllerAdvice {
         log.error(builder.toString());
 
         return new ResponseEntity<>(error(e), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(HelloNotFoundException.class)
+    public ResponseEntity<?> handleHelloNotFoundException(HelloNotFoundException e) {
+        return new ResponseEntity<>(error(e), HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<?> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        return new ResponseEntity<>(error(e), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
