@@ -24,8 +24,7 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -72,7 +71,7 @@ public class HelloControllerAdviceTest {
 
     @Order(2)
     @Test
-    public void Call_HelloInsert_with_invalid_email_throw_MethodArgumentNotValidException() throws Exception {
+    public void call_insert_with_invalid_email_throw_MethodArgumentNotValidException() throws Exception {
         // given
         var helloInsertReqDto = HelloInsertReqDto.builder()
                 .email("invalid.email.com")
@@ -80,10 +79,11 @@ public class HelloControllerAdviceTest {
                 .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(helloInsertReqDto);
 
-        // then
-        mockMvc.perform(post("/hello/v1")
+        // when
+        mockMvc.perform(put("/hello/v1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(reqJson))
+                // then
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertThat(getApiResultExceptionClass(result))
                         .isEqualTo(MethodArgumentNotValidException.class)

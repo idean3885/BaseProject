@@ -31,12 +31,16 @@ public class HelloFindRspDto {
     @Schema(description = "생성시간 샘플", example = "2022-10-07 15:16:50.599")
     private LocalDateTime yyyyMMddHHmmssSSS;
 
+    @Schema(description = "사용여부", example = "Y")
+    private String useYn;
+
     public HelloFindRspDto(Hello hello) {
         id = hello.getId();
         email = hello.getEmail();
         name = hello.getName();
         birthday = hello.getBirthday();
         yyyyMMddHHmmssSSS = hello.getYyyyMMddHHmmssSSS();
+        useYn = hello.getUseYn();
     }
 
 }

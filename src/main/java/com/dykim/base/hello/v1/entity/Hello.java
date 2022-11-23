@@ -47,17 +47,31 @@ public class Hello {
     @Column(length = 23, nullable = false)
     private LocalDateTime yyyyMMddHHmmssSSS;
 
+    @Column(length = 1, nullable = false)
+    private String useYn;
+
     @Builder
-    public Hello(String email, String name, LocalDate birthday, LocalDateTime yyyyMMddHHmmssSSS) {
+    public Hello(String email, String name, LocalDate birthday, LocalDateTime yyyyMMddHHmmssSSS, String useYn) {
         this.email = email;
         this.name = name;
         this.birthday = birthday;
         this.yyyyMMddHHmmssSSS = yyyyMMddHHmmssSSS;
+        this.useYn = useYn;
+    }
+
+    public Hello insert() {
+        useYn = "Y";
+        return this;
     }
 
     public Hello update(HelloUpdateReqDto reqDto) {
         name = StringUtils.isNoneBlank(reqDto.getName()) ? reqDto.getName() : name;
         birthday = Objects.nonNull(reqDto.getBirthday()) ? reqDto.getBirthday() : birthday;
+        return this;
+    }
+
+    public Hello delete() {
+        useYn = "N";
         return this;
     }
 

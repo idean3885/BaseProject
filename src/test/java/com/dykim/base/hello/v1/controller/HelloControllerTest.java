@@ -31,7 +31,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -63,8 +63,9 @@ public class HelloControllerTest {
     @Order(1)
     @Test
     public void call_helloPrint_always_return_string() throws Exception {
-        // then
+        // when
         mockMvc.perform(get("/hello/v1/helloPrint"))
+                // then
                 .andExpect(status().isOk())
                 .andExpect(content().string("hello!"));
     }
@@ -76,10 +77,11 @@ public class HelloControllerTest {
         var name = "name";
         var email = "test@email.com";
 
-        // then
+        // when
         mockMvc.perform(get("/hello/v1/helloDto")
                         .param("name", name)
                         .param("email", email))
+                // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name", is(getRspName(HelloRspDto.class))))
@@ -112,15 +114,14 @@ public class HelloControllerTest {
                 .birthday(reqDto.getBirthday())
                 .yyyyMMddHHmmssSSS(yyyyMMddHHmmssSSS)
                 .build();
+        given(helloRepository.save(any())).willReturn(hello);
 
         // when
-        when(helloRepository.save(any())).thenReturn(hello);
-
-        // then
         mockMvc.perform(put("/hello/v1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(reqJson)
                 )
+                // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name", is(getRspName(HelloInsertRspDto.class))))
@@ -143,11 +144,12 @@ public class HelloControllerTest {
                 .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(helloInsertReqDto);
 
-        // then
+        // when
         mockMvc.perform(put("/hello/v1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(reqJson)
                 )
+                // then
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertThat(getApiResultExceptionClass(result))
                         .isEqualTo(MethodArgumentNotValidException.class)
@@ -164,11 +166,12 @@ public class HelloControllerTest {
                 .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(helloInsertReqDto);
 
-        // then
+        // when
         mockMvc.perform(put("/hello/v1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(reqJson)
                 )
+                // then
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertThat(getApiResultExceptionClass(result))
                         .isEqualTo(MethodArgumentNotValidException.class)
@@ -184,11 +187,12 @@ public class HelloControllerTest {
         map.put("birthday", "19930724");
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
 
-        // then
+        // when
         mockMvc.perform(put("/hello/v1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(reqJson)
                 )
+                // then
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertThat(getApiResultExceptionClass(result))
                         .isEqualTo(HttpMessageNotReadableException.class)
@@ -204,11 +208,12 @@ public class HelloControllerTest {
         map.put("yyyyMMddHHmmssSSS", "20221022000700111");
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
 
-        // then
+        // when
         mockMvc.perform(put("/hello/v1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(reqJson)
                 )
+                // then
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertThat(getApiResultExceptionClass(result))
                         .isEqualTo(HttpMessageNotReadableException.class)
@@ -240,12 +245,11 @@ public class HelloControllerTest {
                 .yyyyMMddHHmmssSSS(yyyyMMddHHmmssSSS)
                 .build();
         final var ANY_HELLO_ID = 1;
+        given(helloRepository.findById(any())).willReturn(Optional.of(hello));
 
         // when
-        when(helloRepository.findById(any())).thenReturn(Optional.of(hello));
-
-        // then
         mockMvc.perform(get("/hello/v1/" + ANY_HELLO_ID))
+                // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name", is(getRspName(HelloFindRspDto.class))))
@@ -264,8 +268,9 @@ public class HelloControllerTest {
         // given
         final var WRONG_HELLO_ID = "Wrong Hello Id";
 
-        // then
+        // when
         mockMvc.perform(get("/hello/v1/" + WRONG_HELLO_ID))
+                // then
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertThat(getApiResultExceptionClass(result))
                         .isEqualTo(MethodArgumentTypeMismatchException.class)
@@ -298,15 +303,14 @@ public class HelloControllerTest {
                 .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
         final var ANY_HELLO_ID = 1;
+        given(helloRepository.findById(any())).willReturn(Optional.of(hello));
 
         // when
-        when(helloRepository.findById(any())).thenReturn(Optional.of(hello));
-
-        // then
         mockMvc.perform(post("/hello/v1/" + ANY_HELLO_ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(reqJson)
                 )
+                // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name", is(getRspName(HelloUpdateRspDto.class))))
@@ -319,6 +323,48 @@ public class HelloControllerTest {
                 .andDo(this::printRspDto);
     }
 
+    @Order(11)
+    @Test
+    public void delete_hello_return_HelloDeleteRspDto() throws Exception {
+        // given
+        var localDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        var localDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
+        var birthday = LocalDate.parse("1993-07-24", localDateFormat);
+        var yyyyMMddHHmmssSSS = LocalDateTime.parse(
+                LocalDateTime.now().format(localDateTimeFormat), localDateTimeFormat
+        );
+        var reqDto = HelloInsertReqDto.builder()
+                .email("email@base.com")
+                .name("name")
+                .birthday(birthday)
+                .yyyyMMddHHmmssSSS(yyyyMMddHHmmssSSS)
+                .build();
+        var hello = Hello.builder()
+                .email(reqDto.getEmail())
+                .name(reqDto.getName())
+                .birthday(reqDto.getBirthday())
+                .yyyyMMddHHmmssSSS(yyyyMMddHHmmssSSS)
+                .build();
+        final var ANY_HELLO_ID = 1;
+        given(helloRepository.findById(any())).willReturn(Optional.of(hello));
+
+        // when
+        mockMvc.perform(delete("/hello/v1/" + ANY_HELLO_ID))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.name", is(getRspName(HelloDeleteRspDto.class))))
+                .andExpect(jsonPath("$.data.name", is(reqDto.getName())))
+                .andExpect(jsonPath("$.data.email", is(reqDto.getEmail())))
+                .andExpect(jsonPath("$.data.birthday", is(reqDto.getBirthday().format(localDateFormat))))
+                .andExpect(jsonPath("$.data.yyyyMMddHHmmssSSS",
+                        is(reqDto.getYyyyMMddHHmmssSSS().format(localDateTimeFormat)))
+                )
+                .andExpect(jsonPath("$.data.useYn", is("N")))
+                .andDo(this::printRspDto);
+    }
+
     private void printRspDto(MvcResult handler) {
         try {
             log.debug("result: {}", handler.getResponse().getContentAsString());
@@ -327,8 +373,8 @@ public class HelloControllerTest {
         }
     }
 
-    private String getRspName(Class rspDtoClass) {
-        return rspDtoClass.getSimpleName();
+    private <T> String getRspName(Class<T> rspDto) {
+        return rspDto.getSimpleName();
     }
 
     private Class<? extends Exception> getApiResultExceptionClass(MvcResult result) {

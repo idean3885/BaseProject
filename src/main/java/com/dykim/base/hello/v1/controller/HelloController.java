@@ -84,6 +84,8 @@ public class HelloController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success",
                     content = @Content(schema = @Schema(implementation = HelloUpdateRspDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters or invalid insert data.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class))),
             @ApiResponse(responseCode = "404", description = "Not Found Hello by id.",
                     content = @Content(schema = @Schema(implementation = ApiResult.class))),
             @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
@@ -93,6 +95,22 @@ public class HelloController {
     @PostMapping("/{id}")
     public ApiResult<HelloUpdateRspDto> update(@PathVariable Long id, @RequestBody HelloUpdateReqDto reqDto) {
         return ok(helloService.update(id, reqDto));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(schema = @Schema(implementation = HelloDeleteRspDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters or invalid insert data.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found Hello by id.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class)))
+    })
+    @Operation(summary = "delete Hello", description = "Delete processing by changing useYn=N ")
+    @DeleteMapping("/{id}")
+    public ApiResult<HelloDeleteRspDto> delete(@PathVariable Long id) {
+        return ok(helloService.delete(id));
     }
 
 }
