@@ -1,7 +1,9 @@
 package com.dykim.base.hello.v1.controller;
 
+import com.dykim.base.hello.v1.config.Debounce;
 import com.dykim.base.hello.v1.controller.dto.*;
 import com.dykim.base.hello.v1.service.HelloService;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,10 +26,17 @@ public class HelloController {
 
     private final HelloService helloService;
 
+    @Debounce(10000)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "hello!",
+                    content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "429", description = "Too Many Requests when Debounce time millis.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class))),
+    })
     @Operation(summary = "helloPrint", description = "api test example")
     @GetMapping("/helloPrint")
     public String helloPrint() {
-        return "hello!";
+        return Json.pretty("hello!");
     }
 
     @ApiResponses(value = {
