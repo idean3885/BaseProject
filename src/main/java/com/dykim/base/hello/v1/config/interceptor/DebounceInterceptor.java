@@ -2,6 +2,7 @@ package com.dykim.base.hello.v1.config.interceptor;
 
 import com.dykim.base.hello.v1.config.Debounce;
 import com.dykim.base.hello.v1.config.advice.exception.HandlerDebounceException;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -10,7 +11,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <h3>Debouce Interceptor</h3>
@@ -40,7 +40,7 @@ public class DebounceInterceptor implements HandlerInterceptor {
     private static final String DEBOUNCE_MAP = "debounceMap";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         try {
             // 0. 실행여부
             if (!(handler instanceof HandlerMethod)) {
@@ -66,31 +66,26 @@ public class DebounceInterceptor implements HandlerInterceptor {
 
             // 3. debounceMap 체크
             var debounceMapObject = session.getAttribute(DEBOUNCE_MAP);
-            if (debounceMapObject == null) {
-                var debounceMap = new HashMap<String, Long>();
-                debounceMap.put(requestURI, currentTimeMillis);
-                session.setAttribute(DEBOUNCE_MAP, debounceMap);
-                return true;
+            var debounceMap = new HashMap<String, Long>();
+            if (debounceMapObject != null) {
+                debounceMap = (HashMap<String, Long>) debounceMapObject; // 캐스팅 에러를 감수하고 최소한의 조건만 사용
             }
 
-            var debounceMap = (Map<String, Long>) debounceMapObject;
-
+            // 4. 저장된 최종 호출시간
             var lastCallTimeMillis = debounceMap.get(requestURI);
-            if (lastCallTimeMillis == null) {
-                debounceMap.put(requestURI, lastCallTimeMillis);
-                session.setAttribute(DEBOUNCE_MAP, debounceMap);
-                return true;
-            } else if (lastCallTimeMillis + debounce.value() <= currentTimeMillis) {
-                debounceMap.put(requestURI, currentTimeMillis);
-                session.setAttribute(DEBOUNCE_MAP, debounceMap);
-                return true;
-            }
 
+            // 5. 최종 호출시간 갱신
             debounceMap.put(requestURI, currentTimeMillis);
             session.setAttribute(DEBOUNCE_MAP, debounceMap);
-            throw new HandlerDebounceException(
-                    String.format("Api call time has not elapsed. Remaining time %dms"
-                            , lastCallTimeMillis + debounce.value() - currentTimeMillis));
+
+            // 6. 디바운싱
+            if (lastCallTimeMillis == null || lastCallTimeMillis + debounce.value() <= currentTimeMillis) {
+                return true;
+            }
+            var remainingTimeMillis = lastCallTimeMillis + debounce.value() - currentTimeMillis;
+            log.error("Api called before debounce time(remaining: {}ms). Reset debounce {}ms", remainingTimeMillis, debounce.value());
+            throw new HandlerDebounceException(String.format("Api called before debounce time(remaining: %dms). Reset debounce %dms"
+                            , remainingTimeMillis, debounce.value()));
         } catch (HandlerDebounceException e) {
             throw e;
         } catch (Exception e) {
