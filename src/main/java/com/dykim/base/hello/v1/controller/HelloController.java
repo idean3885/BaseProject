@@ -33,9 +33,9 @@ public class HelloController {
             @ApiResponse(responseCode = "429", description = "Too Many Requests when Debounce time millis.",
                     content = @Content(schema = @Schema(implementation = ApiResult.class))),
     })
-    @Operation(summary = "helloPrint", description = "api test example")
-    @GetMapping("/helloPrint")
-    public String helloPrint() {
+    @Operation(summary = "helloPrintDebounce", description = "api call&debounce test example")
+    @GetMapping("/helloPrintDebounce")
+    public String helloPrintDebounce() {
         return Json.pretty("hello!");
     }
 
@@ -117,7 +117,7 @@ public class HelloController {
             @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
                     content = @Content(schema = @Schema(implementation = ApiResult.class)))
     })
-    @Operation(summary = "delete Hello", description = "Delete processing by changing useYn=N ")
+    @Operation(summary = "delete Hello", description = "Delete processing by changing useYn=N")
     @DeleteMapping("/{id}")
     public ApiResult<HelloDeleteRspDto> delete(@PathVariable Long id) {
         return ok(helloService.delete(id));

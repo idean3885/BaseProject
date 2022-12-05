@@ -21,22 +21,21 @@ import javax.servlet.http.HttpServletResponse;
  *
  *   예)
  *    A인터셉터 preHandle -> B인터셉터 preHandle
- *    -> PerformanceInterceptor preHandle
- *    -> HandlerAdaptor 수행
- *    -> PerformanceInterceptor postHandle(HandleAdaptor 예외없이 성공한 경우만 수행)
+ *    -> PerformanceInterceptor.preHandle
+ *    -> HandlerAdaptor 를 핸들러 메소드(컨트롤러 로직) 수행
+ *    -> PerformanceInterceptor.postHandle(HandleAdaptor 예외없이 성공한 경우만 수행)
  *    -> B 인터셉터 postHandle
  *    ...
  * </pre>
- *
  */
 @Slf4j
 public class PerformanceInterceptor implements HandlerInterceptor {
 
-    private static final String REQUEST_TIME_MILLIS = "requestTimeMillis";
+    private static final String PROCESS_TIME_MILLIS = "process-time-millis";
 
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
-        request.setAttribute(REQUEST_TIME_MILLIS, System.currentTimeMillis());
+        request.setAttribute(PROCESS_TIME_MILLIS, System.currentTimeMillis());
         return true;
     }
 
@@ -44,8 +43,8 @@ public class PerformanceInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @Nullable Object handler,
                     @Nullable ModelAndView modelAndView) {
         var completeHandlerAdaptorTimeMillis = System.currentTimeMillis();
-        var requestTimeMillis = (Long) request.getAttribute(REQUEST_TIME_MILLIS);
-        log.info("Api call success. process time: {}ms", completeHandlerAdaptorTimeMillis - requestTimeMillis);
+        var requestTimeMillis = (Long) request.getAttribute(PROCESS_TIME_MILLIS);
+        log.info("Handler proceed success. process time: {}ms", completeHandlerAdaptorTimeMillis - requestTimeMillis);
     }
 
 }

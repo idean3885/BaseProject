@@ -6,6 +6,7 @@ import com.dykim.base.hello.v1.entity.HelloRepository;
 import com.dykim.base.hello.v1.service.HelloService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.swagger.v3.core.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,12 +63,12 @@ public class HelloControllerTest {
 
     @Order(1)
     @Test
-    public void call_helloPrint_always_return_string() throws Exception {
+    public void call_helloPrintDebounce_always_return_string() throws Exception {
         // when
-        mockMvc.perform(get("/hello/v1/helloPrint"))
+        mockMvc.perform(get("/hello/v1/helloPrintDebounce"))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().string("hello!"));
+                .andExpect(content().string(Json.pretty("hello!")));
     }
 
     @Order(2)
