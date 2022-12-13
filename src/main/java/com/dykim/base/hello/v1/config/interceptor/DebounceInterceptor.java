@@ -20,7 +20,7 @@ import java.util.HashMap;
  *  컨트롤러 메소드 별 어노테이션으로 관리하기 위해 핸들러매핑 이후 실행 전 체크한다.
  * <pre>
  *  1. Debounce 대상 여부
- *  2. 세션 획득 - 없는 경우 생성(순수 디바운스 기능만 확인, 로그인 구현 후 리팩토링 필요)
+ *  2. 세션 획득 - 없는 경우 생성하지 않음.
  *  3. debounceMap 조회
  *  4. 최종 호출시간 조회
  *  5. 최종 호출시간 갱신
@@ -37,9 +37,13 @@ import java.util.HashMap;
  * }
  * </pre>
  * <pre>
- * <b>특이사항)온전한 기능확인을 위해 세션이 없는 경우 생성한다.</b>
- * <b>따라서 세션 구현 후 세션 획득 로직을 변경해야 한다.</b>
+ * <b>참고)빈 세션으로 응답 성공 시, 세션이 활성화된다.</b>
+ * <b>따라서 최초 호출 이후 재호출 시에는 세션은 유효한 상태가 된다.</b>
  * </pre>
+ *
+ * @see <a href="https://github.com/idean3885/BaseProejct/issues/6">[Feature]DebounceInterceptor 구현 - API 다중호출 방어 Git Issue</a>
+ * @see <a href="https://velog.io/@idean3885/API-%EB%8B%A4%EC%A4%91-%ED%98%B8%EC%B6%9C-%EC%9D%B4%EC%8A%88-%EC%B2%98%EB%A6%AC">API 다중 호출 이슈 처리 Velog</a>
+ *
  */
 @Slf4j
 @Component
