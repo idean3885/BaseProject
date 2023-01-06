@@ -1,5 +1,6 @@
 package com.dykim.base.hello.v1.config.interceptor;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -12,19 +13,21 @@ import java.util.List;
 @Component
 public class HelloInterceptor implements HandlerInterceptor {
 
-    private final List<String> byPassUrls = List.of("/hello/v1/helloDto", "/hello/v1", "/hello/v1/*");
+    private final List<String> byPassUrls = List.of("/hello/v1/helloDto");
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         // 1. Request Url By pass 확인
-        if (byPassUrls.contains(request.getRequestURI())) {
-            log.info("Session Validation By pass.");
-            return true;
+        for (String byPassUrl : byPassUrls) {
+            // 1) startsWith
+            if (request.getRequestURI().startsWith(byPassUrl)) {
+                log.info("Session Validation By pass.");
+                return true;
+            }
         }
 
-        log.info("sessionId: {}", request.getSession().getId());
-        log.info("requestURI: {}", request.getRequestURI());
-
+        // 2. Debounce 테스트용 세션생성 로그 request.getSession() -> 세션없으면 만들기 때문에 메소드 처리완료 후에는 항상 세션이 활성화된다.
+        log.info("sessionId: [{}]requestURI: {}", request.getSession().getId(), request.getRequestURI());
         return true;
     }
 
