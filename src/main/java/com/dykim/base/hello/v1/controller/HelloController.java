@@ -1,7 +1,9 @@
 package com.dykim.base.hello.v1.controller;
 
+import com.dykim.base.hello.v1.config.Debounce;
 import com.dykim.base.hello.v1.controller.dto.*;
 import com.dykim.base.hello.v1.service.HelloService;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,10 +26,17 @@ public class HelloController {
 
     private final HelloService helloService;
 
-    @Operation(summary = "helloPrint", description = "api test example")
-    @GetMapping("/helloPrint")
-    public String helloPrint() {
-        return "hello!";
+    @Debounce(3000)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "hello!",
+                    content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "429", description = "Too Many Requests when Debounce time millis.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class))),
+    })
+    @Operation(summary = "helloPrintDebounce", description = "api call&debounce test example")
+    @GetMapping("/helloPrintDebounce")
+    public String helloPrintDebounce() {
+        return Json.pretty("hello!");
     }
 
     @ApiResponses(value = {
@@ -43,6 +52,7 @@ public class HelloController {
         return ok(new HelloRspDto(name, email));
     }
 
+    @Debounce(500)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "exception not occurred. param(isOccur) is false."),
             @ApiResponse(responseCode = "503", description = "exception occurred. param(isOccur) is true.")
@@ -107,7 +117,7 @@ public class HelloController {
             @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
                     content = @Content(schema = @Schema(implementation = ApiResult.class)))
     })
-    @Operation(summary = "delete Hello", description = "Delete processing by changing useYn=N ")
+    @Operation(summary = "delete Hello", description = "Delete processing by changing useYn=N")
     @DeleteMapping("/{id}")
     public ApiResult<HelloDeleteRspDto> delete(@PathVariable Long id) {
         return ok(helloService.delete(id));
