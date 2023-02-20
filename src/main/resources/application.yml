@@ -1,37 +1,13 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-  h2:
-    console:
-      enabled: true
+  profiles.active: test
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
-      ddl-auto: create-drop
-    database-platform: org.hibernate.dialect.H2Dialect
+      ddl-auto: validate
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
     cache: false # 캐시설정, TODO: 운영에서는 true 로 한다고 함.
     check-template-location: true # templates 디렉토리 검사(파일 없으면 에러 발생)
-  devtools:
-    livereload.enabled: true # 프론트 자원 라이브로드
 
-# swagger doc
-spring-doc:
-  version: v0.0.1
-  title: "Base Project"
-  description: "스프링부트 베이스 프로젝트"
-  packages-to-scan: com.dykim.base
-  swagger-ui:
-    path: /apidocs
-    tags-sorter: alpha
-  api-docs:
-    path: /api-docs/json
-    groups.enabled: true
-  cache.disabled: true
-  default-consumes-media-type: application/json;charset=UTF-8
-  default-produces-media-type: application/json;charset=UTF-8
+

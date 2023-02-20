@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+
+<!-- default_layout 기준 css fragment 의 html 엘리먼트 구조를 상속받는다. -->
+<!-- 현재 html 전용 CSS 추가 -->
+<th:block layout:fragment="css">
+<!--        <link rel="stylesheet" th:href="@{/css/common.css}" >-->
+</th:block>
+<!-- 현재 html 전용 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <!--    <script th:src="@{/js/page/home.js}"></script>-->
+</th:block>
+
+<!-- Content -->
+<div layout:fragment="content">
+    <h1>Content</h1>
+</div>
+</html>

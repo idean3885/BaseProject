@@ -24,13 +24,13 @@ public class FrontController {
             @ApiResponse(responseCode = "200", description = "Success. Return view",
                     content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @Operation(summary = "request home view", description = "request home view code")
-    @GetMapping("/home")
-    public ModelAndView goHome() {
+    @Operation(summary = "request sample view", description = "SampleView with default layout")
+    @GetMapping("/sampleWithDefaultLayout")
+    public ModelAndView sampleWithDefaultLayout() {
         var mav = new ModelAndView();
         var resultList = List.of("AAA", "BBB", "CCC", "DDD", "EEE", "FFF");
         mav.addObject("resultList", resultList);
-        mav.setViewName("content/home");
+        mav.setViewName("contents/sampleWithDefaultLayout");
         return mav;
     }
 
