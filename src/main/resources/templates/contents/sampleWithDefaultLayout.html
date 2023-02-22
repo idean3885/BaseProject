@@ -15,7 +15,25 @@
 </th:block>
 
 <!-- Content -->
-<div layout:fragment="content">
-    <h1>Content</h1>
+<div layout:fragment="content" class="content-wrapper px-4 py-2" style="min-height: 363px;">
+    <div class="content-header">
+        <h1>Introduction</h1>
+    </div>
+    <div class="content px-2">
+        <h2 id="sample-page">샘플 페이지</h2>
+        <p>Base Project 의 샘플페이지 콘텐츠입니다.</p>
+        <h3 id="sample-page-repo">샘플 페이지 코드</h3>
+        <p>베이스 프로젝트에 thymeleaf 로 구현되어 있습니다. 베이스 프로젝트 레포지토리는 <a href="https://github.com/idean3885/BaseProejct">여기입니다.</a><br>
+        <h2>cdn 적용</h2>
+        <p>AdminLte3 cdn 주소입니다.</p>
+        <pre class="highlight">
+            <code>
+                <span class="nt">&lt;script </span>
+                <span class="na">src=</span>
+                <span class="s">"https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"</span>
+                <span class="nt">&gt;&lt;/script&gt;</span>
+            </code>
+        </pre>
+    </div>
 </div>
 </html>
