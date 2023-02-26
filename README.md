@@ -15,7 +15,7 @@
 6. [JWT, Spring Security 구현](#6-spring-session-spring-security-구현)
 7. [로그인 구현](#7-로그인-구현)
 
-
+## 기타
 98. [자체구현](#98-자체구현)
     1. [API 다중호출방어로직](#1-api-다중호출방어로직)
 99. [참고](#99-참고)
@@ -23,7 +23,7 @@
     2. [브랜치 전략 - Github flow](#2-브랜치-전략---github-flow)
 ---
 ## 1. 환경구성
-- Spring Boot 2.7.0 / Gradle
+- Spring Boot 2.7.0 / Gradle 7.4
 - Jdk 11
 - JUnit5
 - Spring Data JPA(with. h2-MySQL8)
