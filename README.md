@@ -27,7 +27,7 @@
 - Jdk 11
 - JUnit5
 - Spring Data JPA(with. h2-MySQL8)
-- Thymeleaf
+- Thymeleaf (with. bootstrap AdminLTE3)
 
 ## 2. API 문서
 - API 문서를 코드로 관리하기 위해 swagger 를 적용하였습니다.
