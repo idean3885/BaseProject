@@ -11,6 +11,8 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
   devtools:
     livereload.enabled: true # 프론트 자원 라이브로드
+  thymeleaf:
+    cache: false # 화면 로딩 시 캐시 비활성화(default: true), 화면 수정이 빈번한 개발환경에서만 캐시 비활성화
 
 # swagger doc
 spring-doc:

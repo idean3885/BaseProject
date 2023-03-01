@@ -7,7 +7,6 @@ spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
-    cache: false # 캐시설정, TODO: 운영에서는 true 로 한다고 함.
     check-template-location: true # templates 디렉토리 검사(파일 없으면 에러 발생)
 
 
