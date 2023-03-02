@@ -1,5 +1,7 @@
 package com.dykim.base.hello.v1.entity;
 
+import com.dykim.base.hello.v1.config.HelloAuditorAware;
+import com.dykim.base.hello.v1.controller.advice.exception.HelloAuditorAwareException;
 import com.dykim.base.hello.v1.controller.dto.HelloUpdateReqDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class HelloRepositoryTest {
 
     @Autowired
     HelloRepository helloRepository;
+
+    @Autowired
+    HelloAuditorAware helloAuditorAware;
 
     @AfterEach
     public void clearAllHello() {
@@ -246,20 +251,29 @@ public class HelloRepositoryTest {
     }
 
     private void assertBaseEntity(Hello hello, String type) {
+        // given
+        var auditorId = helloAuditorAware.getCurrentAuditor()
+                .orElseThrow(() -> new HelloAuditorAwareException("Not found sessionUserId from Auditor"));
+
         // then
         // 1) common
         assertThat(hello.getCreatedDateTime()).isNotNull();
-        assertThat(hello.getUpdateDateTime()).isNotNull();
+        assertThat(hello.getUpdatedDateTime()).isNotNull();
 
         // 2) each case
-        switch(type) {
+        switch (type) {
             case "SAVE":
-                assertThat(hello.getUpdateDateTime()).isEqualTo(hello.getCreatedDateTime());
+                assertThat(hello.getUpdatedDateTime()).isEqualTo(hello.getCreatedDateTime());
+                assertThat(hello.getCreatedId()).isEqualTo(auditorId);
+                assertThat(hello.getUpdatedId()).isEqualTo(auditorId);
                 break;
             case "FIND":
+                assertThat(hello.getUpdatedDateTime()).isAfterOrEqualTo(hello.getCreatedDateTime());
+                break;
             case "UPDATE":
             case "DELETE":
-                assertThat(hello.getUpdateDateTime()).isAfterOrEqualTo(hello.getCreatedDateTime());
+                assertThat(hello.getUpdatedId()).isEqualTo(auditorId);
+                assertThat(hello.getUpdatedDateTime()).isAfterOrEqualTo(hello.getCreatedDateTime());
                 break;
             default:
                 assert false;
