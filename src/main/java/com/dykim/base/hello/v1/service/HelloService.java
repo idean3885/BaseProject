@@ -51,8 +51,6 @@ public class HelloService {
                     throw new HelloAlreadyExistException(
                             String.format("Email '%s' already exists.", reqDto.getEmail()));
                 });
-
-
         var hello = reqDto.toEntity().insert();
         return new HelloInsertRspDto(helloRepository.save(hello));
     }
@@ -68,15 +66,17 @@ public class HelloService {
     }
 
     public HelloUpdateRspDto update(Long id, HelloUpdateReqDto reqDto) {
-        return helloRepository.findById(id)
+        return helloRepository.findByIdAndUseYn(id, "Y")
                 .map(hello -> hello.update(reqDto))
+                .map(helloRepository::save)
                 .map(HelloUpdateRspDto::new)
                 .orElseThrow(() -> new HelloNotFoundException("Not Found Hello. id: " + id));
     }
 
     public HelloDeleteRspDto delete(Long id) {
-        return helloRepository.findById(id)
+        return helloRepository.findByIdAndUseYn(id, "Y")
                 .map(Hello::delete)
+                .map(helloRepository::save)
                 .map(HelloDeleteRspDto::new)
                 .orElseThrow(() -> new HelloNotFoundException("Not Found Hello. id: " + id));
     }

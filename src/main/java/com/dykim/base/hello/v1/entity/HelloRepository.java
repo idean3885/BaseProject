@@ -8,4 +8,6 @@ public interface HelloRepository extends JpaRepository<Hello, Long> {
 
     Optional<Boolean> existsByEmailAndUseYn(String email, String useYn);
 
+    Optional<Hello> findByIdAndUseYn(Long id, String useYn);
+
 }

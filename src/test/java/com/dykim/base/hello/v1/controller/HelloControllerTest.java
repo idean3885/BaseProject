@@ -304,7 +304,8 @@ public class HelloControllerTest {
                 .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
         final var ANY_HELLO_ID = 1;
-        given(helloRepository.findById(any())).willReturn(Optional.of(hello));
+        given(helloRepository.findByIdAndUseYn(any(), any())).willReturn(Optional.of(hello));
+        given(helloRepository.save(any())).willReturn(hello);
 
         // when
         mockMvc.perform(post("/hello/v1/" + ANY_HELLO_ID)
@@ -348,7 +349,8 @@ public class HelloControllerTest {
                 .yyyyMMddHHmmssSSS(yyyyMMddHHmmssSSS)
                 .build();
         final var ANY_HELLO_ID = 1;
-        given(helloRepository.findById(any())).willReturn(Optional.of(hello));
+        given(helloRepository.findByIdAndUseYn(any(), any())).willReturn(Optional.of(hello));
+        given(helloRepository.save(any())).willReturn(hello);
 
         // when
         mockMvc.perform(delete("/hello/v1/" + ANY_HELLO_ID))

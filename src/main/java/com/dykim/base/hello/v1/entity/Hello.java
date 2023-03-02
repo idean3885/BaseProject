@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -27,26 +28,32 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Hello {
+public class Hello extends HelloBaseEntity {
 
+    @Comment("Hello ID")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Comment("Hello 이메일")
     @Email
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 
+    @Comment("Hello 명")
     @NotBlank
     @Column(length = 50, nullable = false)
     private String name;
 
+    @Comment("Hello 생년월일")
     @Column(length = 10)
     private LocalDate birthday;
 
+    @Comment("Hello 날짜")
     @Column(length = 23, nullable = false)
     private LocalDateTime yyyyMMddHHmmssSSS;
 
+    @Comment("Hello 사용여부")
     @Column(length = 1, nullable = false)
     private String useYn;
 

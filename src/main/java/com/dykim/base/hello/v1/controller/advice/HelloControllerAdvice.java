@@ -2,6 +2,7 @@ package com.dykim.base.hello.v1.controller.advice;
 
 import com.dykim.base.hello.v1.controller.HelloController;
 import com.dykim.base.hello.v1.controller.advice.exception.HelloAlreadyExistException;
+import com.dykim.base.hello.v1.controller.advice.exception.HelloAuditorAwareException;
 import com.dykim.base.hello.v1.controller.advice.exception.HelloException;
 import com.dykim.base.hello.v1.controller.advice.exception.HelloNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -83,10 +84,14 @@ public class HelloControllerAdvice {
             builder.append(fieldError.getRejectedValue());
             builder.append("]");
         }
-
         log.error(builder.toString());
-
         return new ResponseEntity<>(error(e), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(HelloAuditorAwareException.class)
+    public ResponseEntity<?> handleHelloAuditorAwareException(HelloAuditorAwareException e) {
+        return new ResponseEntity<>(error(e), HttpStatus.FORBIDDEN);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -106,5 +111,6 @@ public class HelloControllerAdvice {
     public ResponseEntity<?> handleRuntimeException(RuntimeException e) {
         return new ResponseEntity<>(error(e), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
 }
