@@ -50,6 +50,7 @@ public class HelloRepositoryTest {
         assertThat(hello.getEmail()).isEqualTo(mockHello.getEmail());
         assertThat(hello.getName()).isEqualTo(mockHello.getName());
         assertThat(hello.getBirthday()).isEqualTo(mockHello.getBirthday());
+        assertBaseEntityFind(hello);
     }
 
     @Order(2)
@@ -80,11 +81,13 @@ public class HelloRepositoryTest {
         assertThat(hello1.getEmail()).isEqualTo(mockHello1.getEmail());
         assertThat(hello1.getName()).isEqualTo(mockHello1.getName());
         assertThat(hello1.getBirthday()).isEqualTo(mockHello1.getBirthday());
+        assertBaseEntityFind(hello1);
 
         var hello2 = helloList.get(1);
         assertThat(hello2.getEmail()).isEqualTo(mockHello2.getEmail());
         assertThat(hello2.getName()).isEqualTo(mockHello2.getName());
         assertThat(hello2.getBirthday()).isEqualTo(mockHello2.getBirthday());
+        assertBaseEntityFind(hello2);
     }
 
     @Order(3)
@@ -107,6 +110,7 @@ public class HelloRepositoryTest {
         assertThat(insertedHello.getEmail()).isEqualTo(hello.getEmail());
         assertThat(insertedHello.getName()).isEqualTo(hello.getName());
         assertThat(insertedHello.getBirthday()).isEqualTo(hello.getBirthday());
+        assertBaseEntitySave(insertedHello);
     }
 
     @Order(4)
@@ -176,6 +180,7 @@ public class HelloRepositoryTest {
         assertThat(hello.getId()).isEqualTo(mockHello.getId());
         assertThat(hello.getName()).isEqualTo(helloUpdateReqDto.getName());
         assertThat(hello.getBirthday()).isEqualTo(helloUpdateReqDto.getBirthday());
+        assertBaseEntityUpdate(hello);
 
         var findHelloOps = helloRepository.findById(hello.getId());
         assertThat(findHelloOps.isPresent()).isTrue();
@@ -183,6 +188,7 @@ public class HelloRepositoryTest {
         var findHello = findHelloOps.get();
         assertThat(findHello.getName()).isEqualTo(helloUpdateReqDto.getName());
         assertThat(findHello.getBirthday()).isEqualTo(helloUpdateReqDto.getBirthday());
+        assertBaseEntityFind(findHello);
     }
 
     @Order(7)
@@ -206,12 +212,14 @@ public class HelloRepositoryTest {
         // then
         assertThat(hello.getId()).isEqualTo(mockHello.getId());
         assertThat(hello.getUseYn()).isEqualTo("N");
+        assertBaseEntityDelete(hello);
 
         var findHelloOps = helloRepository.findById(mockHello.getId());
         assertThat(findHelloOps.isPresent()).isTrue();
 
         var findHello = findHelloOps.get();
         assertThat(findHello.getUseYn()).isEqualTo("N");
+        assertBaseEntityFind(findHello);
     }
 
     private LocalDateTime nowYyyyMMddHHmmssSSS() {
@@ -219,6 +227,43 @@ public class HelloRepositoryTest {
         return LocalDateTime.parse(
                 LocalDateTime.now().format(localDateTimeFormat), localDateTimeFormat
         );
+    }
+
+    private void assertBaseEntitySave(Hello hello) {
+        assertBaseEntity(hello, "SAVE");
+    }
+
+    private void assertBaseEntityFind(Hello hello) {
+        assertBaseEntity(hello, "FIND");
+    }
+
+    private void assertBaseEntityUpdate(Hello hello) {
+        assertBaseEntity(hello, "UPDATE");
+    }
+
+    private void assertBaseEntityDelete(Hello hello) {
+        assertBaseEntity(hello, "DELETE");
+    }
+
+    private void assertBaseEntity(Hello hello, String type) {
+        // then
+        // 1) common
+        assertThat(hello.getCreatedDateTime()).isNotNull();
+        assertThat(hello.getUpdateDateTime()).isNotNull();
+
+        // 2) each case
+        switch(type) {
+            case "SAVE":
+                assertThat(hello.getUpdateDateTime()).isEqualTo(hello.getCreatedDateTime());
+                break;
+            case "FIND":
+            case "UPDATE":
+            case "DELETE":
+                assertThat(hello.getUpdateDateTime()).isAfterOrEqualTo(hello.getCreatedDateTime());
+                break;
+            default:
+                assert false;
+        }
     }
 
 }

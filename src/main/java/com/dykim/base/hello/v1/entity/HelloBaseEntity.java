@@ -1,0 +1,29 @@
+package com.dykim.base.hello.v1.entity;
+
+import lombok.Getter;
+import org.hibernate.annotations.Comment;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.Column;
+import javax.persistence.EntityListeners;
+import javax.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
+
+@EntityListeners(AuditingEntityListener.class)
+@MappedSuperclass
+@Getter
+public class HelloBaseEntity {
+
+    @Comment("hello 등록시간, yyyyMMddHHmmSSS")
+    @CreatedDate
+    @Column(length = 23, nullable = false, updatable = false)
+    private LocalDateTime createdDateTime;
+
+    @Comment("hello 수정시간, yyyyMMddHHmmSSS")
+    @LastModifiedDate
+    @Column(length = 23, nullable = false)
+    private LocalDateTime updateDateTime;
+
+}
