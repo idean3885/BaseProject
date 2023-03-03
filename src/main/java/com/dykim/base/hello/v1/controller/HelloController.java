@@ -52,7 +52,6 @@ public class HelloController {
         return ok(new HelloRspDto(name, email));
     }
 
-    @Debounce(500)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "exception not occurred. param(isOccur) is false."),
             @ApiResponse(responseCode = "503", description = "exception occurred. param(isOccur) is true.")
@@ -61,6 +60,16 @@ public class HelloController {
     @GetMapping("/occurException")
     public String occurException(boolean isOccur) {
         return helloService.occurException(isOccur);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "RequestSession is valid. return 'true'"),
+            @ApiResponse(responseCode = "401", description = "RequestSession invalid.")
+    })
+    @Operation(summary = "Hello validSession", description = "Session validation SessionValidationInterceptor.")
+    @GetMapping("/validSession")
+    public String validSession() {
+        return "true";
     }
 
     @ApiResponses(value = {
