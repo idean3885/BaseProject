@@ -16,7 +16,7 @@ spring:
 
 # swagger doc
 spring-doc:
-  version: v0.0.1
+  version: v0.0.2
   title: "Base Project"
   description: "스프링부트 베이스 프로젝트"
   packages-to-scan: com.dykim.base
