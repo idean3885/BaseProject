@@ -4,8 +4,8 @@ import com.dykim.base.advice.hello.exception.HelloException;
 import com.dykim.base.sample.hello.controller.HelloController;
 import com.dykim.base.sample.hello.dto.HelloInsertReqDto;
 import com.dykim.base.sample.hello.service.HelloService;
+import com.dykim.base.util.TestAdviceUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,22 +13,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Objects;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.BDDMockito.when;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
@@ -49,24 +44,25 @@ public class HelloControllerAdviceTest {
                 .standaloneSetup(helloController)
                 .setControllerAdvice(new HelloControllerAdvice())
                 .build();
-
         objectMapper = new ObjectMapper();
     }
 
     @Order(1)
     @Test
     public void call_occurException_always_throw_HelloException() throws Exception {
-        // when
-        when(helloController.occurException(anyBoolean())).thenThrow(new HelloException("Exception!"));
+        // given
+        given(helloController.occurException(anyBoolean())).willThrow(new HelloException("Exception!"));
 
-        // then
+        // when
         mockMvc.perform(get("/sample/hello/occurException")
                         .param("isOccur", "true")
                 )
+
+                // then
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(result -> assertThat(getApiResultExceptionClass(result)).isEqualTo(HelloException.class))
-                .andDo(this::printContent);
+                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result)).isEqualTo(HelloException.class))
+                .andDo(TestAdviceUtil::printRspDto);
     }
 
     @Order(2)
@@ -85,22 +81,10 @@ public class HelloControllerAdviceTest {
                         .content(reqJson))
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
                         .isEqualTo(MethodArgumentNotValidException.class)
                 )
-                .andDo(this::printContent);
-    }
-
-    private Class<? extends Exception> getApiResultExceptionClass(MvcResult result) {
-        return Objects.requireNonNull(result.getResolvedException()).getClass();
-    }
-
-    private void printContent(MvcResult result) {
-        try {
-            log.debug("result: {}", result.getResponse().getContentAsString());
-        } catch (UnsupportedEncodingException e) {
-            log.error("Print response contents fail.");
-        }
+                .andDo(TestAdviceUtil::printRspDto);
     }
 
 }

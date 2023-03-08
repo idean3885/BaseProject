@@ -16,7 +16,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @Component
-public class HelloAuditorAware implements AuditorAware<Long> {
+public class BaseAuditorAware implements AuditorAware<Long> {
 
     /**
      * TODO: 로그인 구현 후 아래 세션 객체 사용필요.

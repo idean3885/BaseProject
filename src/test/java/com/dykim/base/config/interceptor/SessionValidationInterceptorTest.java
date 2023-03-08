@@ -5,7 +5,7 @@ import com.dykim.base.advice.common.exception.InvalidSessionException;
 import com.dykim.base.sample.hello.controller.HelloController;
 import com.dykim.base.sample.hello.entity.HelloRepository;
 import com.dykim.base.sample.hello.service.HelloService;
-import lombok.extern.slf4j.Slf4j;
+import com.dykim.base.util.TestAdviceUtil;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,10 +13,7 @@ import org.mockito.Mock;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *  - 하지만 세션 검증자체가 주된 목적이기 때문에 테스트코드를 따로 작성함.</b>
  * </pre>
  */
-@Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -75,18 +71,10 @@ public class SessionValidationInterceptorTest {
         mockMvc.perform(get("/sample/hello/validSession"))
                 // then
                 .andExpect(status().isUnauthorized())
-                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
                         .isEqualTo(InvalidSessionException.class)
                 )
-                .andDo(this::printExceptionMessage);
-    }
-
-    private Class<? extends Exception> getApiResultExceptionClass(MvcResult result) {
-        return Objects.requireNonNull(result.getResolvedException()).getClass();
-    }
-
-    private void printExceptionMessage(MvcResult result) {
-        log.debug("result: {}", Objects.requireNonNull(result.getResolvedException()).getLocalizedMessage());
+                .andDo(TestAdviceUtil::printExceptionMessage);
     }
 
 }

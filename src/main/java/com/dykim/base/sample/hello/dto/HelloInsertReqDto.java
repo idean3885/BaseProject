@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
  * 참고) <a href="https://velog.io/@idean3885/Dto-Entity-Validation-%EC%B2%98%EB%A6%AC#2-entity-validation---validated">Dto, Entity Validation 처리 내용 정리한 개인 블로그</a>
  */
 @Schema(name = "HelloInsertReqDto", description = "Hello 추가 요청 Dto")
+@ToString
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

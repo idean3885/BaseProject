@@ -4,10 +4,10 @@ import com.dykim.base.sample.hello.dto.*;
 import com.dykim.base.sample.hello.entity.Hello;
 import com.dykim.base.sample.hello.entity.HelloRepository;
 import com.dykim.base.sample.hello.service.HelloService;
+import com.dykim.base.util.TestAdviceUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.core.util.Json;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,17 +16,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +33,6 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -85,10 +81,10 @@ public class HelloControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.name", is(getRspName(HelloRspDto.class))))
+                .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(HelloRspDto.class))))
                 .andExpect(jsonPath("$.data.name", is(name)))
                 .andExpect(jsonPath("$.data.email", is(email)))
-                .andDo(this::printRspDto);
+                .andDo(TestAdviceUtil::printRspDto);
     }
 
     @Order(3)
@@ -125,14 +121,14 @@ public class HelloControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.name", is(getRspName(HelloInsertRspDto.class))))
+                .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(HelloInsertRspDto.class))))
                 .andExpect(jsonPath("$.data.name", is(reqDto.getName())))
                 .andExpect(jsonPath("$.data.email", is(reqDto.getEmail())))
                 .andExpect(jsonPath("$.data.birthday", is(reqDto.getBirthday().format(localDateFormat))))
                 .andExpect(jsonPath("$.data.yyyyMMddHHmmssSSS",
                         is(reqDto.getYyyyMMddHHmmssSSS().format(localDateTimeFormat)))
                 )
-                .andDo(this::printRspDto);
+                .andDo(TestAdviceUtil::printRspDto);
     }
 
     @Order(4)
@@ -152,10 +148,10 @@ public class HelloControllerTest {
                 )
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
                         .isEqualTo(MethodArgumentNotValidException.class)
                 )
-                .andDo(this::printExceptionMessage);
+                .andDo(TestAdviceUtil::printExceptionMessage);
     }
 
     @Order(5)
@@ -174,10 +170,10 @@ public class HelloControllerTest {
                 )
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
                         .isEqualTo(MethodArgumentNotValidException.class)
                 )
-                .andDo(this::printExceptionMessage);
+                .andDo(TestAdviceUtil::printExceptionMessage);
     }
 
     @Order(6)
@@ -195,10 +191,10 @@ public class HelloControllerTest {
                 )
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
                         .isEqualTo(HttpMessageNotReadableException.class)
                 )
-                .andDo(this::printExceptionMessage);
+                .andDo(TestAdviceUtil::printExceptionMessage);
     }
 
     @Order(7)
@@ -216,10 +212,10 @@ public class HelloControllerTest {
                 )
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
                         .isEqualTo(HttpMessageNotReadableException.class)
                 )
-                .andDo(this::printExceptionMessage);
+                .andDo(TestAdviceUtil::printExceptionMessage);
     }
 
     @Order(8)
@@ -253,14 +249,14 @@ public class HelloControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.name", is(getRspName(HelloFindRspDto.class))))
+                .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(HelloFindRspDto.class))))
                 .andExpect(jsonPath("$.data.name", is(reqDto.getName())))
                 .andExpect(jsonPath("$.data.email", is(reqDto.getEmail())))
                 .andExpect(jsonPath("$.data.birthday", is(reqDto.getBirthday().format(localDateFormat))))
                 .andExpect(jsonPath("$.data.yyyyMMddHHmmssSSS",
                         is(reqDto.getYyyyMMddHHmmssSSS().format(localDateTimeFormat)))
                 )
-                .andDo(this::printRspDto);
+                .andDo(TestAdviceUtil::printRspDto);
     }
 
     @Order(9)
@@ -273,10 +269,10 @@ public class HelloControllerTest {
         mockMvc.perform(get("/sample/hello/" + WRONG_HELLO_ID))
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertThat(getApiResultExceptionClass(result))
+                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
                         .isEqualTo(MethodArgumentTypeMismatchException.class)
                 )
-                .andDo(this::printExceptionMessage);
+                .andDo(TestAdviceUtil::printExceptionMessage);
     }
 
     @Order(10)
@@ -315,14 +311,14 @@ public class HelloControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.name", is(getRspName(HelloUpdateRspDto.class))))
+                .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(HelloUpdateRspDto.class))))
                 .andExpect(jsonPath("$.data.name", is(reqDto.getName())))
                 .andExpect(jsonPath("$.data.email", is(hello.getEmail())))
                 .andExpect(jsonPath("$.data.birthday", is(reqDto.getBirthday().format(localDateFormat))))
                 .andExpect(jsonPath("$.data.yyyyMMddHHmmssSSS",
                         is(hello.getYyyyMMddHHmmssSSS().format(localDateTimeFormat)))
                 )
-                .andDo(this::printRspDto);
+                .andDo(TestAdviceUtil::printRspDto);
     }
 
     @Order(11)
@@ -357,7 +353,7 @@ public class HelloControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.name", is(getRspName(HelloDeleteRspDto.class))))
+                .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(HelloDeleteRspDto.class))))
                 .andExpect(jsonPath("$.data.name", is(reqDto.getName())))
                 .andExpect(jsonPath("$.data.email", is(reqDto.getEmail())))
                 .andExpect(jsonPath("$.data.birthday", is(reqDto.getBirthday().format(localDateFormat))))
@@ -365,27 +361,7 @@ public class HelloControllerTest {
                         is(reqDto.getYyyyMMddHHmmssSSS().format(localDateTimeFormat)))
                 )
                 .andExpect(jsonPath("$.data.useYn", is("N")))
-                .andDo(this::printRspDto);
-    }
-
-    private void printRspDto(MvcResult handler) {
-        try {
-            log.debug("result: {}", handler.getResponse().getContentAsString());
-        } catch (UnsupportedEncodingException e) {
-            log.error("Fail contentAsString from response.", e);
-        }
-    }
-
-    private <T> String getRspName(Class<T> rspDto) {
-        return rspDto.getSimpleName();
-    }
-
-    private Class<? extends Exception> getApiResultExceptionClass(MvcResult result) {
-        return Objects.requireNonNull(result.getResolvedException()).getClass();
-    }
-
-    private void printExceptionMessage(MvcResult result) {
-        log.debug("result: {}", Objects.requireNonNull(result.getResolvedException()).getLocalizedMessage());
+                .andDo(TestAdviceUtil::printRspDto);
     }
 
 }

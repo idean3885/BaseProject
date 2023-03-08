@@ -1,7 +1,9 @@
 package com.dykim.base.advice.common;
 
+import com.dykim.base.advice.common.exception.AlreadyExistsException;
 import com.dykim.base.advice.common.exception.HandlerDebounceException;
 import com.dykim.base.advice.common.exception.InvalidSessionException;
+import com.dykim.base.sample.hello.dto.ApiResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,6 +24,12 @@ import static com.dykim.base.sample.hello.dto.ApiResult.error;
  */
 @RestControllerAdvice
 public class CommonControllerAdvice {
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<?> handleAlreadyExistsException(AlreadyExistsException e) {
+        return new ResponseEntity<>(ApiResult.error(e), HttpStatus.BAD_REQUEST);
+    }
 
     @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
     @ExceptionHandler(HandlerDebounceException.class)

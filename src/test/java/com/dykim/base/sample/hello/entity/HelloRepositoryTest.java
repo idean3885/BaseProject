@@ -1,7 +1,7 @@
 package com.dykim.base.sample.hello.entity;
 
 import com.dykim.base.advice.hello.exception.HelloAuditorAwareException;
-import com.dykim.base.config.HelloAuditorAware;
+import com.dykim.base.config.BaseAuditorAware;
 import com.dykim.base.sample.hello.dto.HelloUpdateReqDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class HelloRepositoryTest {
     HelloRepository helloRepository;
 
     @Autowired
-    HelloAuditorAware helloAuditorAware;
+    BaseAuditorAware baseAuditorAware;
 
     @AfterEach
     public void clearAllHello() {
@@ -252,7 +252,7 @@ public class HelloRepositoryTest {
 
     private void assertBaseEntity(Hello hello, String type) {
         // given
-        var auditorId = helloAuditorAware.getCurrentAuditor()
+        var auditorId = baseAuditorAware.getCurrentAuditor()
                 .orElseThrow(() -> new HelloAuditorAwareException("Not found sessionUserId from Auditor"));
 
         // then
