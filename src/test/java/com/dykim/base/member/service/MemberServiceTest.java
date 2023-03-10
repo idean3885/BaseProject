@@ -1,7 +1,9 @@
 package com.dykim.base.member.service;
 
 import com.dykim.base.advice.common.exception.AlreadyExistsException;
+import com.dykim.base.advice.common.exception.EntityNotFoundException;
 import com.dykim.base.member.dto.MemberInsertReqDto;
+import com.dykim.base.member.dto.MemberUpdateReqDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,10 +39,10 @@ public class MemberServiceTest {
     @Order(1)
     @Test
     @Transactional
-    public void insert_return_MemberInsertRspDto() {
+    public void insert_member_return_MemberInsertRspDto() {
         // given
         var reqDto = MemberInsertReqDto.builder()
-                .mbrEml("email@base.com")
+                .mbrEml("valid@email.com")
                 .mbrPswd("pswd")
                 .mbrNm("name")
                 .mbrTelno("01234567890")
@@ -64,6 +66,7 @@ public class MemberServiceTest {
 
     @Order(2)
     @Test
+    @Transactional
     public void insert_member_exists_mbrEml_useYn_Y_throw_AlreadyExistsException() {
         // setup
         var mockMemberInsertRspDto = memberService.insert(MemberInsertReqDto.builder()
@@ -87,6 +90,122 @@ public class MemberServiceTest {
 
         // when-then
         assertThrows(AlreadyExistsException.class, () -> memberService.insert(reqDto));
+    }
+
+
+    @Order(3)
+    @Test
+    @Transactional
+    public void select_member_return_MemberSelectRspDto() {
+        // setup
+        var mockMemberInsertRspDto = memberService.insert(MemberInsertReqDto.builder()
+                .mbrEml("mock@email.com")
+                .mbrPswd("mock-pswd")
+                .mbrNm("mock-mbrNm")
+                .mbrTelno("01234567890")
+                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                .mbrDaddr("mock-mbrDaddr")
+                .build());
+
+        // given
+        var mbrId = mockMemberInsertRspDto.getMbrId();
+
+        // when
+        var rspDto = memberService.select(mbrId);
+
+        // then
+        assertThat(rspDto.getMbrId()).isEqualTo(mbrId);
+        assertThat(rspDto.getMbrEml()).isEqualTo(mockMemberInsertRspDto.getMbrEml());
+        assertThat(rspDto.getMbrPswd()).isEqualTo(mockMemberInsertRspDto.getMbrPswd());
+        assertThat(rspDto.getMbrNm()).isEqualTo(mockMemberInsertRspDto.getMbrNm());
+        assertThat(rspDto.getMbrTelno()).isEqualTo(mockMemberInsertRspDto.getMbrTelno());
+        assertThat(rspDto.getMbrRoadNmAddr()).isEqualTo(mockMemberInsertRspDto.getMbrRoadNmAddr());
+        assertThat(rspDto.getMbrDaddr()).isEqualTo(mockMemberInsertRspDto.getMbrDaddr());
+        assertThat(rspDto.getUseYn()).isEqualTo("Y");
+    }
+
+    @Order(4)
+    @Test
+    @Transactional
+    public void update_member_return_MemberUpdateRspDto() {
+        // setup
+        var mockMemberInsertRspDto = memberService.insert(MemberInsertReqDto.builder()
+                .mbrEml("mock@email.com")
+                .mbrPswd("mock-pswd")
+                .mbrNm("mock-mbrNm")
+                .mbrTelno("01234567890")
+                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                .mbrDaddr("mock-mbrDaddr")
+                .build());
+
+        // given
+        var reqDto = MemberUpdateReqDto.builder()
+                .mbrPswd("udpate pswd")
+                .mbrTelno("11111111111")
+                .mbrRoadNmAddr("update road address")
+                .mbrDaddr("update detail address")
+                .build();
+
+        // when
+        var rspDto = memberService.update(mockMemberInsertRspDto.getMbrId(), reqDto);
+
+        // then
+        assertThat(rspDto.getMbrPswd()).isEqualTo(reqDto.getMbrPswd());
+        assertThat(rspDto.getMbrTelno()).isEqualTo(reqDto.getMbrTelno());
+        assertThat(rspDto.getMbrRoadNmAddr()).isEqualTo(reqDto.getMbrRoadNmAddr());
+        assertThat(rspDto.getMbrDaddr()).isEqualTo(reqDto.getMbrDaddr());
+    }
+
+    @Order(5)
+    @Test
+    @Transactional
+    public void update_with_not_exist_member_throw_EntityNotFoundException() {
+        // given
+        var reqDto = MemberUpdateReqDto.builder()
+                .mbrPswd("udpate pswd")
+                .mbrTelno("11111111111")
+                .mbrRoadNmAddr("update road address")
+                .mbrDaddr("update detail address")
+                .build();
+        final var NOT_EXIST_MBR_ID = -1L;
+
+        // when-then
+        assertThrows(EntityNotFoundException.class, () -> memberService.update(NOT_EXIST_MBR_ID, reqDto));
+    }
+
+    @Order(6)
+    @Test
+    @Transactional
+    public void delete_member_return_MemberDeleteRspDto() {
+        // setup
+        var mockMemberInsertRspDto = memberService.insert(MemberInsertReqDto.builder()
+                .mbrEml("mock@email.com")
+                .mbrPswd("mock-pswd")
+                .mbrNm("mock-mbrNm")
+                .mbrTelno("01234567890")
+                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                .mbrDaddr("mock-mbrDaddr")
+                .build());
+
+        // given
+        var mbrId = mockMemberInsertRspDto.getMbrId();
+
+        // when
+        var rspDto = memberService.delete(mbrId);
+
+        // then
+        assertThat(rspDto.getUseYn()).isEqualTo("N");
+    }
+
+    @Order(7)
+    @Test
+    @Transactional
+    public void delete_with_not_exist_member_throw_EntityNotFoundException() {
+        // given
+        final var NOT_EXIST_MBR_ID = -1L;
+
+        // when-then
+        assertThrows(EntityNotFoundException.class, () -> memberService.delete(NOT_EXIST_MBR_ID));
     }
 
 }

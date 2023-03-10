@@ -1,10 +1,12 @@
 package com.dykim.base.member.entity;
 
 
+import com.dykim.base.member.dto.MemberUpdateReqDto;
 import com.dykim.base.sample.hello.entity.Hello;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
@@ -76,6 +78,19 @@ public class Member extends MemberBaseEntity {
 
     public Member insert() {
         useYn = "Y";
+        return this;
+    }
+
+    public Member update(MemberUpdateReqDto reqDto) {
+        mbrPswd = StringUtils.isNoneBlank(reqDto.getMbrPswd()) ? reqDto.getMbrPswd() : mbrPswd;
+        mbrTelno = StringUtils.isNoneBlank(reqDto.getMbrTelno()) ? reqDto.getMbrTelno() : mbrTelno;
+        mbrRoadNmAddr = StringUtils.isNoneBlank(reqDto.getMbrRoadNmAddr()) ? reqDto.getMbrRoadNmAddr() : mbrRoadNmAddr;
+        mbrDaddr = StringUtils.isNoneBlank(reqDto.getMbrDaddr()) ? reqDto.getMbrDaddr() : mbrDaddr;
+        return this;
+    }
+
+    public Member delete() {
+        useYn = "N";
         return this;
     }
 

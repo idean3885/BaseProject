@@ -28,6 +28,16 @@ public class HelloRepositoryTest {
     @Autowired
     BaseAuditorAware baseAuditorAware;
 
+    /**
+     * <h3>각 테스트케이스 별 후처리</h3>
+     * 케이스 종료 후 데이터를 삭제하여 다른 케이스에 영향을 주지 않도록 한다.
+     *
+     * <pre>
+     *  - Spring 가이드에 따르면 온전한 동작을 하지 않을 수 있기에 믿지 말라고 되어있으나 근거가 부족함.
+     *  - 따라서 해당 예제에서는 @Transactional 선언 대신 공통 후처리로 진행해봄.
+     * </pre>
+     * <b>참고)후처리가 없는 경우 케이스 별 @Transactional 선언하여 종료 후 롤백되도록 해야한다.</b>
+     */
     @AfterEach
     public void clearAllHello() {
         helloRepository.deleteAll();

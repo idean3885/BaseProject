@@ -1,6 +1,7 @@
 package com.dykim.base.advice.common;
 
 import com.dykim.base.advice.common.exception.AlreadyExistsException;
+import com.dykim.base.advice.common.exception.EntityNotFoundException;
 import com.dykim.base.advice.common.exception.HandlerDebounceException;
 import com.dykim.base.advice.common.exception.InvalidSessionException;
 import com.dykim.base.sample.hello.dto.ApiResult;
@@ -29,6 +30,12 @@ public class CommonControllerAdvice {
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<?> handleAlreadyExistsException(AlreadyExistsException e) {
         return new ResponseEntity<>(ApiResult.error(e), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException e) {
+        return new ResponseEntity<>(ApiResult.error(e), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)

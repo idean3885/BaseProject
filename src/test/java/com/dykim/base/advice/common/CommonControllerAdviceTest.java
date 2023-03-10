@@ -1,6 +1,7 @@
 package com.dykim.base.advice.common;
 
 import com.dykim.base.advice.common.exception.AlreadyExistsException;
+import com.dykim.base.advice.common.exception.EntityNotFoundException;
 import com.dykim.base.member.controller.MemberController;
 import com.dykim.base.member.dto.MemberInsertReqDto;
 import com.dykim.base.member.service.MemberService;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,7 +67,25 @@ public class CommonControllerAdviceTest {
                 // then
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result)).isEqualTo(AlreadyExistsException.class))
+                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
+                        .isEqualTo(AlreadyExistsException.class))
+                .andDo(TestAdviceUtil::printRspDto);
+    }
+
+    @Order(2)
+    @Test
+    public void not_found_member_throw_EntityNotFoundException() throws Exception {
+        // given
+        given(memberService.delete(any())).willThrow(EntityNotFoundException.class);
+        final var NOT_FOUND_MBR_ID = -1L;
+
+        // when
+        mockMvc.perform(delete("/member/" + NOT_FOUND_MBR_ID))
+                // then
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
+                        .isEqualTo(EntityNotFoundException.class))
                 .andDo(TestAdviceUtil::printRspDto);
     }
 
