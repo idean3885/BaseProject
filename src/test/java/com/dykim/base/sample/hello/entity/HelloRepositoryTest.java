@@ -13,6 +13,9 @@ import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Random;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -70,39 +73,40 @@ public class HelloRepositoryTest {
 
     @Order(2)
     @Test
-    public void findAll_return_Hello_list() {
+    public void findAllByName_return_Hello_list() {
         // given
-        var mockHello1 = helloRepository.save(Hello.builder()
-                .email("mock1@email.com")
+        final IntFunction<String> initEmailByNumber = number -> String.format("mock%d@email.com", number);
+        var sameSaveHello = Hello.builder()
                 .name("mockName1")
                 .birthday(LocalDate.parse("1993-07-24"))
                 .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
                 .useYn("Y")
-                .build());
-
-        var mockHello2 = helloRepository.save(Hello.builder()
-                .email("mock2@email.com")
-                .name("mockName2")
-                .birthday(LocalDate.parse("1993-01-24"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .useYn("Y")
-                .build());
+                .build();
+        final var SAME_COUNT = 10;
+        IntStream.range(1, SAME_COUNT + 1).forEach(
+                number -> helloRepository.save(Hello.builder()
+                        .email(initEmailByNumber.apply(number))
+                        .name(sameSaveHello.getName())
+                        .birthday(sameSaveHello.getBirthday())
+                        .yyyyMMddHHmmssSSS(sameSaveHello.getYyyyMMddHHmmssSSS())
+                        .useYn(sameSaveHello.getUseYn())
+                        .build())
+        );
 
         // when
-        var helloList = helloRepository.findAll();
+        var helloListOps = helloRepository.findAllByName(sameSaveHello.getName());
 
-        // then -> 인서트 순서에 맞춰 저장되고 조회되기 때문에 순서를 보장함.
-        var hello1 = helloList.get(0);
-        assertThat(hello1.getEmail()).isEqualTo(mockHello1.getEmail());
-        assertThat(hello1.getName()).isEqualTo(mockHello1.getName());
-        assertThat(hello1.getBirthday()).isEqualTo(mockHello1.getBirthday());
-        assertBaseEntityFind(hello1);
-
-        var hello2 = helloList.get(1);
-        assertThat(hello2.getEmail()).isEqualTo(mockHello2.getEmail());
-        assertThat(hello2.getName()).isEqualTo(mockHello2.getName());
-        assertThat(hello2.getBirthday()).isEqualTo(mockHello2.getBirthday());
-        assertBaseEntityFind(hello2);
+        // then
+        assertThat(helloListOps.isPresent()).isTrue();
+        
+        var helloList = helloListOps.get();
+        assertThat(helloList.size()).isEqualTo(SAME_COUNT);
+        var specimenIdx = new Random(System.currentTimeMillis()).nextInt(SAME_COUNT);
+        var specimenHello = helloList.get(specimenIdx);
+        assertThat(specimenHello.getEmail()).isEqualTo(initEmailByNumber.apply(specimenIdx + 1));
+        assertThat(specimenHello.getName()).isEqualTo(sameSaveHello.getName());
+        assertThat(specimenHello.getBirthday()).isEqualTo(sameSaveHello.getBirthday());
+        assertBaseEntityFind(specimenHello);
     }
 
     @Order(3)

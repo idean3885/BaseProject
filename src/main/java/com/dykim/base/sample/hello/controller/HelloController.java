@@ -100,6 +100,18 @@ public class HelloController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(schema = @Schema(implementation = HelloFindListRspDto.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class)))
+    })
+    @Operation(summary = "find Hello list", description = "find hello list")
+    @GetMapping()
+    public ApiResult<HelloFindListRspDto> findList(@RequestParam String name) {
+        return ApiResult.ok(helloService.findList(name));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
                     content = @Content(schema = @Schema(implementation = HelloUpdateRspDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request parameters or invalid insert data.",
                     content = @Content(schema = @Schema(implementation = ApiResult.class))),

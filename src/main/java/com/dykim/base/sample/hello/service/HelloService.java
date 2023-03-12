@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @Validated // 서비스 메서드 진입 시 빈 벨리데이터를 통해 검증하기 위해 추가 -> Aop 로 동작함.
@@ -61,8 +60,10 @@ public class HelloService {
                 .orElseGet(HelloFindRspDto::new);
     }
 
-    public List<Hello> findAll() {
-        return helloRepository.findAll();
+    public HelloFindListRspDto findList(String name) {
+        return helloRepository.findAllByName(name)
+                .map(HelloFindListRspDto::new)
+                .orElseGet(HelloFindListRspDto::new);
     }
 
     public HelloUpdateRspDto update(Long id, HelloUpdateReqDto reqDto) {

@@ -25,6 +25,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Random;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -89,7 +94,7 @@ public class HelloControllerTest {
 
     @Order(3)
     @Test
-    public void insert_hello_return_HelloInsertRspDto() throws Exception {
+    public void insert_return_HelloInsertRspDto() throws Exception {
         // given
         var localDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         var localDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
@@ -133,7 +138,7 @@ public class HelloControllerTest {
 
     @Order(4)
     @Test
-    public void insert_hello_with_invalid_email_throw_MethodArgumentNotValidException() throws Exception {
+    public void insert_with_invalid_email_throw_MethodArgumentNotValidException() throws Exception {
         // given
         var helloInsertReqDto = HelloInsertReqDto.builder()
                 .email("email")
@@ -156,7 +161,7 @@ public class HelloControllerTest {
 
     @Order(5)
     @Test
-    public void insert_hello_with_empty_name_throw_MethodArgumentNotValidException() throws Exception {
+    public void insert_with_empty_name_throw_MethodArgumentNotValidException() throws Exception {
         // given
         var helloInsertReqDto = HelloInsertReqDto.builder()
                 .email("email@base.com")
@@ -178,7 +183,7 @@ public class HelloControllerTest {
 
     @Order(6)
     @Test
-    public void insert_hello_with_invalid_birthday_format_throw_HttpMessageNotReadableException() throws Exception {
+    public void insert_with_invalid_birthday_format_throw_HttpMessageNotReadableException() throws Exception {
         // given
         var map = new HashMap<String, String>();
         map.put("birthday", "19930724");
@@ -199,7 +204,7 @@ public class HelloControllerTest {
 
     @Order(7)
     @Test
-    public void insert_hello_with_invalid_yyyyMMddHHmmssSSS_format_throw_HttpMessageNotReadableException() throws Exception {
+    public void insert_with_invalid_yyyyMMddHHmmssSSS_format_throw_HttpMessageNotReadableException() throws Exception {
         // given
         var map = new HashMap<String, String>();
         map.put("yyyyMMddHHmmssSSS", "20221022000700111");
@@ -220,7 +225,7 @@ public class HelloControllerTest {
 
     @Order(8)
     @Test
-    public void find_hello_return_HelloFindRspDto() throws Exception {
+    public void find_return_HelloFindRspDto() throws Exception {
         // given
         var localDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         var localDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
@@ -261,7 +266,7 @@ public class HelloControllerTest {
 
     @Order(9)
     @Test
-    public void find_hello_with_invalid_id_type_throw_MethodArgumentTypeMismatchException() throws Exception {
+    public void find_with_invalid_id_type_throw_MethodArgumentTypeMismatchException() throws Exception {
         // given
         final var WRONG_HELLO_ID = "Wrong Hello Id";
 
@@ -277,7 +282,52 @@ public class HelloControllerTest {
 
     @Order(10)
     @Test
-    public void update_hello_return_HelloUpdateRspDto() throws Exception {
+    public void findList_return_HelloFindListRspDto() throws Exception {
+        // given
+        var localDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        var localDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        final IntFunction<String> initEmailByNumber = number -> String.format("mock%d@email.com", number);
+        var sameSaveHello = Hello.builder()
+                .name("mockName1")
+                .birthday(LocalDate.parse("1993-07-24"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .useYn("Y")
+                .build();
+        final var SAME_COUNT = 10;
+        var sameHelloList = IntStream.range(1, SAME_COUNT + 1)
+                .mapToObj(number -> Hello.builder()
+                        .email(initEmailByNumber.apply(number))
+                        .name(sameSaveHello.getName())
+                        .birthday(sameSaveHello.getBirthday())
+                        .yyyyMMddHHmmssSSS(sameSaveHello.getYyyyMMddHHmmssSSS())
+                        .useYn(sameSaveHello.getUseYn())
+                        .build())
+                .collect(Collectors.toList());
+        given(helloRepository.findAllByName(sameSaveHello.getName())).willReturn(Optional.of(sameHelloList));
+
+        // id, unique 값 외 모든 컬럼 값이 동일하기 때문에 전체 조사 대신 표본 1개만 검증한다.
+        var specimenIdx = new Random(System.currentTimeMillis()).nextInt(SAME_COUNT);
+        var specimenMember = sameHelloList.get(specimenIdx);
+        Function<String, String> specimenDataExp = key -> String.format("$.data.list[%d].%s", specimenIdx, key);
+
+        // when
+        mockMvc.perform(get("/sample/hello?name=" + sameSaveHello.getName()))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(HelloFindListRspDto.class))))
+                .andExpect(jsonPath(specimenDataExp.apply("name"), is(specimenMember.getName())))
+                .andExpect(jsonPath(specimenDataExp.apply("email"), is(initEmailByNumber.apply(specimenIdx + 1))))
+                .andExpect(jsonPath(specimenDataExp.apply("birthday"),
+                        is(specimenMember.getBirthday().format(localDateFormat))))
+                .andExpect(jsonPath(specimenDataExp.apply("yyyyMMddHHmmssSSS"),
+                        is(specimenMember.getYyyyMMddHHmmssSSS().format(localDateTimeFormat))))
+                .andDo(TestAdviceUtil::printRspDto);
+    }
+
+    @Order(11)
+    @Test
+    public void update_return_HelloUpdateRspDto() throws Exception {
         // setup
         var localDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         var localDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
@@ -321,9 +371,9 @@ public class HelloControllerTest {
                 .andDo(TestAdviceUtil::printRspDto);
     }
 
-    @Order(11)
+    @Order(12)
     @Test
-    public void delete_hello_return_HelloDeleteRspDto() throws Exception {
+    public void delete_return_HelloDeleteRspDto() throws Exception {
         // given
         var localDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         var localDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
@@ -362,6 +412,11 @@ public class HelloControllerTest {
                 )
                 .andExpect(jsonPath("$.data.useYn", is("N")))
                 .andDo(TestAdviceUtil::printRspDto);
+    }
+
+    private LocalDateTime nowYyyyMMddHHmmssSSS() {
+        var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        return LocalDateTime.parse(LocalDateTime.now().format(dateTimeFormatter), dateTimeFormatter);
     }
 
 }
