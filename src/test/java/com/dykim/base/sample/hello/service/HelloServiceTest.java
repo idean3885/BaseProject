@@ -15,6 +15,9 @@ import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Random;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -195,7 +198,57 @@ public class HelloServiceTest {
     @Order(8)
     @Test
     @Transactional
-    public void update_with_DynamicUpdate_return_HelloUpdateRspDto() {
+    public void findList_return_HelloFindListRspDto() {
+        // given
+        final IntFunction<String> initEmailByNumber = number -> String.format("mock%d@email.com", number);
+        var sameInsertReqDto = HelloInsertReqDto.builder()
+                .name("name")
+                .birthday(parseBirthday("1900-01-01"))
+                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                .build();
+        final var SAME_COUNT = 10;
+        IntStream.range(1, SAME_COUNT + 1).forEach(
+                number -> helloService.insert(HelloInsertReqDto.builder()
+                        .email(initEmailByNumber.apply(number))
+                        .name(sameInsertReqDto.getName())
+                        .birthday(sameInsertReqDto.getBirthday())
+                        .yyyyMMddHHmmssSSS(sameInsertReqDto.getYyyyMMddHHmmssSSS())
+                        .build()));
+
+        // when
+        var rspDto = helloService.findList(sameInsertReqDto.getName());
+
+        // then
+        assertThat(rspDto.getList().size()).isEqualTo(SAME_COUNT);
+
+        // id 및 unique 컬럼 외 모든 컬럼 값이 동일하기에 목록 전체 검증은 의미가 없다.
+        // 따라서 표본 1개만 랜덤으로 추출하여 검증한다.
+        var specimenIdx = new Random(System.currentTimeMillis()).nextInt(SAME_COUNT);
+        var specimenRspDto = rspDto.getList().get(specimenIdx);
+        assertThat(specimenRspDto.getEmail()).isEqualTo(initEmailByNumber.apply(specimenIdx + 1));
+        assertThat(specimenRspDto.getName()).isEqualTo(sameInsertReqDto.getName());
+        assertThat(specimenRspDto.getBirthday()).isEqualTo(sameInsertReqDto.getBirthday());
+    }
+
+    @Order(9)
+    @Test
+    @Transactional
+    public void findList_with_not_exists_return_empty_ArrayList() {
+        // given
+        final var NOT_EXISTS_MBR_NM = "Not exist!";
+
+        // when
+        var rspDto = helloService.findList(NOT_EXISTS_MBR_NM);
+
+        // then
+        assertThat(rspDto.getList()).isNotNull();
+        assertThat(rspDto.getList().isEmpty()).isTrue();
+    }
+
+    @Order(10)
+    @Test
+    @Transactional
+    public void update_return_HelloUpdateRspDto() {
         // setup
         var helloInsertRspDto = helloService.insert(HelloInsertReqDto.builder()
                 .email("mock@email.com")
@@ -219,7 +272,7 @@ public class HelloServiceTest {
         assertThat(helloUpdateRspDto.getEmail()).isEqualTo(helloInsertRspDto.getEmail());
     }
 
-    @Order(9)
+    @Order(11)
     @Test
     public void update_with_not_exist_hello_throw_HelloNotFoundException() {
         // given
@@ -233,10 +286,10 @@ public class HelloServiceTest {
         assertThrows(HelloNotFoundException.class, () -> helloService.update(NOT_EXIST_ID, helloUpdateReqDto));
     }
 
-    @Order(10)
+    @Order(12)
     @Test
     @Transactional
-    public void delete_with_DynamicUpdate_return_HelloDeleteRspDto() {
+    public void delete_return_HelloDeleteRspDto() {
         // setup
         var helloInsertRspDto = helloService.insert(HelloInsertReqDto.builder()
                 .email("mock@email.com")
@@ -255,7 +308,7 @@ public class HelloServiceTest {
         assertThat(helloDeleteRspDto.getUseYn()).isEqualTo("N");
     }
 
-    @Order(11)
+    @Order(13)
     @Test
     public void delete_with_not_exist_id_throw_HelloNotFoundException() {
         // given

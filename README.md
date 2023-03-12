@@ -51,12 +51,11 @@
 * [Dto, Entity 검증 정리한 블로그](https://velog.io/@idean3885/Dto-Entity-Validation-%EC%B2%98%EB%A6%AC#2-entity-validation---validated)
 
 ## 5. 회원 엔티티 구현
-- JPA 예정
-- H2-PostgreSQL 예정
+- Spring Data JPA(with. H2-MySQL8) 로 작성
 - 기능 구현 중심의 프로젝트이기 때문에 H2 데이터베이스의 인메모리 방식을 사용합니다.
-- ~~jdbc 드라이버는 PostgreSQl 을 사용합니다.~~   
-  ~~Heroku 에서 PostgreSQL 10000 row 까지 무료로 제공되고 있어 토이 프로젝트 진행 시 데이터베이스 코드를 바로 사용할 수 있어 선택했습니다.~~  
-  프리티어가 없어짐에 따라 jdbc 를 익숙한 MySQL 로 변경하고 우선 H2 인메모리로 구현진행
+- 공공데이터 포털에서 관리되는 표준용어 기준으로 ERD를 작성하고 구현했습니다.
+  + ~~[(폐쇄됌.)공공데이터 공통표준용어 폐쇄된 페이지 확인](https://data.seoul.go.kr/commonList/commonList.do)~~
+- [작성된 ERD 확인하기(ERDCloud)](https://www.erdcloud.com/d/ZG8wGTXTmkTyL8qdp)
 
 ## 6. Spring Session, Spring Security 구현
 - TBD
