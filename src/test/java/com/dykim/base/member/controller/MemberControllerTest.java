@@ -22,6 +22,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Optional;
+import java.util.Random;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -56,7 +61,7 @@ public class MemberControllerTest {
 
     @Order(1)
     @Test
-    public void insert_member_return_MemberInsertRspDto() throws Exception {
+    public void insert_return_MemberInsertRspDto() throws Exception {
         // given
         var reqDto = MemberInsertReqDto.builder()
                 .mbrEml("email@base.com")
@@ -99,7 +104,7 @@ public class MemberControllerTest {
 
     @Order(2)
     @Test
-    public void insert_member_with_invalid_mbrEml_throw_MethodArgumentNotValidException() throws Exception {
+    public void insert_with_invalid_mbrEml_throw_MethodArgumentNotValidException() throws Exception {
         // given
         var reqDto = MemberInsertReqDto.builder()
                 .mbrEml("invalid.email.com")
@@ -126,7 +131,7 @@ public class MemberControllerTest {
 
     @Order(3)
     @Test
-    public void insert_member_with_null_mbrPswd_throw_MethodArgumentNotValidException() throws Exception {
+    public void insert_with_null_mbrPswd_throw_MethodArgumentNotValidException() throws Exception {
         // given
         var reqDto = MemberInsertReqDto.builder()
                 .mbrEml("valid@email.com")
@@ -152,7 +157,7 @@ public class MemberControllerTest {
 
     @Order(4)
     @Test
-    public void insert_member_with_blank_mbrPswd_throw_MethodArgumentNotValidException() throws Exception {
+    public void insert_with_blank_mbrPswd_throw_MethodArgumentNotValidException() throws Exception {
         // given
         var reqDto = MemberInsertReqDto.builder()
                 .mbrEml("valid@email.com")
@@ -179,7 +184,7 @@ public class MemberControllerTest {
 
     @Order(5)
     @Test
-    public void insert_member_with_null_mbrNm_throw_MethodArgumentNotValidException() throws Exception {
+    public void insert_with_null_mbrNm_throw_MethodArgumentNotValidException() throws Exception {
         // given
         var reqDto = MemberInsertReqDto.builder()
                 .mbrEml("valid@email.com")
@@ -205,7 +210,7 @@ public class MemberControllerTest {
 
     @Order(6)
     @Test
-    public void insert_member_with_blank_mbrNm_throw_MethodArgumentNotValidException() throws Exception {
+    public void insert_with_blank_mbrNm_throw_MethodArgumentNotValidException() throws Exception {
         // given
         var reqDto = MemberInsertReqDto.builder()
                 .mbrEml("valid@email.com")
@@ -232,7 +237,7 @@ public class MemberControllerTest {
 
     @Order(7)
     @Test
-    public void insert_member_with_11_over_mbrTelno_throw_MethodArgumentNotValidException() throws Exception {
+    public void insert_with_11_over_mbrTelno_throw_MethodArgumentNotValidException() throws Exception {
         // given
         var reqDto = MemberInsertReqDto.builder()
                 .mbrEml("valid@email.com")
@@ -259,7 +264,7 @@ public class MemberControllerTest {
 
     @Order(8)
     @Test
-    public void insert_member_exists_mbrEml_useYn_Y_throw_AlreadyExistsException() throws Exception {
+    public void insert_exists_mbrEml_useYn_Y_throw_AlreadyExistsException() throws Exception {
         // given
         var reqDto = MemberInsertReqDto.builder()
                 .mbrEml("valid@email.com")
@@ -287,7 +292,7 @@ public class MemberControllerTest {
 
     @Order(9)
     @Test
-    public void select_member_return_MemberSelectRspDto() throws Exception {
+    public void select_return_MemberSelectRspDto() throws Exception {
         // given
         var member = Member.builder()
                 .mbrEml("valid@email.com")
@@ -319,7 +324,7 @@ public class MemberControllerTest {
 
     @Order(10)
     @Test
-    public void select_member_with_invalid_mbrId_type_throw_MethodArgumentTypeMismatchException() throws Exception {
+    public void select_with_invalid_mbrId_type_throw_MethodArgumentTypeMismatchException() throws Exception {
         // given
         final var WRONG_MBR_ID = "String Id!";
 
@@ -335,7 +340,54 @@ public class MemberControllerTest {
 
     @Order(11)
     @Test
-    public void update_member_return_MemberUpdateRspDto() throws Exception {
+    public void selectList_return_MemberSelectListRspDto() throws Exception {
+        // given
+        final IntFunction<String> initEmlByNumber = number -> String.format("mock%d@email.com", number);
+        var sameSaveMember = Member.builder()
+                .mbrPswd("mock-pswd")
+                .mbrNm("sameName")
+                .mbrTelno("01234567890")
+                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                .mbrDaddr("mock-mbrDaddr")
+                .useYn("Y")
+                .build();
+        final var SAME_COUNT = 10;
+        var sameMemberList = IntStream.range(1, SAME_COUNT + 1)
+                .mapToObj(number -> Member.builder()
+                        .mbrEml(initEmlByNumber.apply(number))
+                        .mbrPswd(sameSaveMember.getMbrPswd())
+                        .mbrNm(sameSaveMember.getMbrNm())
+                        .mbrTelno(sameSaveMember.getMbrTelno())
+                        .mbrRoadNmAddr(sameSaveMember.getMbrRoadNmAddr())
+                        .mbrDaddr(sameSaveMember.getMbrDaddr())
+                        .useYn(sameSaveMember.getUseYn())
+                        .build())
+                .collect(Collectors.toList());
+        given(memberRepository.findAllByMbrNm(sameSaveMember.getMbrNm())).willReturn(Optional.of(sameMemberList));
+        var specimenIdx = new Random(System.currentTimeMillis()).nextInt(SAME_COUNT);
+        var specimenMember = sameMemberList.get(specimenIdx);
+        Function<String, String> specimenDataExp = key -> String.format("$.data.list[%d].%s", specimenIdx, key);
+
+        // when
+        mockMvc.perform(get("/member?mbrNm=" + sameSaveMember.getMbrNm()))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(MemberSelectListRspDto.class))))
+                .andExpect(jsonPath(specimenDataExp.apply("mbrEml"), is(specimenMember.getMbrEml())))
+                .andExpect(jsonPath(specimenDataExp.apply("mbrPswd"), is(specimenMember.getMbrPswd())))
+                .andExpect(jsonPath(specimenDataExp.apply("mbrNm"), is(specimenMember.getMbrNm())))
+                .andExpect(jsonPath(specimenDataExp.apply("mbrTelno"), is(specimenMember.getMbrTelno())))
+                .andExpect(jsonPath(specimenDataExp.apply("mbrRoadNmAddr"), is(specimenMember.getMbrRoadNmAddr())))
+                .andExpect(jsonPath(specimenDataExp.apply("mbrDaddr"), is(specimenMember.getMbrDaddr())))
+                .andExpect(jsonPath(specimenDataExp.apply("useYn"), is(specimenMember.getUseYn())))
+                .andDo(TestAdviceUtil::printRspDto);
+
+    }
+
+    @Order(12)
+    @Test
+    public void update_return_MemberUpdateRspDto() throws Exception {
         // given
         var member = Member.builder()
                 .mbrEml("valid@email.com")
@@ -380,9 +432,9 @@ public class MemberControllerTest {
                 .andDo(TestAdviceUtil::printRspDto);
     }
 
-    @Order(12)
+    @Order(13)
     @Test
-    public void delete_member_return_MemberDeleteRspDto() throws Exception {
+    public void delete_return_MemberDeleteRspDto() throws Exception {
         // given
         var member = Member.builder()
                 .mbrEml("valid@email.com")
@@ -417,7 +469,7 @@ public class MemberControllerTest {
                 .andDo(TestAdviceUtil::printRspDto);
     }
 
-    @Order(13)
+    @Order(14)
     @Test
     public void delete_with_not_found_member_throw_EntityNotFoundException() throws Exception {
         // given

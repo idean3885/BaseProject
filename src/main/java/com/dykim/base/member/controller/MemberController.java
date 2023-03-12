@@ -57,6 +57,19 @@ public class MemberController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(schema = @Schema(implementation = MemberSelectListRspDto.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
+                    content = @Content(schema = @Schema(implementation = ApiResult.class)))
+    })
+    @Operation(summary = "Select Member List", description = "회원 목록 조회")
+    @ResponseBody
+    @GetMapping
+    public ApiResult<MemberSelectListRspDto> selectList(@RequestParam String mbrNm) {
+        return ok(memberService.selectList(mbrNm));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
                     content = @Content(schema = @Schema(implementation = MemberUpdateRspDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request parameters or invalid update data.",
                     content = @Content(schema = @Schema(implementation = ApiResult.class))),

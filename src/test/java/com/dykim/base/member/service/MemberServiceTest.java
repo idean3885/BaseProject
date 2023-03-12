@@ -10,6 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Random;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -127,6 +131,62 @@ public class MemberServiceTest {
     @Order(4)
     @Test
     @Transactional
+    public void selectList_member_return_MemberSelectListRspDto() {
+        // given
+        final IntFunction<String> initEmlByNumber = number -> String.format("mock%d@email.com", number);
+        var sameInsertReqDto = MemberInsertReqDto.builder()
+                .mbrPswd("mock-pswd")
+                .mbrNm("sameName")
+                .mbrTelno("01234567890")
+                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                .mbrDaddr("mock-mbrDaddr")
+                .build();
+        final var SAME_COUNT = 10;
+        IntStream.range(1, SAME_COUNT + 1).forEach(
+                number -> memberService.insert(MemberInsertReqDto.builder()
+                        .mbrEml(initEmlByNumber.apply(number))
+                        .mbrPswd(sameInsertReqDto.getMbrPswd())
+                        .mbrNm(sameInsertReqDto.getMbrNm())
+                        .mbrTelno(sameInsertReqDto.getMbrTelno())
+                        .mbrRoadNmAddr(sameInsertReqDto.getMbrRoadNmAddr())
+                        .mbrDaddr(sameInsertReqDto.getMbrDaddr())
+                        .build()));
+
+        // when
+        var rspDto = memberService.selectList(sameInsertReqDto.getMbrNm());
+
+        // then
+        assertThat(rspDto.getList().size()).isEqualTo(SAME_COUNT);
+
+        var specimenIdx = new Random(System.currentTimeMillis()).nextInt(SAME_COUNT);
+        var specimenRspDto = rspDto.getList().get(specimenIdx);
+        assertThat(specimenRspDto.getMbrId()).isNotNull();
+        assertThat(specimenRspDto.getMbrEml()).isEqualTo(initEmlByNumber.apply(specimenIdx + 1));
+        assertThat(specimenRspDto.getMbrPswd()).isEqualTo(sameInsertReqDto.getMbrPswd());
+        assertThat(specimenRspDto.getMbrNm()).isEqualTo(sameInsertReqDto.getMbrNm());
+        assertThat(specimenRspDto.getMbrTelno()).isEqualTo(sameInsertReqDto.getMbrTelno());
+        assertThat(specimenRspDto.getMbrRoadNmAddr()).isEqualTo(sameInsertReqDto.getMbrRoadNmAddr());
+        assertThat(specimenRspDto.getMbrDaddr()).isEqualTo(sameInsertReqDto.getMbrDaddr());
+        assertThat(specimenRspDto.getUseYn()).isEqualTo("Y");
+    }
+
+    @Order(5)
+    @Test
+    public void selectList_member_with_not_exists_return_empty_ArrayList() {
+        // given
+        final var NOT_EXISTS_MBR_NM = "Not exist!";
+
+        // when
+        var rspDto = memberService.selectList(NOT_EXISTS_MBR_NM);
+
+        // then
+        assertThat(rspDto.getList()).isNotNull();
+        assertThat(rspDto.getList().isEmpty()).isTrue();
+    }
+
+    @Order(6)
+    @Test
+    @Transactional
     public void update_member_return_MemberUpdateRspDto() {
         // setup
         var mockMemberInsertRspDto = memberService.insert(MemberInsertReqDto.builder()
@@ -156,7 +216,7 @@ public class MemberServiceTest {
         assertThat(rspDto.getMbrDaddr()).isEqualTo(reqDto.getMbrDaddr());
     }
 
-    @Order(5)
+    @Order(7)
     @Test
     @Transactional
     public void update_with_not_exist_member_throw_EntityNotFoundException() {
@@ -173,7 +233,7 @@ public class MemberServiceTest {
         assertThrows(EntityNotFoundException.class, () -> memberService.update(NOT_EXIST_MBR_ID, reqDto));
     }
 
-    @Order(6)
+    @Order(8)
     @Test
     @Transactional
     public void delete_member_return_MemberDeleteRspDto() {
@@ -197,7 +257,7 @@ public class MemberServiceTest {
         assertThat(rspDto.getUseYn()).isEqualTo("N");
     }
 
-    @Order(7)
+    @Order(9)
     @Test
     @Transactional
     public void delete_with_not_exist_member_throw_EntityNotFoundException() {

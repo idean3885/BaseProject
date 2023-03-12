@@ -47,11 +47,25 @@ public class MemberService {
     }
 
     /**
+     * <h3>회원 목록 조회</h3>
+     * 조건에 맞는 회원 목록을 조회한다.<p/>
+     * 조건은 Equals 로 검색한다.
+     *
+     * @param mbrNm 회원이름
+     * @return {@link MemberSelectRspDto 조회된 회원 List}
+     */
+    public MemberSelectListRspDto selectList(String mbrNm) {
+        return memberRepository.findAllByMbrNm(mbrNm)
+                .map(MemberSelectListRspDto::new)
+                .orElseGet(MemberSelectListRspDto::new);
+    }
+
+    /**
      * <h3>회원 수정</h3>
      * 입력된 값 중 유효한 값만 수정 처리한다.
-     *  - 유효값 조건: NonBlank
+     * - 유효값 조건: NonBlank
      *
-     * @param mbrId 회원ID
+     * @param mbrId  회원ID
      * @param reqDto {@link MemberUpdateReqDto 회원 수정 요청 Dto}
      * @return {@link MemberUpdateRspDto 회원 수정 응답 Dto}
      */

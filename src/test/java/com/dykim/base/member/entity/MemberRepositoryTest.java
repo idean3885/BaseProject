@@ -10,6 +10,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.validation.ConstraintViolationException;
+import java.util.Random;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -27,7 +30,8 @@ public class MemberRepositoryTest {
 
     @AfterEach
     public void clearAllMember() {
-        // 매 케이스 종료 후 데이터를 삭제하여 다른 케이스에 영향이 없도록 한다.
+        // @Transactional 활용한 테스트케이스가 추후 생길 수 있기 때문에
+        // @Transactional 로 케이스 별 rollback 대신 데이터 삭제로 케이스 별 영향도를 없앤다.
         // 스프링 가이드에 따르면 온전히 동작하지 않을수도 있다고 한다.(근거가 부족하여 공통처리로 사용함)
         memberRepository.deleteAll();
     }
@@ -165,6 +169,52 @@ public class MemberRepositoryTest {
 
     @Order(6)
     @Test
+    public void findAllByMbrNm_return_member_list() {
+        // given
+        final IntFunction<String> initEmlByNumber = number -> String.format("mock%d@email.com", number);
+        var sameSaveMember = Member.builder()
+                .mbrPswd("mock-pswd")
+                .mbrNm("sameName")
+                .mbrTelno("01234567890")
+                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                .mbrDaddr("mock-mbrDaddr")
+                .useYn("Y")
+                .build();
+        final var SAME_COUNT = 10;
+        IntStream.range(1, SAME_COUNT + 1).forEach(
+                number -> memberRepository.save(Member.builder()
+                        .mbrEml(initEmlByNumber.apply(number))
+                        .mbrPswd(sameSaveMember.getMbrPswd())
+                        .mbrNm(sameSaveMember.getMbrNm())
+                        .mbrTelno(sameSaveMember.getMbrTelno())
+                        .mbrRoadNmAddr(sameSaveMember.getMbrRoadNmAddr())
+                        .mbrDaddr(sameSaveMember.getMbrDaddr())
+                        .useYn(sameSaveMember.getUseYn())
+                        .build()));
+
+        // when
+        var memberListOps = memberRepository.findAllByMbrNm(sameSaveMember.getMbrNm());
+
+        // then
+        assertThat(memberListOps.isPresent()).isTrue();
+
+        var memberList = memberListOps.get();
+        assertThat(memberList.size()).isEqualTo(SAME_COUNT);
+
+        var specimenIdx = new Random(System.currentTimeMillis()).nextInt(SAME_COUNT);
+        var specimenMember = memberList.get(specimenIdx);
+        assertThat(specimenMember.getMbrEml()).isEqualTo(initEmlByNumber.apply(specimenIdx + 1));
+        assertThat(specimenMember.getMbrPswd()).isEqualTo(sameSaveMember.getMbrPswd());
+        assertThat(specimenMember.getMbrNm()).isEqualTo(sameSaveMember.getMbrNm());
+        assertThat(specimenMember.getMbrTelno()).isEqualTo(sameSaveMember.getMbrTelno());
+        assertThat(specimenMember.getMbrRoadNmAddr()).isEqualTo(sameSaveMember.getMbrRoadNmAddr());
+        assertThat(specimenMember.getMbrDaddr()).isEqualTo(sameSaveMember.getMbrDaddr());
+        assertThat(specimenMember.getUseYn()).isEqualTo(sameSaveMember.getUseYn());
+        assertBaseEntitySelect(specimenMember);
+    }
+
+    @Order(7)
+    @Test
     public void update_to_save_return_MemberUpdateRspDto() {
         // setup
         var mockMember = memberRepository.save(Member.builder()
@@ -207,7 +257,7 @@ public class MemberRepositoryTest {
         assertBaseEntitySelect(selectMember);
     }
 
-    @Order(7)
+    @Order(8)
     @Test
     public void delete_to_save_return_MemberDeleteRspDto() {
         // setup
