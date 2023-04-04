@@ -12,7 +12,7 @@
 3. [테스트 코드](#3-테스트-코드)
 4. [입력값 검증](#4-입력값-검증)
 5. [회원 엔티티 구현](#5-회원-엔티티-구현)
-6. [JWT, Spring Security 구현](#6-spring-session-spring-security-구현)
+6. [Spring Session, Spring Security 구현](#6-spring-session-spring-security-구현)
 7. [로그인 구현](#7-로그인-구현)
 
 ## 기타
