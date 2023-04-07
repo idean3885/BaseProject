@@ -12,6 +12,16 @@
 <!-- 현재 html 전용 스크립트 추가 -->
 <th:block layout:fragment="script">
     <!--    <script th:src="@{/js/page/home.js}"></script>-->
+    <script th:inline="javascript">
+        function copyCodeBlock() {
+            let r = document.createRange();
+            r.selectNode(document.getElementById('codeBlock'));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(r);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+        }
+    </script>
 </th:block>
 
 <!-- Content -->
@@ -26,14 +36,17 @@
         <p>베이스 프로젝트에 thymeleaf 로 구현되어 있습니다. 베이스 프로젝트 레포지토리는 <a href="https://github.com/idean3885/BaseProejct">여기입니다.</a><br>
         <h2>cdn 적용</h2>
         <p>AdminLte3 cdn 주소입니다.</p>
-        <pre class="highlight">
-            <code>
-                <span class="nt">&lt;script </span>
-                <span class="na">src=</span>
-                <span class="s">"https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"</span>
-                <span class="nt">&gt;&lt;/script&gt;</span>
-            </code>
-        </pre>
+        <div style="outline: auto" onclick="copyCodeBlock()">
+            <span th:text="${codeBlockString}"></span>
+            <code id="codeBlock" style="white-space: pre; display: flex">&lt;template&gt;
+    &lt;v-switch
+            v-model="model"
+            hide-details
+            inset
+            :label="`Switch: ${model.toString()}`"
+    >&lt;/v-switch&gt;
+&lt;/template&gt;</code>
+        </div>
     </div>
 </div>
 </html>

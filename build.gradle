@@ -1,38 +1,40 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.0'
+    id 'java'
+    id 'org.springframework.boot' version '2.7.0'
 }
 
 apply plugin: 'io.spring.dependency-management'
 
-group = 'com.dykim.base'
+group = 'com.dykim'
 version = '0.0.2'
 sourceCompatibility = '11'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'com.google.guava:guava:31.1-jre'
 
-	implementation 'com.h2database:h2:2.1.214'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'com.h2database:h2:2.1.214'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.0'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.0'
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-validation'
-	testImplementation 'com.h2database:h2:2.1.214'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'com.h2database:h2:2.1.214'
 }
