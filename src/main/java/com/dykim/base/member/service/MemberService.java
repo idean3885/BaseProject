@@ -8,6 +8,8 @@ import com.dykim.base.member.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -15,6 +17,14 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+
+    public void procSignUp(SignUpDto signUpDto, BindingResult bindingResult) {
+        memberRepository.existsByMbrEmlAndUseYn(signUpDto.getMbrEml(), "Y")
+                .filter(isExists -> isExists)
+                .ifPresentOrElse(
+                        isExists -> bindingResult.addError(new FieldError("signUpDto", "mbrEml", "이메일이 이미 존재합니다."))
+                        , () -> memberRepository.save(signUpDto.toEntity().insert()));
+    }
 
     /**
      * <h3>회원 추가</h3>

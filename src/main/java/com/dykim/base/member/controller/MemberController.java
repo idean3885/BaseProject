@@ -11,9 +11,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 import static com.dykim.base.sample.hello.dto.ApiResult.ok;
 
@@ -24,6 +27,43 @@ import static com.dykim.base.sample.hello.dto.ApiResult.ok;
 public class MemberController {
 
     private final MemberService memberService;
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success. Return view",
+                    content = @Content(schema = @Schema(implementation = ModelAndView.class)))
+    })
+    @Operation(summary = "SignUp", description = "회원가입 화면 진입")
+    @GetMapping("/signUp")
+    public ModelAndView initSignUp(SignUpDto signUpDto) {
+        var mav = new ModelAndView();
+        mav.addObject("signUpDto", Objects.requireNonNullElseGet(signUpDto, SignUpDto::new));
+        mav.setViewName("contents/01.member/signUp");
+        return mav;
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success. Return view",
+                    content = @Content(schema = @Schema(implementation = ModelAndView.class)))
+    })
+    @Operation(summary = "SignUp", description = "회원가입 처리")
+    @PostMapping("/signUp")
+    public ModelAndView procSignUp(@Valid SignUpDto signUpDto, BindingResult bindingResult) {
+        // 1. Dto 값 검증 실패 시
+        if (bindingResult.hasErrors()) {
+            return initSignUp(signUpDto);
+        }
+
+        // 2. 회원가입
+        memberService.procSignUp(signUpDto, bindingResult);
+        if (bindingResult.hasErrors()) { // 회원가입 예외 확인
+            return initSignUp(signUpDto);
+        }
+        var signInDto = SignInDto.builder().mbrEml(signUpDto.getMbrEml()).build();
+        var mav = new ModelAndView();
+        mav.addObject("signInDto", signInDto);
+        mav.setViewName("contents/01.member/signIn");
+        return mav;
+    }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success",

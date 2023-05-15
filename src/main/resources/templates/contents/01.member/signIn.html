@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+
+<!-- default_layout 기준 css fragment 의 html 엘리먼트 구조를 상속받는다. -->
+<!-- 현재 html 전용 CSS 추가 -->
+<th:block layout:fragment="css">
+    <!--        <link rel="stylesheet" th:href="@{/css/common.css}" >-->
+</th:block>
+<!-- 현재 html 전용 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <!--    <script th:src="@{/js/page/home.js}"></script>-->
+    <script th:inline="javascript">
+        function copyCodeBlock() {
+            let r = document.createRange();
+            r.selectNode(document.getElementById('codeBlock'));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(r);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+        }
+    </script>
+</th:block>
+
+<!-- Content -->
+<div layout:fragment="content" class="content-wrapper px-4 py-2" style="min-height: 363px;">
+    <div class="content-header">
+        <h1>로그인</h1>
+    </div>
+    <div class="content px-2">
+        <form th:action="@{/member/signIn}" th:object="${signInDto}" method="post">
+            <table>
+                <tbody>
+                <tr>
+                    <td>회원 이메일</td>
+                    <td><input type="text" th:field="*{mbrEml}"/></td>
+                    <td th:if="${#fields.hasErrors('mbrEml')}" th:errors="*{mbrEml}"></td>
+                </tr>
+                <tr>
+                    <td>회원 비밀번호</td>
+                    <td><input type="text" th:field="*{mbrPswd}"/></td>
+                    <td th:if="${#fields.hasErrors('mbrPswd')}" th:errors="*{mbrPswd}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <button type="submit">로그인</button>
+        </form>
+    </div>
+</div>
+</html>

@@ -30,7 +30,7 @@ public class FrontController {
         var mav = new ModelAndView();
         var resultList = List.of("AAA", "BBB", "CCC", "DDD", "EEE", "FFF");
         mav.addObject("resultList", resultList);
-        mav.setViewName("contents/sampleWithDefaultLayout");
+        mav.setViewName("contents/99.sample/sampleWithDefaultLayout");
         return mav;
     }
 
