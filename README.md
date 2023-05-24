@@ -42,8 +42,9 @@
 
 ## 3. 테스트 코드
 - Spring Boot 2.7.0 기준 spring-starter-test 에 JUnit5 가 내장되어 있어 JUnit5를 사용합니다.
-- io.spring.dependency-management 에 의해 스프링 관련 디펜던시가 일괄 관리되기 때문에 위 디펜던시 버전은 변경하지 않습니다.
-- [JUnit4 -> JUnit5 메소드 변경점 참고 블로그](https://theheydaze.tistory.com/218)
+- io.spring.dependency-management 에 의해 스프링 관련 디펜던시가 일괄 관리되기 때문에 위 디펜던시 버전은 변경하지 않습니다.   
+  [JUnit4 -> JUnit5 메소드 변경점 참고 블로그](https://theheydaze.tistory.com/218)
+
 
 ## 4. 입력값 검증
 1. 컨트롤러 진입 전 Dto 검증
@@ -87,6 +88,12 @@
   인터셉터 PreHandle 단계에서 세션 별 동일 API 에 대해 최종호출시간을 비교하여 최초 호출 이후 일정시간동안 호출을 차단한다.  
   [Debounce 기능 정리한 블로그](https://velog.io/@idean3885/API-%EB%8B%A4%EC%A4%91-%ED%98%B8%EC%B6%9C-%EC%9D%B4%EC%8A%88-%EC%B2%98%EB%A6%AC)  
   [구현 GitHub 이슈](https://github.com/idean3885/BaseProejct/issues/6)
+
+#### 참고 - 테스트케이스
+- 23.05.25 기준 병렬처리 테스트 설정 및 케이스를 구현함
+- `@RepeatedTest` 특성 상 매 반복 시 독립적인 Test 로 수행됌
+- 따라서 `@BeforeEach`, `@AfterEach` 가 매번 수행되며 전역변수를 테스트 케이스 단위로 구분할 수 없음.
+- 이를 해결하기 위해 클래스 별 `@RepeatedTest` 메소드 1개만 구현하고 테스트하도록 구조 변경함.
 
 ## 99. 참고
 ### 1. 커밋 컨벤션

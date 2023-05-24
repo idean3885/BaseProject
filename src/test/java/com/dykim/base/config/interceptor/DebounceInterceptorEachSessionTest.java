@@ -6,34 +6,39 @@ import com.dykim.base.sample.hello.entity.HelloRepository;
 import com.dykim.base.sample.hello.service.HelloService;
 import io.swagger.v3.core.util.Json;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * <h3>DebounceInterceptor 테스트 클래스</h3>
- * Api 다중호출 방지를 위한 인터셉터 테스트
+ * <h3>DebounceInterceptor 다중 세션 테스트</h3>
+ * 각 세션 별 Api Debouncing 테스트
  * <pre>
- *  - 다중호출 방지를 위해 성능 검증이 필수
- *  - 이를 테스트하기 위해 실제 서버를 구동하는 방식으로 진행
+ *  - 반복을 위해 @RepeatedTest 사용
+ *  - 매 반복 시 독립적인 Test 로 취급하기 때문에 전역 변수를 메소드 단위로 구분할 수 없다.
+ *    ㄴ @BeforeEach, @AfterEach 매 회 수행됌
+ *  - 따라서 반복시행에 대해 Thread-safe 변수 활용을 위해 클래스 당 1개의 반복 메소드만 작성한다.
  * </pre>
+ *
+ * @see DebounceInterceptor
  */
 @Slf4j
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class DebounceInterceptorTest {
+public class DebounceInterceptorEachSessionTest {
 
     @Mock
     private HelloRepository helloRepository;
@@ -42,20 +47,19 @@ public class DebounceInterceptorTest {
     private HelloService helloService;
 
     private MockMvc mockMvc;
-    private MockHttpSession mockHttpSession;
+    private final int REPEAT_COUNT = 100;
 
     @BeforeAll
-    public void setup() {
+    public void setupGlobalField() {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(new HelloController(helloService))
                 .addInterceptors(new DebounceInterceptor())
                 .setControllerAdvice(new CommonControllerAdvice())
                 .build();
-        mockHttpSession = new MockHttpSession();
     }
 
-    @Order(1)
-    @RepeatedTest(10)
+    @Execution(ExecutionMode.CONCURRENT)
+    @RepeatedTest(REPEAT_COUNT)
     public void call_helloPrintDebounce_always_new_session() throws Exception {
         // given
         var newMockHttpSession = new MockHttpSession();
@@ -65,24 +69,6 @@ public class DebounceInterceptorTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().string(Json.pretty("hello!")));
-    }
-
-    @Order(2)
-    @RepeatedTest(20)
-    public void call_helloPrintDebounce_first_debounce(RepetitionInfo repetitionInfo) throws Exception {
-        // when
-        mockMvc.perform(get("/sample/hello/helloPrintDebounce").session(mockHttpSession))
-                // then
-                .andDo(handler -> {
-                    var httpStatus = handler.getResponse().getStatus();
-                    var currentCount = repetitionInfo.getCurrentRepetition();
-                    assertThat(httpStatus).isEqualTo(currentCount == 1 ?
-                            HttpStatus.OK.value() : HttpStatus.TOO_MANY_REQUESTS.value());
-                    var rspString = handler.getResponse().getContentAsString();
-                    if (httpStatus == HttpStatus.OK.value() && currentCount == 1) {
-                        assertThat(rspString).isEqualTo(Json.pretty("hello!"));
-                    }
-                });
     }
 
 }
