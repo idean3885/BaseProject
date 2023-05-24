@@ -19,11 +19,14 @@ import java.util.HashMap;
  *  JS 의 디바운스 방식으로 구현<br/>
  *  컨트롤러 메소드 별 어노테이션으로 관리하기 위해 핸들러매핑 이후 실행 전 체크한다.
  * <pre>
- *  1. Debounce 대상 여부
- *  2. 세션 획득 - 없는 경우 생성하지 않음.
- *  3. debounceMap 조회
- *  4. 최종 호출시간 조회
- *  5. 최종 호출시간 갱신
+ *  1. 핸들러메소드 검증
+ *  2. Debounce 대상 여부
+ *  3. 세션 획득 - 없는 경우 생성하지 않음.
+ *  4. debounceMap header 조회
+ *  4-2. 최초 호출 확인 - 동기화 처리
+ *  5. debounceMap header 재조회
+ *   1) 최종 호출시간 조회
+ *   2) 최종 호출시간 갱신
  *  6. 디바운싱
  * </pre>
  * <pre>
@@ -55,12 +58,15 @@ public class DebounceInterceptor implements HandlerInterceptor {
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         var stopWatch = new StopWatch("debounceInterceptor");
         try {
-            // 0. 핸들러메소드 검증
+            // 1. 핸들러메소드 검증
+            stopWatch.start("1. 핸들러메소드 검증");
             if (!(handler instanceof HandlerMethod)) {
                 return true;
             }
+            stopWatch.stop();
 
-            // 1. Debounce 대상 여부
+            // 2. Debounce 대상 여부
+            stopWatch.start("2. Debounce 대상 여부");
             var handlerMethod = (HandlerMethod) handler;
             Debounce debounce = handlerMethod.getMethodAnnotation(Debounce.class);
             if (debounce == null) {
@@ -71,44 +77,55 @@ public class DebounceInterceptor implements HandlerInterceptor {
                 log.error("Invalid debounce time: {}ms. request(URI: {})is debounce pass.", debounce.value(), requestURI);
                 return true;
             }
+            stopWatch.stop();
 
-            // 2. 세션 검증
-            stopWatch.start("getSession - isCreate:false");
+            // 3. 세션 검증
+            stopWatch.start("3. 세션 검증");
             var session = request.getSession(false);
             var currentTimeMillis = System.currentTimeMillis();
-            stopWatch.stop();
             if (session == null) {
                 log.error("Request session is invalid. Debounce pass.");
                 return true;
             }
-
-            // 3. debounceMap 조회
-            stopWatch.start("getAttribute - debounceMap");
-            var debounceMapObject = session.getAttribute(DEBOUNCE_MAP);
             stopWatch.stop();
 
-            stopWatch.start("get debounceMap");
+            // 4. debounceMap header 조회
+            stopWatch.start("4. debounceMap header 조회");
+            var debounceMapObject = session.getAttribute(DEBOUNCE_MAP);
             var debounceMap = new HashMap<String, Long>();
+            Long lastCallTimeMillis = null;
+            stopWatch.stop();
+
+            // 4-2. 최초 호출 확인 - 동기화 처리
+            // 최초 호출 시 먼저 진입한 세션만 성공처리될 수 있도록 동기화 블록 설정함.
+            if (debounceMapObject == null) {
+                stopWatch.start("4-2. 최초 호출 확인 - 동기화 처리 진입");
+                synchronized (DEBOUNCE_MAP) {
+                    stopWatch.stop();
+                    debounceMapObject = session.getAttribute(DEBOUNCE_MAP);
+                    // 동기화 처리 중 다른 쓰레드가 대기하기 때문에 진입 시 한번 더 확인함.
+                    if (debounceMapObject == null) {
+                        stopWatch.start("4-2. 최초 호출 확인 - 동기화 처리 수행");
+                        debounceMap.put(requestURI, currentTimeMillis);
+                        session.setAttribute(DEBOUNCE_MAP, debounceMap);
+                        stopWatch.stop();
+                    }
+                }
+            }
+
+            // 5. debounceMap header 재조회
+            // 싱크로나이즈 블록에서 병렬처리로 인해 debounceMapObject 가 설정될 수 있기 때문에 다시 체크함.
+            stopWatch.start("5. debounceMap header 재조회");
             if (debounceMapObject != null) {
                 debounceMap = (HashMap<String, Long>) debounceMapObject; // 캐스팅 에러를 감수하고 최소한의 조건만 사용
+                // 1) 최종 호출시간 조회
+                lastCallTimeMillis = debounceMap.get(requestURI);
+
+                // 2) 최종 호출시간 갱신
+                debounceMap.put(requestURI, currentTimeMillis);
+                session.setAttribute(DEBOUNCE_MAP, debounceMap);
             }
             stopWatch.stop();
-
-            // 4. 최종 호출시간 조회
-            stopWatch.start("get lastCallTimeMillis - map.get()");
-            var lastCallTimeMillis = debounceMap.get(requestURI);
-            stopWatch.stop();
-
-            // 5. 최종 호출시간 갱신
-            stopWatch.start("set lastCallTimeMillis - map.set()");
-            debounceMap.put(requestURI, currentTimeMillis);
-            stopWatch.stop();
-
-            stopWatch.start("setAttribute - debounceMap");
-            session.setAttribute(DEBOUNCE_MAP, debounceMap);
-            stopWatch.stop();
-
-            log.info(stopWatch.prettyPrint());
 
             // 6. 디바운싱
             if (lastCallTimeMillis == null || lastCallTimeMillis + debounce.value() <= currentTimeMillis) {
@@ -123,6 +140,8 @@ public class DebounceInterceptor implements HandlerInterceptor {
         } catch (Exception e) {
             log.error(e.getMessage());
             log.error("Invalid Debounce process. Debounce is bypass.");
+        } finally {
+            log.info(stopWatch.prettyPrint());
         }
 
         return true;
