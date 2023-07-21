@@ -141,7 +141,7 @@ public class DebounceInterceptor implements HandlerInterceptor {
             log.error(e.getMessage());
             log.error("Invalid Debounce process. Debounce is bypass.");
         } finally {
-            log.info(stopWatch.prettyPrint());
+            log.debug(stopWatch.prettyPrint());
         }
 
         return true;
