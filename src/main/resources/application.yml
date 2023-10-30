@@ -9,4 +9,15 @@ spring:
     suffix: .html
     check-template-location: true # templates 디렉토리 검사(파일 없으면 에러 발생)
 
-
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
+  pattern:
+    console: "[%d{HH:mm:ss.SSS}][%-5level][%.38t][%logger{39}#%method:%line] - %msg%n"
+    file: "[%d{HH:mm:ss.SSS}][%-5level][%.38t][%logger{39}#%method:%line] - %msg%n"
