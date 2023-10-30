@@ -60,6 +60,7 @@ public class CommonControllerAdvice {
         AlreadyExistsException.class
     })
     public ResponseEntity<ApiResult<String>> handleBadRequestException(Exception e) {
+        log.error(e.getMessage(), e);
         return new ResponseEntity<>(ApiResult.error(e), HttpStatus.BAD_REQUEST);
     }
 
@@ -94,18 +95,21 @@ public class CommonControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResult<String>> handleEntityNotFoundException(EntityNotFoundException e) {
+        log.error(e.getMessage(), e);
         return new ResponseEntity<>(ApiResult.error(e), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
     @ExceptionHandler(HandlerDebounceException.class)
     public ResponseEntity<ApiResult<String>> handleHandlerDebounceException(HandlerDebounceException e) {
+        log.error(e.getMessage(), e);
         return new ResponseEntity<>(error(e), HttpStatus.TOO_MANY_REQUESTS);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidSessionException.class)
     public ResponseEntity<ApiResult<String>> handleInvalidSessionException(InvalidSessionException e) {
+        log.error(e.getMessage(), e);
         return new ResponseEntity<>(error(e), HttpStatus.UNAUTHORIZED);
     }
 
