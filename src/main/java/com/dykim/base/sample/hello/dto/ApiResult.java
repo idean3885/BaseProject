@@ -19,11 +19,16 @@ public class ApiResult<T> {
         );
     }
 
-    public static ApiResult<String> error(Exception exception) {
-        return new ApiResult<>(
-                exception.getClass().getSimpleName(),
-                exception.getMessage()
-        );
+    public static ApiResult<String> error(Exception e) {
+        return error(e.getClass().getSimpleName(), e.getMessage());
+    }
+
+    public static ApiResult<String> error(Exception e, String message) {
+        return error(e.getClass().getSimpleName(), message);
+    }
+
+    private static <T> ApiResult<T> error(String name, T data) {
+        return new ApiResult<>(name, data);
     }
 
 }
