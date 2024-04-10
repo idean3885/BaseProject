@@ -42,5 +42,4 @@ public class MemberUpdateRspDto {
         this.mbrDaddr = member.getMbrDaddr();
         this.useYn = member.getUseYn();
     }
-
 }

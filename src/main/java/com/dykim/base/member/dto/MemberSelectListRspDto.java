@@ -2,11 +2,10 @@ package com.dykim.base.member.dto;
 
 import com.dykim.base.member.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Schema(name = "MemberSelectListRspDto", description = "회원 목록 조회 응답 Dto")
 @Getter
@@ -19,5 +18,4 @@ public class MemberSelectListRspDto {
     public MemberSelectListRspDto(List<Member> memberList) {
         list = memberList.stream().map(MemberSelectRspDto::new).collect(Collectors.toList());
     }
-
 }

@@ -22,5 +22,4 @@ public class MemberUpdateReqDto {
 
     @Schema(description = "회원상세주소")
     private String mbrDaddr;
-
 }

@@ -5,5 +5,4 @@ public class HelloAlreadyExistException extends RuntimeException {
     public HelloAlreadyExistException(String msg) {
         super(msg);
     }
-
 }

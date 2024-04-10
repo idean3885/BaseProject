@@ -1,32 +1,29 @@
 package com.dykim.base.member.entity;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.dykim.base.advice.hello.exception.HelloAuditorAwareException;
 import com.dykim.base.config.BaseAuditorAware;
 import com.dykim.base.member.dto.MemberUpdateReqDto;
+import java.util.Random;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
+import javax.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
-import javax.validation.ConstraintViolationException;
-import java.util.Random;
-import java.util.function.IntFunction;
-import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ActiveProfiles("test")
 @SpringBootTest
 public class MemberRepositoryTest {
 
-    @Autowired
-    MemberRepository memberRepository;
+    @Autowired MemberRepository memberRepository;
 
-    @Autowired
-    BaseAuditorAware baseAuditorAware;
+    @Autowired BaseAuditorAware baseAuditorAware;
 
     @AfterEach
     public void clearAllMember() {
@@ -40,15 +37,16 @@ public class MemberRepositoryTest {
     @Test
     public void save_return_Member() {
         // given
-        var member = Member.builder()
-                .mbrEml("valid@email.com")
-                .mbrPswd("pswd")
-                .mbrNm("mbrNm")
-                .mbrTelno("mbrTelno")
-                .mbrRoadNmAddr("mbrRoadNmAddr")
-                .mbrDaddr("mbrDaddr")
-                .useYn("Y")
-                .build();
+        var member =
+                Member.builder()
+                        .mbrEml("valid@email.com")
+                        .mbrPswd("pswd")
+                        .mbrNm("mbrNm")
+                        .mbrTelno("mbrTelno")
+                        .mbrRoadNmAddr("mbrRoadNmAddr")
+                        .mbrDaddr("mbrDaddr")
+                        .useYn("Y")
+                        .build();
 
         // when
         var insertedMember = memberRepository.save(member);
@@ -69,86 +67,87 @@ public class MemberRepositoryTest {
     @Test
     public void save_with_duplicate_mbrEml_throw_DataIntegrityViolationException() {
         // setup
-        var mockMember = memberRepository.save(Member.builder()
-                .mbrEml("mock@email.com")
-                .mbrPswd("mock-pswd")
-                .mbrNm("mock-mbrNm")
-                .mbrTelno("01234567890")
-                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                .mbrDaddr("mock-mbrDaddr")
-                .useYn("Y")
-                .build());
+        var mockMember =
+                memberRepository.save(
+                        Member.builder()
+                                .mbrEml("mock@email.com")
+                                .mbrPswd("mock-pswd")
+                                .mbrNm("mock-mbrNm")
+                                .mbrTelno("01234567890")
+                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                                .mbrDaddr("mock-mbrDaddr")
+                                .useYn("Y")
+                                .build());
 
         // given
-        var member = Member.builder()
-                .mbrEml(mockMember.getMbrEml())
-                .mbrPswd("pswd")
-                .mbrNm("mbrNm")
-                .mbrTelno("01234567890")
-                .mbrRoadNmAddr("mbrRoadNmAddr")
-                .mbrDaddr("mbrDaddr")
-                .useYn("Y")
-                .build();
+        var member =
+                Member.builder()
+                        .mbrEml(mockMember.getMbrEml())
+                        .mbrPswd("pswd")
+                        .mbrNm("mbrNm")
+                        .mbrTelno("01234567890")
+                        .mbrRoadNmAddr("mbrRoadNmAddr")
+                        .mbrDaddr("mbrDaddr")
+                        .useYn("Y")
+                        .build();
 
         // when-then
-        assertThrows(DataIntegrityViolationException.class,
-                () -> memberRepository.save(member)
-        );
+        assertThrows(DataIntegrityViolationException.class, () -> memberRepository.save(member));
     }
 
     @Order(3)
     @Test
     public void save_with_empty_require_parameter_throw_ConstraintViolationException() {
         // given
-        var member = Member.builder()
-                .mbrEml("valid@email.com")
-//                .mbrPswd("pswd") // nullable=false 테스트용 주석
-                .mbrNm("mbrNm")
-                .mbrTelno("mbrTelno")
-                .mbrRoadNmAddr("mbrRoadNmAddr")
-                .mbrDaddr("mbrDaddr")
-                .useYn("Y")
-                .build();
+        var member =
+                Member.builder()
+                        .mbrEml("valid@email.com")
+                        //                .mbrPswd("pswd") // nullable=false 테스트용 주석
+                        .mbrNm("mbrNm")
+                        .mbrTelno("mbrTelno")
+                        .mbrRoadNmAddr("mbrRoadNmAddr")
+                        .mbrDaddr("mbrDaddr")
+                        .useYn("Y")
+                        .build();
 
         // when-then
-        assertThrows(ConstraintViolationException.class,
-                () -> memberRepository.save(member)
-        );
+        assertThrows(ConstraintViolationException.class, () -> memberRepository.save(member));
     }
 
     @Order(4)
     @Test
     public void save_with_over_length_parameter_throw_DataIntegrityViolationException() {
         // given
-        var member = Member.builder()
-                .mbrEml("valid@email.com")
-                .mbrPswd("pswd")
-                .mbrNm("mbrNm")
-                .mbrTelno("012345678901")
-                .mbrRoadNmAddr("mbrRoadNmAddr")
-                .mbrDaddr("mbrDaddr")
-                .useYn("Y")
-                .build();
+        var member =
+                Member.builder()
+                        .mbrEml("valid@email.com")
+                        .mbrPswd("pswd")
+                        .mbrNm("mbrNm")
+                        .mbrTelno("012345678901")
+                        .mbrRoadNmAddr("mbrRoadNmAddr")
+                        .mbrDaddr("mbrDaddr")
+                        .useYn("Y")
+                        .build();
 
         // when-then
-        assertThrows(DataIntegrityViolationException.class,
-                () -> memberRepository.save(member)
-        );
+        assertThrows(DataIntegrityViolationException.class, () -> memberRepository.save(member));
     }
 
     @Order(5)
     @Test
     public void findById_return_member() {
         // given
-        var mockMember = memberRepository.save(Member.builder()
-                .mbrEml("mock@email.com")
-                .mbrPswd("mock-pswd")
-                .mbrNm("mock-mbrNm")
-                .mbrTelno("01234567890")
-                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                .mbrDaddr("mock-mbrDaddr")
-                .useYn("Y")
-                .build());
+        var mockMember =
+                memberRepository.save(
+                        Member.builder()
+                                .mbrEml("mock@email.com")
+                                .mbrPswd("mock-pswd")
+                                .mbrNm("mock-mbrNm")
+                                .mbrTelno("01234567890")
+                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                                .mbrDaddr("mock-mbrDaddr")
+                                .useYn("Y")
+                                .build());
 
         // when
         var memberOps = memberRepository.findById(mockMember.getMbrId());
@@ -172,25 +171,29 @@ public class MemberRepositoryTest {
     public void findAllByMbrNm_return_member_list() {
         // given
         final IntFunction<String> initEmlByNumber = number -> String.format("mock%d@email.com", number);
-        var sameSaveMember = Member.builder()
-                .mbrPswd("mock-pswd")
-                .mbrNm("sameName")
-                .mbrTelno("01234567890")
-                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                .mbrDaddr("mock-mbrDaddr")
-                .useYn("Y")
-                .build();
+        var sameSaveMember =
+                Member.builder()
+                        .mbrPswd("mock-pswd")
+                        .mbrNm("sameName")
+                        .mbrTelno("01234567890")
+                        .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                        .mbrDaddr("mock-mbrDaddr")
+                        .useYn("Y")
+                        .build();
         final var SAME_COUNT = 10;
-        IntStream.range(1, SAME_COUNT + 1).forEach(
-                number -> memberRepository.save(Member.builder()
-                        .mbrEml(initEmlByNumber.apply(number))
-                        .mbrPswd(sameSaveMember.getMbrPswd())
-                        .mbrNm(sameSaveMember.getMbrNm())
-                        .mbrTelno(sameSaveMember.getMbrTelno())
-                        .mbrRoadNmAddr(sameSaveMember.getMbrRoadNmAddr())
-                        .mbrDaddr(sameSaveMember.getMbrDaddr())
-                        .useYn(sameSaveMember.getUseYn())
-                        .build()));
+        IntStream.range(1, SAME_COUNT + 1)
+                .forEach(
+                        number ->
+                                memberRepository.save(
+                                        Member.builder()
+                                                .mbrEml(initEmlByNumber.apply(number))
+                                                .mbrPswd(sameSaveMember.getMbrPswd())
+                                                .mbrNm(sameSaveMember.getMbrNm())
+                                                .mbrTelno(sameSaveMember.getMbrTelno())
+                                                .mbrRoadNmAddr(sameSaveMember.getMbrRoadNmAddr())
+                                                .mbrDaddr(sameSaveMember.getMbrDaddr())
+                                                .useYn(sameSaveMember.getUseYn())
+                                                .build()));
 
         // when
         var memberListOps = memberRepository.findAllByMbrNm(sameSaveMember.getMbrNm());
@@ -217,23 +220,26 @@ public class MemberRepositoryTest {
     @Test
     public void update_to_save_return_MemberUpdateRspDto() {
         // setup
-        var mockMember = memberRepository.save(Member.builder()
-                .mbrEml("mock@email.com")
-                .mbrPswd("mock-pswd")
-                .mbrNm("mock-mbrNm")
-                .mbrTelno("01234567890")
-                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                .mbrDaddr("mock-mbrDaddr")
-                .useYn("Y")
-                .build());
+        var mockMember =
+                memberRepository.save(
+                        Member.builder()
+                                .mbrEml("mock@email.com")
+                                .mbrPswd("mock-pswd")
+                                .mbrNm("mock-mbrNm")
+                                .mbrTelno("01234567890")
+                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                                .mbrDaddr("mock-mbrDaddr")
+                                .useYn("Y")
+                                .build());
 
         // given
-        var reqDto = MemberUpdateReqDto.builder()
-                .mbrPswd("udpate pswd")
-                .mbrTelno("11111111111")
-                .mbrRoadNmAddr("update road address")
-                .mbrDaddr("update detail address")
-                .build();
+        var reqDto =
+                MemberUpdateReqDto.builder()
+                        .mbrPswd("udpate pswd")
+                        .mbrTelno("11111111111")
+                        .mbrRoadNmAddr("update road address")
+                        .mbrDaddr("update detail address")
+                        .build();
 
         // when
         var member = memberRepository.save(mockMember.update(reqDto));
@@ -261,15 +267,17 @@ public class MemberRepositoryTest {
     @Test
     public void delete_to_save_return_MemberDeleteRspDto() {
         // setup
-        var mockMember = memberRepository.save(Member.builder()
-                .mbrEml("mock@email.com")
-                .mbrPswd("mock-pswd")
-                .mbrNm("mock-mbrNm")
-                .mbrTelno("01234567890")
-                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                .mbrDaddr("mock-mbrDaddr")
-                .useYn("Y")
-                .build());
+        var mockMember =
+                memberRepository.save(
+                        Member.builder()
+                                .mbrEml("mock@email.com")
+                                .mbrPswd("mock-pswd")
+                                .mbrNm("mock-mbrNm")
+                                .mbrTelno("01234567890")
+                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
+                                .mbrDaddr("mock-mbrDaddr")
+                                .useYn("Y")
+                                .build());
 
         // given
         mockMember.delete();
@@ -309,8 +317,11 @@ public class MemberRepositoryTest {
 
     private void assertBaseEntity(Member member, String type) {
         // given
-        var auditorId = baseAuditorAware.getCurrentAuditor()
-                .orElseThrow(() -> new HelloAuditorAwareException("Not found sessionUserId from Auditor"));
+        var auditorId =
+                baseAuditorAware
+                        .getCurrentAuditor()
+                        .orElseThrow(
+                                () -> new HelloAuditorAwareException("Not found sessionUserId from Auditor"));
 
         // then
         // 1) common
@@ -336,5 +347,4 @@ public class MemberRepositoryTest {
                 assert false;
         }
     }
-
 }

@@ -6,13 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
 
 @Tag(name = "Front Controller", description = "thymeleaf 환경 구성용 컨트롤러")
 @RequiredArgsConstructor
@@ -20,10 +19,13 @@ import java.util.List;
 @Controller
 public class FrontController {
 
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success. Return view",
-                    content = @Content(schema = @Schema(implementation = String.class)))
-    })
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Success. Return view",
+                        content = @Content(schema = @Schema(implementation = String.class)))
+            })
     @Operation(summary = "request sample view", description = "SampleView with default layout")
     @GetMapping("/sampleWithDefaultLayout")
     public ModelAndView sampleWithDefaultLayout() {
@@ -33,5 +35,4 @@ public class FrontController {
         mav.setViewName("contents/sampleWithDefaultLayout");
         return mav;
     }
-
 }

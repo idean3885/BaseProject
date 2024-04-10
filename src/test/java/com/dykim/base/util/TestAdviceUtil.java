@@ -1,23 +1,28 @@
 package com.dykim.base.util;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Objects;
-
 /**
+ *
+ *
  * <h3>Test Advice Util</h3>
- * 테스트 코드에서 사용되는 공통 로직 유틸<p/>
- * 아래 조건에 맞는 경우만 등록한다.<br/>
+ *
+ * 테스트 코드에서 사용되는 공통 로직 유틸
+ *
+ * <p>아래 조건에 맞는 경우만 등록한다.<br>
  * <b>등록 조건</b>
+ *
  * <pre>
  *  1. 2개 이상의 테스트 클래스에서 사용되는 경우
  * </pre>
  *
  * <b>참고) 조건에 맞는 로직만 등록하는 이유</b>
+ *
  * <pre>
  *  - 가능성을 보고 유틸로 미리 이관한다면 다른 클래스에서 사용되기 전까진
  *    관리범위만 늘어나게 된다. (테스트 클래스 + 공통 유틸 클래스)
@@ -46,7 +51,8 @@ public class TestAdviceUtil {
     }
 
     public static void printExceptionMessage(MvcResult result) {
-        log.debug("printExceptionMessage: {}", Objects.requireNonNull(result.getResolvedException()).getLocalizedMessage());
+        log.debug(
+                "printExceptionMessage: {}",
+                Objects.requireNonNull(result.getResolvedException()).getLocalizedMessage());
     }
-
 }

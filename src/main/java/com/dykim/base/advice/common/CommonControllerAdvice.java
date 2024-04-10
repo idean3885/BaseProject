@@ -20,8 +20,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
+ *
+ *
  * <h3>Common ControllerAdvice</h3>
+ *
  * 모든 도메인에서 발생가능한 공통 예외를 처리한다.
+ *
  * <pre>
  *  1. 공통 예외
  *  2. 인터셉터 단계에서 발생하는 예외
@@ -34,7 +38,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class CommonControllerAdvice {
 
     /**
+     *
+     *
      * <h3>BAD_REQUEST Exception Handler</h3>
+     *
      * <pre>
      * 1. DataIntegrityViolationException.class
      *  엔티티 컬럼 검증없이 실제 DB와 통신하여 오류가 발생한 경우만 들어온다.
@@ -65,7 +72,10 @@ public class CommonControllerAdvice {
     }
 
     /**
+     *
+     *
      * <h3>MethodArgumentNotValidException Handler</h3>
+     *
      * <pre>
      * 컨트롤러 진입 시 파라미터 타입(자료형) 이 잘못 설정된 경우 발생함.
      * </pre>
@@ -74,7 +84,8 @@ public class CommonControllerAdvice {
      * @return ApiResult
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResult<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiResult<String>> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException e) {
         // @Valid 어노테이션으로 Dto 를 검증하는 경우 발생한다.
         var bindingResult = e.getBindingResult();
 
@@ -94,23 +105,25 @@ public class CommonControllerAdvice {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ApiResult<String>> handleEntityNotFoundException(EntityNotFoundException e) {
+    public ResponseEntity<ApiResult<String>> handleEntityNotFoundException(
+            EntityNotFoundException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(ApiResult.error(e), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
     @ExceptionHandler(HandlerDebounceException.class)
-    public ResponseEntity<ApiResult<String>> handleHandlerDebounceException(HandlerDebounceException e) {
+    public ResponseEntity<ApiResult<String>> handleHandlerDebounceException(
+            HandlerDebounceException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(error(e), HttpStatus.TOO_MANY_REQUESTS);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidSessionException.class)
-    public ResponseEntity<ApiResult<String>> handleInvalidSessionException(InvalidSessionException e) {
+    public ResponseEntity<ApiResult<String>> handleInvalidSessionException(
+            InvalidSessionException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(error(e), HttpStatus.UNAUTHORIZED);
     }
-
 }

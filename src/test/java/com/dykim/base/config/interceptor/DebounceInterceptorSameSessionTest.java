@@ -1,10 +1,15 @@
 package com.dykim.base.config.interceptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 import com.dykim.base.advice.common.CommonControllerAdvice;
 import com.dykim.base.sample.hello.controller.HelloController;
 import com.dykim.base.sample.hello.entity.HelloRepository;
 import com.dykim.base.sample.hello.service.HelloService;
 import io.swagger.v3.core.util.Json;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,15 +26,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
 /**
+ *
+ *
  * <h3>DebounceInterceptor 동일 세션 테스트</h3>
+ *
  * 동일세션 Api Debouncing 테스트
+ *
  * <pre>
  *  - 반복을 위해 @RepeatedTest 사용
  *  - 매 반복 시 독립적인 Test 로 취급하기 때문에 전역 변수를 메소드 단위로 구분할 수 없다.
@@ -44,11 +47,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DebounceInterceptorSameSessionTest {
 
-    @Mock
-    private HelloRepository helloRepository;
+    @Mock private HelloRepository helloRepository;
 
-    @InjectMocks
-    private HelloService helloService;
+    @InjectMocks private HelloService helloService;
 
     private MockMvc mockMvc;
     private MockHttpSession mockHttpSession;
@@ -61,11 +62,11 @@ public class DebounceInterceptorSameSessionTest {
 
     @BeforeAll
     public void setupGlobalField() {
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(new HelloController(helloService))
-                .addInterceptors(new DebounceInterceptor())
-                .setControllerAdvice(new CommonControllerAdvice())
-                .build();
+        mockMvc =
+                MockMvcBuilders.standaloneSetup(new HelloController(helloService))
+                        .addInterceptors(new DebounceInterceptor())
+                        .setControllerAdvice(new CommonControllerAdvice())
+                        .build();
         mockHttpSession = new MockHttpSession();
 
         isFirstCallCheck = new AtomicBoolean();
@@ -84,21 +85,22 @@ public class DebounceInterceptorSameSessionTest {
     @RepeatedTest(REPEAT_COUNT)
     public void call_helloPrintDebounce_first_debounce() throws Exception {
         // when
-        mockMvc.perform(get("/sample/hello/helloPrintDebounce").session(mockHttpSession))
+        mockMvc
+                .perform(get("/sample/hello/helloPrintDebounce").session(mockHttpSession))
                 // then
-                .andDo(handler -> {
-                    var httpStatus = handler.getResponse().getStatus();
-                    if (!isFirstCallCheck.get()) {
-                        isFirstCallCheck.set(true);
-                        firstCallCount.incrementAndGet();
-                        assertThat(httpStatus).isEqualTo(HttpStatus.OK.value());
-                        var rspString = handler.getResponse().getContentAsString();
-                        assertThat(rspString).isEqualTo(Json.pretty("hello!"));
-                    } else {
-                        afterCallCount.incrementAndGet();
-                        assertThat(httpStatus).isEqualTo(HttpStatus.TOO_MANY_REQUESTS.value());
-                    }
-                });
+                .andDo(
+                        handler -> {
+                            var httpStatus = handler.getResponse().getStatus();
+                            if (!isFirstCallCheck.get()) {
+                                isFirstCallCheck.set(true);
+                                firstCallCount.incrementAndGet();
+                                assertThat(httpStatus).isEqualTo(HttpStatus.OK.value());
+                                var rspString = handler.getResponse().getContentAsString();
+                                assertThat(rspString).isEqualTo(Json.pretty("hello!"));
+                            } else {
+                                afterCallCount.incrementAndGet();
+                                assertThat(httpStatus).isEqualTo(HttpStatus.TOO_MANY_REQUESTS.value());
+                            }
+                        });
     }
-
 }

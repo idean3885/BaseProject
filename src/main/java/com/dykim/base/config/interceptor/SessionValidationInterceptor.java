@@ -1,14 +1,13 @@
 package com.dykim.base.config.interceptor;
 
 import com.dykim.base.advice.common.exception.InvalidSessionException;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -17,23 +16,29 @@ public class SessionValidationInterceptor implements HandlerInterceptor {
     private final List<String> byPassUrls = List.of("/sample/hello");
 
     @Override
-    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
+    public boolean preHandle(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull Object handler) {
         var requestUri = request.getRequestURI();
 
         // 1. Request Url By pass 확인
         // TODO: 로그인 기능 구현 후 아래 코드 사용 및 byPass 범위 테스트케이스 수정 필요.
-//        for (String byPassUrl : byPassUrls) {
-//            if (request.getRequestURI().startsWith(byPassUrl)) {
-//                log.info("Session Validation By pass startsWith {}", byPassUrl);
-//                return true;
-//            }
-//        }
+        //        for (String byPassUrl : byPassUrls) {
+        //            if (request.getRequestURI().startsWith(byPassUrl)) {
+        //                log.info("Session Validation By pass startsWith {}", byPassUrl);
+        //                return true;
+        //            }
+        //        }
 
         // tmp1) Debounce 테스트용 세션생성 TODO: 로그인 기능 구현 후 삭제 필요.
         // request.getSession() -> 세션없으면 만들기 때문에 메소드 처리완료 후에는 항상 세션이 활성화된다.
         final var TMP_DEBOUNCE_URI = "/sample/hello/helloPrintDebounce";
         if (requestUri.startsWith(TMP_DEBOUNCE_URI)) {
-            log.info("[byPass For debounce]sessionId: [{}]requestURI: {}", request.getSession().getId(), requestUri);
+            log.info(
+                    "[byPass For debounce]sessionId: [{}]requestURI: {}",
+                    request.getSession().getId(),
+                    requestUri);
         }
 
         // 1) 세션검증
@@ -54,5 +59,4 @@ public class SessionValidationInterceptor implements HandlerInterceptor {
 
         return true;
     }
-
 }

@@ -8,6 +8,7 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     check-template-location: true # templates 디렉토리 검사(파일 없으면 에러 발생)
+  output.ansi.enabled: always # 콘솔로그 색상 적용
 
 server:
   servlet:
@@ -19,5 +20,5 @@ logging:
     console: UTF-8
     file: UTF-8
   pattern:
-    console: "[%d{HH:mm:ss.SSS}][%-5level][%.38t][%logger{39}#%method:%line] - %msg%n"
+    console: "[%d{HH:mm:ss.SSS}][%clr(%-5level)][%.38t][%logger{39}#%method:%line] - %msg%n"
     file: "[%d{HH:mm:ss.SSS}][%-5level][%.38t][%logger{39}#%method:%line] - %msg%n"

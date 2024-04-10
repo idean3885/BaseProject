@@ -38,13 +38,18 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "Invalid request parameters or invalid insert data.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class)))
-    })
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid request parameters or invalid insert data.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Unexpected exception occurred.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class)))
+            })
     @Operation(summary = "Insert Member", description = "회원 추가")
     @ResponseBody
     @PutMapping
@@ -52,13 +57,18 @@ public class MemberController {
         return ok(memberService.insert(reqDto));
     }
 
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "Invalid mbrId type. MethodArgumentTypeMismatchException occurred.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class)))
-    })
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid mbrId type. MethodArgumentTypeMismatchException occurred.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Unexpected exception occurred.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class)))
+            })
     @Operation(summary = "Select Member", description = "회원 조회")
     @ResponseBody
     @GetMapping("{mbrId}")
@@ -66,11 +76,14 @@ public class MemberController {
         return ok(memberService.select(mbrId));
     }
 
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class)))
-    })
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Unexpected exception occurred.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class)))
+            })
     @Operation(summary = "Select Member List", description = "회원 목록 조회")
     @ResponseBody
     @GetMapping
@@ -78,36 +91,50 @@ public class MemberController {
         return ok(memberService.selectList(mbrNm));
     }
 
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "Invalid request parameters or invalid update data.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class))),
-        @ApiResponse(responseCode = "404", description = "Not Found member by mbrId.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class)))
-    })
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid request parameters or invalid update data.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Not Found member by mbrId.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Unexpected exception occurred.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class)))
+            })
     @Operation(summary = "update Member", description = "회원 수정(온전한 값이 입력된 컬럼만 업데이트)")
     @ResponseBody
     @PostMapping("/{mbrId}")
-    public ApiResult<MemberUpdateRspDto> update(@PathVariable Long mbrId, @RequestBody MemberUpdateReqDto reqDto) {
+    public ApiResult<MemberUpdateRspDto> update(
+            @PathVariable Long mbrId, @RequestBody MemberUpdateReqDto reqDto) {
         return ApiResult.ok(memberService.update(mbrId, reqDto));
     }
 
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "Invalid mbrId type. MethodArgumentTypeMismatchException occurred.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class))),
-        @ApiResponse(responseCode = "404", description = "Not Found member by mbrId.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected exception occurred.",
-            content = @Content(schema = @Schema(implementation = ApiResult.class)))
-    })
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid mbrId type. MethodArgumentTypeMismatchException occurred.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Not Found member by mbrId.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Unexpected exception occurred.",
+                        content = @Content(schema = @Schema(implementation = ApiResult.class)))
+            })
     @Operation(summary = "delete Member", description = "회원 삭제(useYn=N 처리)")
     @ResponseBody
     @DeleteMapping("/{mbrId}")
     public ApiResult<MemberDeleteRspDto> delete(@PathVariable Long mbrId) {
         return ApiResult.ok(memberService.delete(mbrId));
     }
-
 }

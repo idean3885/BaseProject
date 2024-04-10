@@ -2,11 +2,10 @@ package com.dykim.base.member.dto;
 
 import com.dykim.base.member.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import org.hibernate.validator.constraints.Length;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 @Schema(name = "MemberInsertReqDto", description = "회원 추가 요청 Dto")
 @ToString
@@ -50,5 +49,4 @@ public class MemberInsertReqDto {
                 .useYn("Y")
                 .build();
     }
-
 }

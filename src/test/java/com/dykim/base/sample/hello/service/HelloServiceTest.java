@@ -1,9 +1,19 @@
 package com.dykim.base.sample.hello.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.dykim.base.advice.hello.exception.HelloAlreadyExistException;
 import com.dykim.base.advice.hello.exception.HelloNotFoundException;
 import com.dykim.base.sample.hello.dto.HelloInsertReqDto;
 import com.dykim.base.sample.hello.dto.HelloUpdateReqDto;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Random;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
+import javax.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,23 +21,16 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ConstraintViolationException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Random;
-import java.util.function.IntFunction;
-import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 /**
+ *
+ *
  * <h3>HelloServiceTest 코드</h3>
- * 테스트 프로파일로 실제 구동하여 서비스 로직을 점검한다.<br/>
- * H2 데이터베이스 및 jpa create-drop 옵션으로 서버 구동마다 데이터베이스를 새로 생성한다.<br/>
- * <br/>
+ *
+ * 테스트 프로파일로 실제 구동하여 서비스 로직을 점검한다.<br>
+ * H2 데이터베이스 및 jpa create-drop 옵션으로 서버 구동마다 데이터베이스를 새로 생성한다.<br>
+ * <br>
  * <b>참고) DML 기능 테스트 시 주의사항</b>
+ *
  * <pre>
  * 실 서버 구동이기 때문에 메소드가 종료되어도 데이터가 남아있어
  * 다른 테스트 케이스에 영향이 생길 수 있다.
@@ -59,12 +62,13 @@ public class HelloServiceTest {
     @Transactional
     public void insert_return_HelloInsertRspDto() {
         // given
-        var reqDto = HelloInsertReqDto.builder()
-                .email("success@email.com")
-                .name("name")
-                .birthday(parseBirthday("1900-01-01"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build();
+        var reqDto =
+                HelloInsertReqDto.builder()
+                        .email("success@email.com")
+                        .name("name")
+                        .birthday(parseBirthday("1900-01-01"))
+                        .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                        .build();
 
         // when
         var rspDto = helloService.insert(reqDto);
@@ -79,11 +83,12 @@ public class HelloServiceTest {
     @Test
     public void insert_with_empty_email_throw_ConstraintViolationException() {
         // given
-        var reqDto = HelloInsertReqDto.builder()
-                .name("name")
-                .birthday(parseBirthday("2001-01-01"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build();
+        var reqDto =
+                HelloInsertReqDto.builder()
+                        .name("name")
+                        .birthday(parseBirthday("2001-01-01"))
+                        .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                        .build();
 
         // when-then
         assertThrows(ConstraintViolationException.class, () -> helloService.insert(reqDto));
@@ -93,12 +98,13 @@ public class HelloServiceTest {
     @Test
     public void insert_invalid_email_format_throw_ConstraintViolationException() {
         // given
-        var reqDto = HelloInsertReqDto.builder()
-                .email("email.com")
-                .name("name")
-                .birthday(parseBirthday("2001-01-01"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build();
+        var reqDto =
+                HelloInsertReqDto.builder()
+                        .email("email.com")
+                        .name("name")
+                        .birthday(parseBirthday("2001-01-01"))
+                        .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                        .build();
 
         // when-then
         assertThrows(ConstraintViolationException.class, () -> helloService.insert(reqDto));
@@ -108,11 +114,12 @@ public class HelloServiceTest {
     @Test
     public void insert_with_empty_name_throw_ConstraintViolationException() {
         // given
-        var reqDto = HelloInsertReqDto.builder()
-                .email("email.com")
-                .birthday(parseBirthday("2001-01-01"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build();
+        var reqDto =
+                HelloInsertReqDto.builder()
+                        .email("email.com")
+                        .birthday(parseBirthday("2001-01-01"))
+                        .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                        .build();
 
         // when-then
         assertThrows(ConstraintViolationException.class, () -> helloService.insert(reqDto));
@@ -122,20 +129,23 @@ public class HelloServiceTest {
     @Test
     public void insert_with_duplicate_email_throw_HelloAlreadyExistException() {
         // setup
-        var mockHelloInsertRspDto = helloService.insert(HelloInsertReqDto.builder()
-                .email("duple@email.com")
-                .name("mock1")
-                .birthday(parseBirthday("1993-07-24"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build());
+        var mockHelloInsertRspDto =
+                helloService.insert(
+                        HelloInsertReqDto.builder()
+                                .email("duple@email.com")
+                                .name("mock1")
+                                .birthday(parseBirthday("1993-07-24"))
+                                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                                .build());
 
         // given
-        var reqDto = HelloInsertReqDto.builder()
-                .email(mockHelloInsertRspDto.getEmail())
-                .name("name")
-                .birthday(parseBirthday("1900-01-01"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build();
+        var reqDto =
+                HelloInsertReqDto.builder()
+                        .email(mockHelloInsertRspDto.getEmail())
+                        .name("name")
+                        .birthday(parseBirthday("1900-01-01"))
+                        .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                        .build();
 
         // when-then
         assertThrows(HelloAlreadyExistException.class, () -> helloService.insert(reqDto));
@@ -146,12 +156,14 @@ public class HelloServiceTest {
     @Transactional
     public void find_by_id_return_HelloFindRspDto() {
         // setup
-        var mockHelloInsertRspDto = helloService.insert(HelloInsertReqDto.builder()
-                .email("mock1@email.com")
-                .name("mock1")
-                .birthday(parseBirthday("1993-07-24"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build());
+        var mockHelloInsertRspDto =
+                helloService.insert(
+                        HelloInsertReqDto.builder()
+                                .email("mock1@email.com")
+                                .name("mock1")
+                                .birthday(parseBirthday("1993-07-24"))
+                                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                                .build());
 
         // given
         var helloId = mockHelloInsertRspDto.getId();
@@ -163,17 +175,23 @@ public class HelloServiceTest {
         assertThat(helloFindRspDto.getName()).isEqualTo(mockHelloInsertRspDto.getName());
         assertThat(helloFindRspDto.getEmail()).isEqualTo(mockHelloInsertRspDto.getEmail());
         assertThat(helloFindRspDto.getBirthday()).isEqualTo(mockHelloInsertRspDto.getBirthday());
-        assertThat(helloFindRspDto.getYyyyMMddHHmmssSSS()).isEqualTo(mockHelloInsertRspDto.getYyyyMMddHHmmssSSS());
+        assertThat(helloFindRspDto.getYyyyMMddHHmmssSSS())
+                .isEqualTo(mockHelloInsertRspDto.getYyyyMMddHHmmssSSS());
     }
 
     /**
+     *
+     *
      * <h3>JPA null find 예외 테스트</h3>
+     *
      * <pre>
      * id 에 null 이 입력되는 케이스를 테스트한다.
      * 실제 컨트롤러를 통해 진입 시, PathVariable 로 입력받고
      * 자료형 검증도 이루어지기 때문에 발생할 가능성은 없지만 샘플 케이스로서 작성함.
      * </pre>
+     *
      * <b>참고</b>
+     *
      * <pre>
      * JPA Repository.find(null) 실행 시 명세와 달리
      * InvalidDataAccessApiUsageException 이 발생한다.
@@ -200,20 +218,25 @@ public class HelloServiceTest {
     @Transactional
     public void findList_return_HelloFindListRspDto() {
         // given
-        final IntFunction<String> initEmailByNumber = number -> String.format("mock%d@email.com", number);
-        var sameInsertReqDto = HelloInsertReqDto.builder()
-                .name("name")
-                .birthday(parseBirthday("1900-01-01"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build();
+        final IntFunction<String> initEmailByNumber =
+                number -> String.format("mock%d@email.com", number);
+        var sameInsertReqDto =
+                HelloInsertReqDto.builder()
+                        .name("name")
+                        .birthday(parseBirthday("1900-01-01"))
+                        .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                        .build();
         final var SAME_COUNT = 10;
-        IntStream.range(1, SAME_COUNT + 1).forEach(
-                number -> helloService.insert(HelloInsertReqDto.builder()
-                        .email(initEmailByNumber.apply(number))
-                        .name(sameInsertReqDto.getName())
-                        .birthday(sameInsertReqDto.getBirthday())
-                        .yyyyMMddHHmmssSSS(sameInsertReqDto.getYyyyMMddHHmmssSSS())
-                        .build()));
+        IntStream.range(1, SAME_COUNT + 1)
+                .forEach(
+                        number ->
+                                helloService.insert(
+                                        HelloInsertReqDto.builder()
+                                                .email(initEmailByNumber.apply(number))
+                                                .name(sameInsertReqDto.getName())
+                                                .birthday(sameInsertReqDto.getBirthday())
+                                                .yyyyMMddHHmmssSSS(sameInsertReqDto.getYyyyMMddHHmmssSSS())
+                                                .build()));
 
         // when
         var rspDto = helloService.findList(sameInsertReqDto.getName());
@@ -250,18 +273,21 @@ public class HelloServiceTest {
     @Transactional
     public void update_return_HelloUpdateRspDto() {
         // setup
-        var helloInsertRspDto = helloService.insert(HelloInsertReqDto.builder()
-                .email("mock@email.com")
-                .name("mock")
-                .birthday(parseBirthday("1900-01-01"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build());
+        var helloInsertRspDto =
+                helloService.insert(
+                        HelloInsertReqDto.builder()
+                                .email("mock@email.com")
+                                .name("mock")
+                                .birthday(parseBirthday("1900-01-01"))
+                                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                                .build());
 
         // given
-        var helloUpdateReqDto = HelloUpdateReqDto.builder()
-                .name("update name")
-                .birthday(parseBirthday("1993-07-24"))
-                .build();
+        var helloUpdateReqDto =
+                HelloUpdateReqDto.builder()
+                        .name("update name")
+                        .birthday(parseBirthday("1993-07-24"))
+                        .build();
 
         // when
         var helloUpdateRspDto = helloService.update(helloInsertRspDto.getId(), helloUpdateReqDto);
@@ -276,14 +302,16 @@ public class HelloServiceTest {
     @Test
     public void update_with_not_exist_hello_throw_HelloNotFoundException() {
         // given
-        var helloUpdateReqDto = HelloUpdateReqDto.builder()
-                .name("update name")
-                .birthday(parseBirthday("1993-07-24"))
-                .build();
+        var helloUpdateReqDto =
+                HelloUpdateReqDto.builder()
+                        .name("update name")
+                        .birthday(parseBirthday("1993-07-24"))
+                        .build();
         final var NOT_EXIST_ID = -1L;
 
         // when-then
-        assertThrows(HelloNotFoundException.class, () -> helloService.update(NOT_EXIST_ID, helloUpdateReqDto));
+        assertThrows(
+                HelloNotFoundException.class, () -> helloService.update(NOT_EXIST_ID, helloUpdateReqDto));
     }
 
     @Order(12)
@@ -291,12 +319,14 @@ public class HelloServiceTest {
     @Transactional
     public void delete_return_HelloDeleteRspDto() {
         // setup
-        var helloInsertRspDto = helloService.insert(HelloInsertReqDto.builder()
-                .email("mock@email.com")
-                .name("mock")
-                .birthday(parseBirthday("1900-01-01"))
-                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
-                .build());
+        var helloInsertRspDto =
+                helloService.insert(
+                        HelloInsertReqDto.builder()
+                                .email("mock@email.com")
+                                .name("mock")
+                                .birthday(parseBirthday("1900-01-01"))
+                                .yyyyMMddHHmmssSSS(nowYyyyMMddHHmmssSSS())
+                                .build());
 
         // given
         var deleteId = helloInsertRspDto.getId();
@@ -327,5 +357,4 @@ public class HelloServiceTest {
         var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         return LocalDateTime.parse(LocalDateTime.now().format(dateTimeFormatter), dateTimeFormatter);
     }
-
 }

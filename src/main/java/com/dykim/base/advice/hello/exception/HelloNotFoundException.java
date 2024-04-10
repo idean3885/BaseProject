@@ -5,5 +5,4 @@ public class HelloNotFoundException extends RuntimeException {
     public HelloNotFoundException(String msg) {
         super(msg);
     }
-
 }

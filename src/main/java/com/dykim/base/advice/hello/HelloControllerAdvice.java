@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
+ *
+ *
  * <h3>Hello ControllerAdvice</h3>
+ *
  * Hello 컨트롤러에서 발생하는 예외를 처리한다.
  */
 @Slf4j
@@ -30,14 +33,16 @@ public class HelloControllerAdvice {
     }
 
     @ExceptionHandler(HelloAlreadyExistException.class)
-    public ResponseEntity<ApiResult<String>> handleHelloAlreadyExistException(HelloAlreadyExistException e) {
+    public ResponseEntity<ApiResult<String>> handleHelloAlreadyExistException(
+            HelloAlreadyExistException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(ApiResult.error(e), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(HelloAuditorAwareException.class)
-    public ResponseEntity<ApiResult<String>> handleHelloAuditorAwareException(HelloAuditorAwareException e) {
+    public ResponseEntity<ApiResult<String>> handleHelloAuditorAwareException(
+            HelloAuditorAwareException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(ApiResult.error(e), HttpStatus.FORBIDDEN);
     }
@@ -52,7 +57,7 @@ public class HelloControllerAdvice {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiResult<String>> handleHttpRequestMethodNotSupportedException(
-        HttpRequestMethodNotSupportedException e) {
+            HttpRequestMethodNotSupportedException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(ApiResult.error(e), HttpStatus.METHOD_NOT_ALLOWED);
     }
@@ -63,5 +68,4 @@ public class HelloControllerAdvice {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(ApiResult.error(e), HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }
