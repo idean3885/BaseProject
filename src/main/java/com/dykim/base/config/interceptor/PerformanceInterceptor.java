@@ -1,17 +1,20 @@
 package com.dykim.base.config.interceptor;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
+ *
+ *
  * <h3>Performance Interceptor</h3>
- *  API 성능 측정용 인터셉터
+ *
+ * API 성능 측정용 인터셉터
+ *
  * <pre>
  *  - 온전히 성공한 로직에 대해서만 속도를 측정한다.
  *    => postHandle 에서 측정한 시간 출력으로 구현
@@ -34,17 +37,22 @@ public class PerformanceInterceptor implements HandlerInterceptor {
     private static final String PROCESS_TIME_MILLIS = "process-time-millis";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
+    public boolean preHandle(
+            HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         request.setAttribute(PROCESS_TIME_MILLIS, System.currentTimeMillis());
         return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @Nullable Object handler,
-                    @Nullable ModelAndView modelAndView) {
+    public void postHandle(
+            HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @Nullable Object handler,
+            @Nullable ModelAndView modelAndView) {
         var completeHandlerAdaptorTimeMillis = System.currentTimeMillis();
         var requestTimeMillis = (Long) request.getAttribute(PROCESS_TIME_MILLIS);
-        log.info("Handler proceed success. process time: {}ms", completeHandlerAdaptorTimeMillis - requestTimeMillis);
+        log.info(
+                "Handler proceed success. process time: {}ms",
+                completeHandlerAdaptorTimeMillis - requestTimeMillis);
     }
-
 }

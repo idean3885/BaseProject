@@ -42,5 +42,4 @@ public class MemberDeleteRspDto {
         this.mbrDaddr = member.getMbrDaddr();
         this.useYn = member.getUseYn();
     }
-
 }

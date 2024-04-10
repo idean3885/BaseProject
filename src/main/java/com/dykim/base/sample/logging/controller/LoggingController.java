@@ -20,5 +20,4 @@ public class LoggingController {
 
         return "Howdy! Check out the Logs to see the output...";
     }
-
 }

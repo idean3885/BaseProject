@@ -16,7 +16,7 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 /**
- * <p>Message source config
+ * Message source config
  *
  * @author dongyoung.kim
  * @since 1.0
@@ -37,7 +37,8 @@ public class MessageSourceConfig {
     @Bean
     public MessageSource messageSource() {
         var messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasenames("classpath:messages/messages", "classpath:messages/ValidationMessages");
+        messageSource.setBasenames(
+                "classpath:messages/messages", "classpath:messages/ValidationMessages");
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
         messageSource.setCacheSeconds(10 * 60);
         return messageSource;
@@ -49,6 +50,4 @@ public class MessageSourceConfig {
         interceptor.setParamName(COOKIE_LANG);
         return interceptor;
     }
-
-
 }

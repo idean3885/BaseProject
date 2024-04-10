@@ -3,11 +3,10 @@ package com.dykim.base.sample.hello.dto;
 import com.dykim.base.sample.hello.entity.Hello;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Schema(name = "HelloFindRspDto", description = "Hello 조회 응답 Dto")
 @Getter
@@ -42,5 +41,4 @@ public class HelloFindRspDto {
         yyyyMMddHHmmssSSS = hello.getYyyyMMddHHmmssSSS();
         useYn = hello.getUseYn();
     }
-
 }

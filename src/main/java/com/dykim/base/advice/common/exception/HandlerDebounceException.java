@@ -5,5 +5,4 @@ public class HandlerDebounceException extends RuntimeException {
     public HandlerDebounceException(String msg) {
         super(msg);
     }
-
 }

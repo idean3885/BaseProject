@@ -1,8 +1,8 @@
 package com.dykim.base.sample.hello.dto;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 public class HelloResponseDtoTest {
 
@@ -19,5 +19,4 @@ public class HelloResponseDtoTest {
         assertThat(rspDto.getName()).isEqualTo(name);
         assertThat(rspDto.getEmail()).isEqualTo(email);
     }
-
 }

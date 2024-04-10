@@ -1,5 +1,10 @@
 package com.dykim.base.config.interceptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.dykim.base.advice.common.CommonControllerAdvice;
 import com.dykim.base.advice.common.exception.InvalidSessionException;
 import com.dykim.base.sample.hello.controller.HelloController;
@@ -15,14 +20,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 /**
+ *
+ *
  * <h3>SessionValidationInterceptor 테스트 클래스</h3>
- * Api 세션 검증을 위한 인터셉터 테스트<p/>
+ *
+ * Api 세션 검증을 위한 인터셉터 테스트
+ *
+ * <p>
  *
  * <pre>
  *  - API 요청이 필수이기 때문에 컨트롤러와 연관됨.
@@ -34,21 +39,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SessionValidationInterceptorTest {
 
-    @Mock
-    private HelloRepository helloRepository;
+    @Mock private HelloRepository helloRepository;
 
-    @InjectMocks
-    private HelloService helloService;
+    @InjectMocks private HelloService helloService;
 
     private MockMvc mockMvc;
 
     @BeforeAll
     public void setup() {
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(new HelloController(helloService))
-                .addInterceptors(new SessionValidationInterceptor())
-                .setControllerAdvice(new CommonControllerAdvice())
-                .build();
+        mockMvc =
+                MockMvcBuilders.standaloneSetup(new HelloController(helloService))
+                        .addInterceptors(new SessionValidationInterceptor())
+                        .setControllerAdvice(new CommonControllerAdvice())
+                        .build();
     }
 
     @Order(1)
@@ -58,7 +61,8 @@ public class SessionValidationInterceptorTest {
         var newMockHttpSession = new MockHttpSession();
 
         // when
-        mockMvc.perform(get("/sample/hello/validSession").session(newMockHttpSession))
+        mockMvc
+                .perform(get("/sample/hello/validSession").session(newMockHttpSession))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
@@ -68,13 +72,14 @@ public class SessionValidationInterceptorTest {
     @Test
     public void call_validSession_invalid_session_throw_InvalidSessionException() throws Exception {
         // when
-        mockMvc.perform(get("/sample/hello/validSession"))
+        mockMvc
+                .perform(get("/sample/hello/validSession"))
                 // then
                 .andExpect(status().isUnauthorized())
-                .andExpect(result -> assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
-                        .isEqualTo(InvalidSessionException.class)
-                )
+                .andExpect(
+                        result ->
+                                assertThat(TestAdviceUtil.getApiResultExceptionClass(result))
+                                        .isEqualTo(InvalidSessionException.class))
                 .andDo(TestAdviceUtil::printExceptionMessage);
     }
-
 }

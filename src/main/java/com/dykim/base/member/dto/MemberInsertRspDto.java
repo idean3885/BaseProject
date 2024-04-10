@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 @Schema(name = "MemberInsertRspDto", description = "회원 추가 응답 Dto")
 @Getter
 @NoArgsConstructor
@@ -45,5 +44,4 @@ public class MemberInsertRspDto {
         this.mbrDaddr = member.getMbrDaddr();
         this.useYn = member.getUseYn();
     }
-
 }

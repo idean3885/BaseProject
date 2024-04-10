@@ -5,5 +5,4 @@ public class HelloAuditorAwareException extends RuntimeException {
     public HelloAuditorAwareException(String msg) {
         super(msg);
     }
-
 }

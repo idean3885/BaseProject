@@ -13,10 +13,7 @@ public class ApiResult<T> {
     private final T data;
 
     public static <T> ApiResult<T> ok(T data) {
-        return new ApiResult<>(
-                data.getClass().getSimpleName(),
-                data
-        );
+        return new ApiResult<>(data.getClass().getSimpleName(), data);
     }
 
     public static ApiResult<String> error(Exception e) {
@@ -30,5 +27,4 @@ public class ApiResult<T> {
     private static <T> ApiResult<T> error(String name, T data) {
         return new ApiResult<>(name, data);
     }
-
 }
