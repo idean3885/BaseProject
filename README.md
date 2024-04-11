@@ -28,6 +28,7 @@
 - JUnit5
 - Spring Data JPA(with. h2-MySQL8)
 - Thymeleaf (with. bootstrap AdminLTE3)
+- [docker-compose (for MySQL or MariaDB external connection)](#4-도커-컴포즈---외부-db-연동-테스트용)
 
 ## 2. API 문서
 - API 문서를 코드로 관리하기 위해 swagger 를 적용하였습니다.
@@ -67,6 +68,7 @@
 
 ## 98. 자체구현
 ### 1. API 다중호출방어로직
+> TODO: k6 테스트 환경 구성 후 실제 검증 필요. 제대로 동작하지 않는다.
 #### 목적
 - 동일 사용자(세션동일)가 같은 API를 다중호출하는 경우를 방지함.
 - 처리완료된 API를 다시 호출하는 경우, 유효한 세션이므로 비즈니스 로직이 수행됨.  
@@ -131,3 +133,10 @@
 
 ### 3. 코드 포맷팅 - spotless
 - spotless 플러그인을 통해 빌드 과정에서 코드 포맷을 검사하고 통제할 수 있도록 조절
+- build.gradle 에 아래 컴파일 옵션을 추가하여 build task 실행 전 `spotlessApply` 실행되도록 적용함.
+  `compileJava.dependsOn 'spotlessApply`
+
+### 4. 도커 컴포즈 - 외부 DB 연동 테스트용
+> 외부 DB 연동 테스트를 위해 도커 컴포즈로 MySQL, MariaDB 설정을 추가함.  
+> 도커 컴포즈 README 가이드를 통해 실행  
+> [도커 컴포즈 실행 가이드 보기](.db/README.md)

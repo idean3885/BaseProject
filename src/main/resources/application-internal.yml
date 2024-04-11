@@ -20,24 +20,8 @@ spring:
   thymeleaf:
     cache: false # 화면 로딩 시 캐시 비활성화(default: true), 화면 수정이 빈번한 개발환경에서만 캐시 비활성화
 
-# swagger doc
-springdoc:
-  version: v0.0.2
-  title: "Base Project"
-  description: "스프링부트 베이스 프로젝트"
-  packages-to-scan: com.dykim.base
-  swagger-ui:
-    path: /
-    tags-sorter: alpha
-    operations-sorter: alpha
-  api-docs:
-    path: /api-docs/json
-    groups.enabled: true
-  cache.disabled: true
-  default-consumes-media-type: application/json;charset=UTF-8
-  default-produces-media-type: application/json;charset=UTF-8
 logging:
   level:
     root: debug
-  file:
-    name: logs/server.log
+#  file:
+#    name: logs/server.log

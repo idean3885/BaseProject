@@ -46,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@ActiveProfiles("test")
+@ActiveProfiles("internal")
 @SpringBootTest
 public class HelloServiceTest {
 

@@ -1,5 +1,5 @@
 spring:
-  profiles.active: test
+  profiles.active: internal
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
@@ -9,6 +9,10 @@ spring:
     suffix: .html
     check-template-location: true # templates 디렉토리 검사(파일 없으면 에러 발생)
   output.ansi.enabled: always # 콘솔로그 색상 적용
+  sql:
+    init:
+      platform: mysql
+      mode: always
 
 server:
   servlet:
@@ -22,3 +26,20 @@ logging:
   pattern:
     console: "[%d{HH:mm:ss.SSS}][%clr(%-5level)][%.38t][%logger{39}#%method:%line] - %msg%n"
     file: "[%d{HH:mm:ss.SSS}][%-5level][%.38t][%logger{39}#%method:%line] - %msg%n"
+
+# swagger doc
+springdoc:
+  version: v0.0.2
+  title: "Base Project"
+  description: "스프링부트 베이스 프로젝트"
+  packages-to-scan: com.dykim.base
+  swagger-ui:
+    path: /
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /api-docs/json
+    groups.enabled: true
+  cache.disabled: true
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
