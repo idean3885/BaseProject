@@ -8,12 +8,13 @@
 
 ## 목차
 1. [환경구성](#1-환경구성)
-2. [API 문서](#2-API-문서)
-3. [테스트 코드](#3-테스트-코드)
-4. [입력값 검증](#4-입력값-검증)
-5. [회원 엔티티 구현](#5-회원-엔티티-구현)
-6. [Spring Session, Spring Security 구현](#6-spring-session-spring-security-구현)
-7. [로그인 구현](#7-로그인-구현)
+2. [서버 실행 가이드](#2-서버-실행-가이드)
+3. [API 문서](#3-API-문서)
+4. [테스트 코드](#4-테스트-코드)
+5. [입력값 검증](#5-입력값-검증)
+6. [회원 엔티티 구현](#6-회원-엔티티-구현)
+7. [Spring Session, Spring Security 구현](#7-spring-session-spring-security-구현)
+8. [로그인 구현](#8-로그인-구현)
 
 ## 기타
 98. [자체구현](#98-자체구현)
@@ -30,7 +31,26 @@
 - Thymeleaf (with. bootstrap AdminLTE3)
 - [docker-compose (for MySQL or MariaDB external connection)](#4-도커-컴포즈---외부-db-연동-테스트용)
 
-## 2. API 문서
+## 2. 서버 실행 가이드
+### 1. 그레들 디펜던시 설치
+
+### 2. 서버 실행
+1. internal 실행 - H2 인메모리
+   - 디폴트로 internal 프로파일로 실행되어 H2 인메모리로 동작합니다.
+2. external 실행 - 외부 DB 또는 docker-compose DB
+   - 외부 DB 로 연동하고 싶은 경우, external 프로파일을 수정하고 실행할 수 있습니다.
+   - 테스트용 DB 가 필요한 경우, .db 디렉토리의 docker-compose 를 사용할 수 있습니다.  
+     [docker-compose 가이드 보기](.db/README.md)
+
+### 3. 프론트 접속
+> TBD: 스프링 시큐리티 적용 후 로그인 페이지로 가이드 변경 예정
+- http://localhost:8080/sample/front/sampleWithDefaultLayout
+
+
+### 참고) API 문서(swagger) 접속
+- http://localhost:8080/swagger-ui/index.html
+
+## 3. API 문서
 - API 문서를 코드로 관리하기 위해 swagger 를 적용하였습니다.
 - swagger-ui 3.0 / springdocs 디펜던시로 구현
 - 추가 설정없이 사용가능한 sprigdocs 로 swagger3 구현함.
@@ -41,28 +61,28 @@
   ant_path_matcher -> path_pattern_parser
   ```
 
-## 3. 테스트 코드
+## 4. 테스트 코드
 - Spring Boot 2.7.0 기준 spring-starter-test 에 JUnit5 가 내장되어 있어 JUnit5를 사용합니다.
 - io.spring.dependency-management 에 의해 스프링 관련 디펜던시가 일괄 관리되기 때문에 위 디펜던시 버전은 변경하지 않습니다.   
   [JUnit4 -> JUnit5 메소드 변경점 참고 블로그](https://theheydaze.tistory.com/218)
 
 
-## 4. 입력값 검증
+## 5. 입력값 검증
 1. 컨트롤러 진입 전 Dto 검증
 2. 서비스코드 진입 전 Dto 검증
 * [Dto, Entity 검증 정리한 블로그](https://velog.io/@idean3885/Dto-Entity-Validation-%EC%B2%98%EB%A6%AC#2-entity-validation---validated)
 
-## 5. 회원 엔티티 구현
+## 6. 회원 엔티티 구현
 - Spring Data JPA(with. H2-MySQL8) 로 작성
 - 기능 구현 중심의 프로젝트이기 때문에 H2 데이터베이스의 인메모리 방식을 사용합니다.
 - 공공데이터 포털에서 관리되는 표준용어 기준으로 ERD를 작성하고 구현했습니다.
   + ~~[(폐쇄됌.)공공데이터 공통표준용어 폐쇄된 페이지 확인](https://data.seoul.go.kr/commonList/commonList.do)~~
 - [작성된 ERD 확인하기(ERDCloud)](https://www.erdcloud.com/d/ZG8wGTXTmkTyL8qdp)
 
-## 6. Spring Session, Spring Security 구현
+## 7. Spring Session, Spring Security 구현
 - TBD
 
-## 7. 로그인 구현
+## 8. 로그인 구현
 - 이메일, 패스워드로 구현
 - TBD
 
