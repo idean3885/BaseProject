@@ -1,8 +1,8 @@
 package com.dykim.base.config;
 
-import com.dykim.base.config.interceptor.DebounceInterceptor;
-import com.dykim.base.config.interceptor.PerformanceInterceptor;
-import com.dykim.base.config.interceptor.SessionValidationInterceptor;
+import com.dykim.base.interceptor.DebounceInterceptor;
+import com.dykim.base.interceptor.PerformanceInterceptor;
+import com.dykim.base.interceptor.SessionValidationInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
