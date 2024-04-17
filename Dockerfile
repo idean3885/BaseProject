@@ -4,6 +4,7 @@ WORKDIR /usr/src/github.com/idean3885/BaseProject
 
 COPY . .
 
+RUN chmod +x gradlew
 RUN ./gradlew build
 
 FROM openjdk:11-jre-slim
