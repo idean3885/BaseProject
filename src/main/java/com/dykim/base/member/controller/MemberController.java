@@ -87,8 +87,8 @@ public class MemberController {
     @Operation(summary = "Select Member List", description = "회원 목록 조회")
     @ResponseBody
     @GetMapping
-    public ApiResult<MemberSelectListRspDto> selectList(@RequestParam String mbrNm) {
-        return ok(memberService.selectList(mbrNm));
+    public ApiResult<MemberSelectListRspDto> selectList(@RequestParam String name) {
+        return ok(memberService.selectList(name));
     }
 
     @ApiResponses(

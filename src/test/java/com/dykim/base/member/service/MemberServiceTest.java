@@ -50,25 +50,25 @@ public class MemberServiceTest {
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("name")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("road address")
-                        .mbrDaddr("detail address")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("road address")
+                        .detailAddress("detail address")
                         .build();
 
         // when
         var rspDto = memberService.insert(reqDto);
 
         // then
-        assertThat(rspDto.getMbrId()).isNotNull();
-        assertThat(rspDto.getMbrEml()).isEqualTo(reqDto.getMbrEml());
-        assertThat(rspDto.getMbrPswd()).isEqualTo(reqDto.getMbrPswd());
-        assertThat(rspDto.getMbrNm()).isEqualTo(reqDto.getMbrNm());
-        assertThat(rspDto.getMbrTelno()).isEqualTo(reqDto.getMbrTelno());
-        assertThat(rspDto.getMbrRoadNmAddr()).isEqualTo(reqDto.getMbrRoadNmAddr());
-        assertThat(rspDto.getMbrDaddr()).isEqualTo(reqDto.getMbrDaddr());
+        assertThat(rspDto.getId()).isNotNull();
+        assertThat(rspDto.getEmail()).isEqualTo(reqDto.getEmail());
+        assertThat(rspDto.getPassword()).isEqualTo(reqDto.getPassword());
+        assertThat(rspDto.getName()).isEqualTo(reqDto.getName());
+        assertThat(rspDto.getPhoneNo()).isEqualTo(reqDto.getPhoneNo());
+        assertThat(rspDto.getRoadNameAddress()).isEqualTo(reqDto.getRoadNameAddress());
+        assertThat(rspDto.getDetailAddress()).isEqualTo(reqDto.getDetailAddress());
         assertThat(rspDto.getUseYn()).isEqualTo("Y");
     }
 
@@ -80,23 +80,23 @@ public class MemberServiceTest {
         var mockMemberInsertRspDto =
                 memberService.insert(
                         MemberInsertReqDto.builder()
-                                .mbrEml("mock@email.com")
-                                .mbrPswd("mock-pswd")
-                                .mbrNm("mock-mbrNm")
-                                .mbrTelno("01234567890")
-                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                                .mbrDaddr("mock-mbrDaddr")
+                                .email("mock@email.com")
+                                .password("mock-pswd")
+                                .name("mock-name")
+                                .phoneNo("01234567890")
+                                .roadNameAddress("mock-roadNameAddress")
+                                .detailAddress("mock-detailAddress")
                                 .build());
 
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml(mockMemberInsertRspDto.getMbrEml())
-                        .mbrPswd("pswd")
-                        .mbrNm("name")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("road address")
-                        .mbrDaddr("detail address")
+                        .email(mockMemberInsertRspDto.getEmail())
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("road address")
+                        .detailAddress("detail address")
                         .build();
 
         // when-then
@@ -111,28 +111,28 @@ public class MemberServiceTest {
         var mockMemberInsertRspDto =
                 memberService.insert(
                         MemberInsertReqDto.builder()
-                                .mbrEml("mock@email.com")
-                                .mbrPswd("mock-pswd")
-                                .mbrNm("mock-mbrNm")
-                                .mbrTelno("01234567890")
-                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                                .mbrDaddr("mock-mbrDaddr")
+                                .email("mock@email.com")
+                                .password("mock-pswd")
+                                .name("mock-name")
+                                .phoneNo("01234567890")
+                                .roadNameAddress("mock-roadNameAddress")
+                                .detailAddress("mock-detailAddress")
                                 .build());
 
         // given
-        var mbrId = mockMemberInsertRspDto.getMbrId();
+        var mbrId = mockMemberInsertRspDto.getId();
 
         // when
         var rspDto = memberService.select(mbrId);
 
         // then
         assertThat(rspDto.getMbrId()).isEqualTo(mbrId);
-        assertThat(rspDto.getMbrEml()).isEqualTo(mockMemberInsertRspDto.getMbrEml());
-        assertThat(rspDto.getMbrPswd()).isEqualTo(mockMemberInsertRspDto.getMbrPswd());
-        assertThat(rspDto.getMbrNm()).isEqualTo(mockMemberInsertRspDto.getMbrNm());
-        assertThat(rspDto.getMbrTelno()).isEqualTo(mockMemberInsertRspDto.getMbrTelno());
-        assertThat(rspDto.getMbrRoadNmAddr()).isEqualTo(mockMemberInsertRspDto.getMbrRoadNmAddr());
-        assertThat(rspDto.getMbrDaddr()).isEqualTo(mockMemberInsertRspDto.getMbrDaddr());
+        assertThat(rspDto.getEmail()).isEqualTo(mockMemberInsertRspDto.getEmail());
+        assertThat(rspDto.getPassword()).isEqualTo(mockMemberInsertRspDto.getPassword());
+        assertThat(rspDto.getName()).isEqualTo(mockMemberInsertRspDto.getName());
+        assertThat(rspDto.getPhoneNo()).isEqualTo(mockMemberInsertRspDto.getPhoneNo());
+        assertThat(rspDto.getRoadNameAddress()).isEqualTo(mockMemberInsertRspDto.getRoadNameAddress());
+        assertThat(rspDto.getDetailAddress()).isEqualTo(mockMemberInsertRspDto.getDetailAddress());
         assertThat(rspDto.getUseYn()).isEqualTo("Y");
     }
 
@@ -144,11 +144,11 @@ public class MemberServiceTest {
         final IntFunction<String> initEmlByNumber = number -> String.format("mock%d@email.com", number);
         var sameInsertReqDto =
                 MemberInsertReqDto.builder()
-                        .mbrPswd("mock-pswd")
-                        .mbrNm("sameName")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                        .mbrDaddr("mock-mbrDaddr")
+                        .password("mock-pswd")
+                        .name("sameName")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("mock-roadNameAddress")
+                        .detailAddress("mock-detailAddress")
                         .build();
         final var SAME_COUNT = 10;
         IntStream.range(1, SAME_COUNT + 1)
@@ -156,16 +156,16 @@ public class MemberServiceTest {
                         number ->
                                 memberService.insert(
                                         MemberInsertReqDto.builder()
-                                                .mbrEml(initEmlByNumber.apply(number))
-                                                .mbrPswd(sameInsertReqDto.getMbrPswd())
-                                                .mbrNm(sameInsertReqDto.getMbrNm())
-                                                .mbrTelno(sameInsertReqDto.getMbrTelno())
-                                                .mbrRoadNmAddr(sameInsertReqDto.getMbrRoadNmAddr())
-                                                .mbrDaddr(sameInsertReqDto.getMbrDaddr())
+                                                .email(initEmlByNumber.apply(number))
+                                                .password(sameInsertReqDto.getPassword())
+                                                .name(sameInsertReqDto.getName())
+                                                .phoneNo(sameInsertReqDto.getPhoneNo())
+                                                .roadNameAddress(sameInsertReqDto.getRoadNameAddress())
+                                                .detailAddress(sameInsertReqDto.getDetailAddress())
                                                 .build()));
 
         // when
-        var rspDto = memberService.selectList(sameInsertReqDto.getMbrNm());
+        var rspDto = memberService.selectList(sameInsertReqDto.getName());
 
         // then
         assertThat(rspDto.getList().size()).isEqualTo(SAME_COUNT);
@@ -173,12 +173,13 @@ public class MemberServiceTest {
         var specimenIdx = new Random(System.currentTimeMillis()).nextInt(SAME_COUNT);
         var specimenRspDto = rspDto.getList().get(specimenIdx);
         assertThat(specimenRspDto.getMbrId()).isNotNull();
-        assertThat(specimenRspDto.getMbrEml()).isEqualTo(initEmlByNumber.apply(specimenIdx + 1));
-        assertThat(specimenRspDto.getMbrPswd()).isEqualTo(sameInsertReqDto.getMbrPswd());
-        assertThat(specimenRspDto.getMbrNm()).isEqualTo(sameInsertReqDto.getMbrNm());
-        assertThat(specimenRspDto.getMbrTelno()).isEqualTo(sameInsertReqDto.getMbrTelno());
-        assertThat(specimenRspDto.getMbrRoadNmAddr()).isEqualTo(sameInsertReqDto.getMbrRoadNmAddr());
-        assertThat(specimenRspDto.getMbrDaddr()).isEqualTo(sameInsertReqDto.getMbrDaddr());
+        assertThat(specimenRspDto.getEmail()).isEqualTo(initEmlByNumber.apply(specimenIdx + 1));
+        assertThat(specimenRspDto.getPassword()).isEqualTo(sameInsertReqDto.getPassword());
+        assertThat(specimenRspDto.getName()).isEqualTo(sameInsertReqDto.getName());
+        assertThat(specimenRspDto.getPhoneNo()).isEqualTo(sameInsertReqDto.getPhoneNo());
+        assertThat(specimenRspDto.getRoadNameAddress())
+                .isEqualTo(sameInsertReqDto.getRoadNameAddress());
+        assertThat(specimenRspDto.getDetailAddress()).isEqualTo(sameInsertReqDto.getDetailAddress());
         assertThat(specimenRspDto.getUseYn()).isEqualTo("Y");
     }
 
@@ -204,31 +205,31 @@ public class MemberServiceTest {
         var mockMemberInsertRspDto =
                 memberService.insert(
                         MemberInsertReqDto.builder()
-                                .mbrEml("mock@email.com")
-                                .mbrPswd("mock-pswd")
-                                .mbrNm("mock-mbrNm")
-                                .mbrTelno("01234567890")
-                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                                .mbrDaddr("mock-mbrDaddr")
+                                .email("mock@email.com")
+                                .password("mock-pswd")
+                                .name("mock-name")
+                                .phoneNo("01234567890")
+                                .roadNameAddress("mock-roadNameAddress")
+                                .detailAddress("mock-detailAddress")
                                 .build());
 
         // given
         var reqDto =
                 MemberUpdateReqDto.builder()
-                        .mbrPswd("udpate pswd")
-                        .mbrTelno("11111111111")
-                        .mbrRoadNmAddr("update road address")
-                        .mbrDaddr("update detail address")
+                        .password("udpate pswd")
+                        .phoneNo("11111111111")
+                        .roadNameAddress("update road address")
+                        .detailAddress("update detail address")
                         .build();
 
         // when
-        var rspDto = memberService.update(mockMemberInsertRspDto.getMbrId(), reqDto);
+        var rspDto = memberService.update(mockMemberInsertRspDto.getId(), reqDto);
 
         // then
-        assertThat(rspDto.getMbrPswd()).isEqualTo(reqDto.getMbrPswd());
-        assertThat(rspDto.getMbrTelno()).isEqualTo(reqDto.getMbrTelno());
-        assertThat(rspDto.getMbrRoadNmAddr()).isEqualTo(reqDto.getMbrRoadNmAddr());
-        assertThat(rspDto.getMbrDaddr()).isEqualTo(reqDto.getMbrDaddr());
+        assertThat(rspDto.getPassword()).isEqualTo(reqDto.getPassword());
+        assertThat(rspDto.getPhoneNo()).isEqualTo(reqDto.getPhoneNo());
+        assertThat(rspDto.getRoadNameAddress()).isEqualTo(reqDto.getRoadNameAddress());
+        assertThat(rspDto.getDetailAddress()).isEqualTo(reqDto.getDetailAddress());
     }
 
     @Order(7)
@@ -238,10 +239,10 @@ public class MemberServiceTest {
         // given
         var reqDto =
                 MemberUpdateReqDto.builder()
-                        .mbrPswd("udpate pswd")
-                        .mbrTelno("11111111111")
-                        .mbrRoadNmAddr("update road address")
-                        .mbrDaddr("update detail address")
+                        .password("udpate pswd")
+                        .phoneNo("11111111111")
+                        .roadNameAddress("update road address")
+                        .detailAddress("update detail address")
                         .build();
         final var NOT_EXIST_MBR_ID = -1L;
 
@@ -258,16 +259,16 @@ public class MemberServiceTest {
         var mockMemberInsertRspDto =
                 memberService.insert(
                         MemberInsertReqDto.builder()
-                                .mbrEml("mock@email.com")
-                                .mbrPswd("mock-pswd")
-                                .mbrNm("mock-mbrNm")
-                                .mbrTelno("01234567890")
-                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                                .mbrDaddr("mock-mbrDaddr")
+                                .email("mock@email.com")
+                                .password("mock-pswd")
+                                .name("mock-name")
+                                .phoneNo("01234567890")
+                                .roadNameAddress("mock-roadNameAddress")
+                                .detailAddress("mock-detailAddress")
                                 .build());
 
         // given
-        var mbrId = mockMemberInsertRspDto.getMbrId();
+        var mbrId = mockMemberInsertRspDto.getId();
 
         // when
         var rspDto = memberService.delete(mbrId);

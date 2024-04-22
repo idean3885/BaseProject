@@ -32,57 +32,57 @@ import org.hibernate.annotations.Comment;
 @Entity
 public class Member extends MemberBaseEntity {
 
-    @Comment("회원ID")
+    @Comment("ID")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mbrId;
+    private Long id;
 
-    @Comment("회원이메일")
+    @Comment("이메일")
     @Email
     @Column(unique = true, nullable = false, length = 100)
-    private String mbrEml;
+    private String email;
 
-    @Comment("회원비밀번호")
+    @Comment("비밀번호")
     @NotBlank
     @Column(nullable = false, length = 64)
-    private String mbrPswd;
+    private String password;
 
-    @Comment("회원이름")
+    @Comment("이름")
     @NotBlank
     @Column(nullable = false, length = 50)
-    private String mbrNm;
+    private String name;
 
-    @Comment("회원전화번호")
+    @Comment("휴대폰 번호")
     @Column(length = 11)
-    private String mbrTelno;
+    private String phoneNo;
 
-    @Comment("회원도로명주소")
+    @Comment("도로명 주소")
     @Column(length = 200)
-    private String mbrRoadNmAddr;
+    private String roadNameAddress;
 
-    @Comment("회원상세주소")
+    @Comment("상세 주소")
     @Column(length = 200)
-    private String mbrDaddr;
+    private String detailAddress;
 
-    @Comment("사용여부")
+    @Comment("회원 여부")
     @Column(nullable = false, length = 1)
     private String useYn;
 
     @Builder
     public Member(
-            String mbrEml,
-            String mbrPswd,
-            String mbrNm,
-            String mbrTelno,
-            String mbrRoadNmAddr,
-            String mbrDaddr,
+            String email,
+            String password,
+            String name,
+            String phoneNo,
+            String roadNameAddress,
+            String detailAddress,
             String useYn) {
-        this.mbrEml = mbrEml;
-        this.mbrPswd = mbrPswd;
-        this.mbrNm = mbrNm;
-        this.mbrTelno = mbrTelno;
-        this.mbrRoadNmAddr = mbrRoadNmAddr;
-        this.mbrDaddr = mbrDaddr;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phoneNo = phoneNo;
+        this.roadNameAddress = roadNameAddress;
+        this.detailAddress = detailAddress;
         this.useYn = useYn;
     }
 
@@ -92,13 +92,16 @@ public class Member extends MemberBaseEntity {
     }
 
     public Member update(MemberUpdateReqDto reqDto) {
-        mbrPswd = StringUtils.isNoneBlank(reqDto.getMbrPswd()) ? reqDto.getMbrPswd() : mbrPswd;
-        mbrTelno = StringUtils.isNoneBlank(reqDto.getMbrTelno()) ? reqDto.getMbrTelno() : mbrTelno;
-        mbrRoadNmAddr =
-                StringUtils.isNoneBlank(reqDto.getMbrRoadNmAddr())
-                        ? reqDto.getMbrRoadNmAddr()
-                        : mbrRoadNmAddr;
-        mbrDaddr = StringUtils.isNoneBlank(reqDto.getMbrDaddr()) ? reqDto.getMbrDaddr() : mbrDaddr;
+        password = StringUtils.isNoneBlank(reqDto.getPassword()) ? reqDto.getPassword() : password;
+        phoneNo = StringUtils.isNoneBlank(reqDto.getPhoneNo()) ? reqDto.getPhoneNo() : phoneNo;
+        roadNameAddress =
+                StringUtils.isNoneBlank(reqDto.getRoadNameAddress())
+                        ? reqDto.getRoadNameAddress()
+                        : roadNameAddress;
+        detailAddress =
+                StringUtils.isNoneBlank(reqDto.getDetailAddress())
+                        ? reqDto.getDetailAddress()
+                        : detailAddress;
         return this;
     }
 

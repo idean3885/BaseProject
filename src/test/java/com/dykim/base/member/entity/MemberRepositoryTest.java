@@ -39,12 +39,12 @@ public class MemberRepositoryTest {
         // given
         var member =
                 Member.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("mbrNm")
-                        .mbrTelno("mbrTelno")
-                        .mbrRoadNmAddr("mbrRoadNmAddr")
-                        .mbrDaddr("mbrDaddr")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("phoneNo")
+                        .roadNameAddress("roadNameAddress")
+                        .detailAddress("detailAddress")
                         .useYn("Y")
                         .build();
 
@@ -52,13 +52,13 @@ public class MemberRepositoryTest {
         var insertedMember = memberRepository.save(member);
 
         // then
-        assertThat(insertedMember.getMbrId()).isNotNull();
-        assertThat(insertedMember.getMbrEml()).isEqualTo(member.getMbrEml());
-        assertThat(insertedMember.getMbrPswd()).isEqualTo(member.getMbrPswd());
-        assertThat(insertedMember.getMbrNm()).isEqualTo(member.getMbrNm());
-        assertThat(insertedMember.getMbrTelno()).isEqualTo(member.getMbrTelno());
-        assertThat(insertedMember.getMbrRoadNmAddr()).isEqualTo(member.getMbrRoadNmAddr());
-        assertThat(insertedMember.getMbrDaddr()).isEqualTo(member.getMbrDaddr());
+        assertThat(insertedMember.getId()).isNotNull();
+        assertThat(insertedMember.getEmail()).isEqualTo(member.getEmail());
+        assertThat(insertedMember.getPassword()).isEqualTo(member.getPassword());
+        assertThat(insertedMember.getName()).isEqualTo(member.getName());
+        assertThat(insertedMember.getPhoneNo()).isEqualTo(member.getPhoneNo());
+        assertThat(insertedMember.getRoadNameAddress()).isEqualTo(member.getRoadNameAddress());
+        assertThat(insertedMember.getDetailAddress()).isEqualTo(member.getDetailAddress());
         assertThat(insertedMember.getUseYn()).isEqualTo(member.getUseYn());
         assertBaseEntitySave(insertedMember);
     }
@@ -70,24 +70,24 @@ public class MemberRepositoryTest {
         var mockMember =
                 memberRepository.save(
                         Member.builder()
-                                .mbrEml("mock@email.com")
-                                .mbrPswd("mock-pswd")
-                                .mbrNm("mock-mbrNm")
-                                .mbrTelno("01234567890")
-                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                                .mbrDaddr("mock-mbrDaddr")
+                                .email("mock@email.com")
+                                .password("mock-pswd")
+                                .name("mock-name")
+                                .phoneNo("01234567890")
+                                .roadNameAddress("mock-roadNameAddress")
+                                .detailAddress("mock-detailAddress")
                                 .useYn("Y")
                                 .build());
 
         // given
         var member =
                 Member.builder()
-                        .mbrEml(mockMember.getMbrEml())
-                        .mbrPswd("pswd")
-                        .mbrNm("mbrNm")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("mbrRoadNmAddr")
-                        .mbrDaddr("mbrDaddr")
+                        .email(mockMember.getEmail())
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("roadNameAddress")
+                        .detailAddress("detailAddress")
                         .useYn("Y")
                         .build();
 
@@ -101,12 +101,12 @@ public class MemberRepositoryTest {
         // given
         var member =
                 Member.builder()
-                        .mbrEml("valid@email.com")
-                        //                .mbrPswd("pswd") // nullable=false 테스트용 주석
-                        .mbrNm("mbrNm")
-                        .mbrTelno("mbrTelno")
-                        .mbrRoadNmAddr("mbrRoadNmAddr")
-                        .mbrDaddr("mbrDaddr")
+                        .email("valid@email.com")
+                        //                .password("pswd") // nullable=false 테스트용 주석
+                        .name("name")
+                        .phoneNo("phoneNo")
+                        .roadNameAddress("roadNameAddress")
+                        .detailAddress("detailAddress")
                         .useYn("Y")
                         .build();
 
@@ -120,12 +120,12 @@ public class MemberRepositoryTest {
         // given
         var member =
                 Member.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("mbrNm")
-                        .mbrTelno("012345678901")
-                        .mbrRoadNmAddr("mbrRoadNmAddr")
-                        .mbrDaddr("mbrDaddr")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("012345678901")
+                        .roadNameAddress("roadNameAddress")
+                        .detailAddress("detailAddress")
                         .useYn("Y")
                         .build();
 
@@ -140,44 +140,44 @@ public class MemberRepositoryTest {
         var mockMember =
                 memberRepository.save(
                         Member.builder()
-                                .mbrEml("mock@email.com")
-                                .mbrPswd("mock-pswd")
-                                .mbrNm("mock-mbrNm")
-                                .mbrTelno("01234567890")
-                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                                .mbrDaddr("mock-mbrDaddr")
+                                .email("mock@email.com")
+                                .password("mock-pswd")
+                                .name("mock-name")
+                                .phoneNo("01234567890")
+                                .roadNameAddress("mock-roadNameAddress")
+                                .detailAddress("mock-detailAddress")
                                 .useYn("Y")
                                 .build());
 
         // when
-        var memberOps = memberRepository.findById(mockMember.getMbrId());
+        var memberOps = memberRepository.findById(mockMember.getId());
 
         // then
         assertThat(memberOps.isPresent()).isTrue();
 
         var member = memberOps.get();
-        assertThat(member.getMbrEml()).isEqualTo(mockMember.getMbrEml());
-        assertThat(member.getMbrPswd()).isEqualTo(mockMember.getMbrPswd());
-        assertThat(member.getMbrNm()).isEqualTo(mockMember.getMbrNm());
-        assertThat(member.getMbrTelno()).isEqualTo(mockMember.getMbrTelno());
-        assertThat(member.getMbrRoadNmAddr()).isEqualTo(mockMember.getMbrRoadNmAddr());
-        assertThat(member.getMbrDaddr()).isEqualTo(mockMember.getMbrDaddr());
+        assertThat(member.getEmail()).isEqualTo(mockMember.getEmail());
+        assertThat(member.getPassword()).isEqualTo(mockMember.getPassword());
+        assertThat(member.getName()).isEqualTo(mockMember.getName());
+        assertThat(member.getPhoneNo()).isEqualTo(mockMember.getPhoneNo());
+        assertThat(member.getRoadNameAddress()).isEqualTo(mockMember.getRoadNameAddress());
+        assertThat(member.getDetailAddress()).isEqualTo(mockMember.getDetailAddress());
         assertThat(member.getUseYn()).isEqualTo(mockMember.getUseYn());
         assertBaseEntitySelect(member);
     }
 
     @Order(6)
     @Test
-    public void findAllByMbrNm_return_member_list() {
+    public void findAllByname_return_member_list() {
         // given
         final IntFunction<String> initEmlByNumber = number -> String.format("mock%d@email.com", number);
         var sameSaveMember =
                 Member.builder()
-                        .mbrPswd("mock-pswd")
-                        .mbrNm("sameName")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                        .mbrDaddr("mock-mbrDaddr")
+                        .password("mock-pswd")
+                        .name("sameName")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("mock-roadNameAddress")
+                        .detailAddress("mock-detailAddress")
                         .useYn("Y")
                         .build();
         final var SAME_COUNT = 10;
@@ -186,17 +186,17 @@ public class MemberRepositoryTest {
                         number ->
                                 memberRepository.save(
                                         Member.builder()
-                                                .mbrEml(initEmlByNumber.apply(number))
-                                                .mbrPswd(sameSaveMember.getMbrPswd())
-                                                .mbrNm(sameSaveMember.getMbrNm())
-                                                .mbrTelno(sameSaveMember.getMbrTelno())
-                                                .mbrRoadNmAddr(sameSaveMember.getMbrRoadNmAddr())
-                                                .mbrDaddr(sameSaveMember.getMbrDaddr())
+                                                .email(initEmlByNumber.apply(number))
+                                                .password(sameSaveMember.getPassword())
+                                                .name(sameSaveMember.getName())
+                                                .phoneNo(sameSaveMember.getPhoneNo())
+                                                .roadNameAddress(sameSaveMember.getRoadNameAddress())
+                                                .detailAddress(sameSaveMember.getDetailAddress())
                                                 .useYn(sameSaveMember.getUseYn())
                                                 .build()));
 
         // when
-        var memberListOps = memberRepository.findAllByMbrNm(sameSaveMember.getMbrNm());
+        var memberListOps = memberRepository.findAllByName(sameSaveMember.getName());
 
         // then
         assertThat(memberListOps.isPresent()).isTrue();
@@ -206,12 +206,12 @@ public class MemberRepositoryTest {
 
         var specimenIdx = new Random(System.currentTimeMillis()).nextInt(SAME_COUNT);
         var specimenMember = memberList.get(specimenIdx);
-        assertThat(specimenMember.getMbrEml()).isEqualTo(initEmlByNumber.apply(specimenIdx + 1));
-        assertThat(specimenMember.getMbrPswd()).isEqualTo(sameSaveMember.getMbrPswd());
-        assertThat(specimenMember.getMbrNm()).isEqualTo(sameSaveMember.getMbrNm());
-        assertThat(specimenMember.getMbrTelno()).isEqualTo(sameSaveMember.getMbrTelno());
-        assertThat(specimenMember.getMbrRoadNmAddr()).isEqualTo(sameSaveMember.getMbrRoadNmAddr());
-        assertThat(specimenMember.getMbrDaddr()).isEqualTo(sameSaveMember.getMbrDaddr());
+        assertThat(specimenMember.getEmail()).isEqualTo(initEmlByNumber.apply(specimenIdx + 1));
+        assertThat(specimenMember.getPassword()).isEqualTo(sameSaveMember.getPassword());
+        assertThat(specimenMember.getName()).isEqualTo(sameSaveMember.getName());
+        assertThat(specimenMember.getPhoneNo()).isEqualTo(sameSaveMember.getPhoneNo());
+        assertThat(specimenMember.getRoadNameAddress()).isEqualTo(sameSaveMember.getRoadNameAddress());
+        assertThat(specimenMember.getDetailAddress()).isEqualTo(sameSaveMember.getDetailAddress());
         assertThat(specimenMember.getUseYn()).isEqualTo(sameSaveMember.getUseYn());
         assertBaseEntitySelect(specimenMember);
     }
@@ -223,43 +223,43 @@ public class MemberRepositoryTest {
         var mockMember =
                 memberRepository.save(
                         Member.builder()
-                                .mbrEml("mock@email.com")
-                                .mbrPswd("mock-pswd")
-                                .mbrNm("mock-mbrNm")
-                                .mbrTelno("01234567890")
-                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                                .mbrDaddr("mock-mbrDaddr")
+                                .email("mock@email.com")
+                                .password("mock-pswd")
+                                .name("mock-name")
+                                .phoneNo("01234567890")
+                                .roadNameAddress("mock-roadNameAddress")
+                                .detailAddress("mock-detailAddress")
                                 .useYn("Y")
                                 .build());
 
         // given
         var reqDto =
                 MemberUpdateReqDto.builder()
-                        .mbrPswd("udpate pswd")
-                        .mbrTelno("11111111111")
-                        .mbrRoadNmAddr("update road address")
-                        .mbrDaddr("update detail address")
+                        .password("udpate pswd")
+                        .phoneNo("11111111111")
+                        .roadNameAddress("update road address")
+                        .detailAddress("update detail address")
                         .build();
 
         // when
         var member = memberRepository.save(mockMember.update(reqDto));
 
         // then
-        assertThat(member.getMbrPswd()).isEqualTo(reqDto.getMbrPswd());
-        assertThat(member.getMbrTelno()).isEqualTo(reqDto.getMbrTelno());
-        assertThat(member.getMbrRoadNmAddr()).isEqualTo(reqDto.getMbrRoadNmAddr());
-        assertThat(member.getMbrDaddr()).isEqualTo(reqDto.getMbrDaddr());
+        assertThat(member.getPassword()).isEqualTo(reqDto.getPassword());
+        assertThat(member.getPhoneNo()).isEqualTo(reqDto.getPhoneNo());
+        assertThat(member.getRoadNameAddress()).isEqualTo(reqDto.getRoadNameAddress());
+        assertThat(member.getDetailAddress()).isEqualTo(reqDto.getDetailAddress());
         assertBaseEntityUpdate(member);
 
         // cross-check select
-        var selectMemberOps = memberRepository.findById(member.getMbrId());
+        var selectMemberOps = memberRepository.findById(member.getId());
         assertThat(selectMemberOps.isPresent()).isTrue();
 
         var selectMember = selectMemberOps.get();
-        assertThat(selectMember.getMbrPswd()).isEqualTo(reqDto.getMbrPswd());
-        assertThat(selectMember.getMbrTelno()).isEqualTo(reqDto.getMbrTelno());
-        assertThat(selectMember.getMbrRoadNmAddr()).isEqualTo(reqDto.getMbrRoadNmAddr());
-        assertThat(selectMember.getMbrDaddr()).isEqualTo(reqDto.getMbrDaddr());
+        assertThat(selectMember.getPassword()).isEqualTo(reqDto.getPassword());
+        assertThat(selectMember.getPhoneNo()).isEqualTo(reqDto.getPhoneNo());
+        assertThat(selectMember.getRoadNameAddress()).isEqualTo(reqDto.getRoadNameAddress());
+        assertThat(selectMember.getDetailAddress()).isEqualTo(reqDto.getDetailAddress());
         assertBaseEntitySelect(selectMember);
     }
 
@@ -270,12 +270,12 @@ public class MemberRepositoryTest {
         var mockMember =
                 memberRepository.save(
                         Member.builder()
-                                .mbrEml("mock@email.com")
-                                .mbrPswd("mock-pswd")
-                                .mbrNm("mock-mbrNm")
-                                .mbrTelno("01234567890")
-                                .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                                .mbrDaddr("mock-mbrDaddr")
+                                .email("mock@email.com")
+                                .password("mock-pswd")
+                                .name("mock-name")
+                                .phoneNo("01234567890")
+                                .roadNameAddress("mock-roadNameAddress")
+                                .detailAddress("mock-detailAddress")
                                 .useYn("Y")
                                 .build());
 
@@ -286,12 +286,12 @@ public class MemberRepositoryTest {
         var member = memberRepository.save(mockMember);
 
         // then
-        assertThat(member.getMbrId()).isEqualTo(mockMember.getMbrId());
+        assertThat(member.getId()).isEqualTo(mockMember.getId());
         assertThat(member.getUseYn()).isEqualTo("N");
         assertBaseEntityDelete(member);
 
         // cross-check select
-        var selectMemberOps = memberRepository.findById(member.getMbrId());
+        var selectMemberOps = memberRepository.findById(member.getId());
         assertThat(selectMemberOps.isPresent()).isTrue();
 
         var selectMember = selectMemberOps.get();

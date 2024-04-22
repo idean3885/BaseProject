@@ -51,9 +51,9 @@ public class CommonControllerAdviceTest {
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml("test@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("testName")
+                        .email("test@email.com")
+                        .password("pswd")
+                        .name("testName")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
         given(memberService.insert(any())).willThrow(AlreadyExistsException.class);

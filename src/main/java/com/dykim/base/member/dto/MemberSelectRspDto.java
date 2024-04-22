@@ -14,34 +14,34 @@ public class MemberSelectRspDto {
     private Long mbrId;
 
     @Schema(description = "회원이메일", required = true, example = "test@email.com")
-    private String mbrEml;
+    private String email;
 
     @Schema(description = "회원비밀번호", required = true)
-    private String mbrPswd;
+    private String password;
 
     @Schema(description = "회원이름", required = true, example = "김동영")
-    private String mbrNm;
+    private String name;
 
     @Schema(description = "회원전화번호", example = "01012341234")
-    private String mbrTelno;
+    private String phoneNo;
 
     @Schema(description = "회원도로명주소")
-    private String mbrRoadNmAddr;
+    private String roadNameAddress;
 
     @Schema(description = "회원상세주소")
-    private String mbrDaddr;
+    private String detailAddress;
 
     @Schema(description = "사용여부")
     private String useYn;
 
     public MemberSelectRspDto(Member member) {
-        this.mbrId = member.getMbrId();
-        this.mbrEml = member.getMbrEml();
-        this.mbrPswd = member.getMbrPswd();
-        this.mbrNm = member.getMbrNm();
-        this.mbrTelno = member.getMbrTelno();
-        this.mbrRoadNmAddr = member.getMbrRoadNmAddr();
-        this.mbrDaddr = member.getMbrDaddr();
+        this.mbrId = member.getId();
+        this.email = member.getEmail();
+        this.password = member.getPassword();
+        this.name = member.getName();
+        this.phoneNo = member.getPhoneNo();
+        this.roadNameAddress = member.getRoadNameAddress();
+        this.detailAddress = member.getDetailAddress();
         this.useYn = member.getUseYn();
     }
 }

@@ -62,22 +62,22 @@ public class MemberControllerTest {
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml("email@base.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("name")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("road address")
-                        .mbrDaddr("detail address")
+                        .email("email@base.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("road address")
+                        .detailAddress("detail address")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
         var member =
                 Member.builder()
-                        .mbrEml(reqDto.getMbrEml())
-                        .mbrPswd(reqDto.getMbrPswd())
-                        .mbrNm(reqDto.getMbrNm())
-                        .mbrTelno(reqDto.getMbrTelno())
-                        .mbrRoadNmAddr(reqDto.getMbrRoadNmAddr())
-                        .mbrDaddr(reqDto.getMbrDaddr())
+                        .email(reqDto.getEmail())
+                        .password(reqDto.getPassword())
+                        .name(reqDto.getName())
+                        .phoneNo(reqDto.getPhoneNo())
+                        .roadNameAddress(reqDto.getRoadNameAddress())
+                        .detailAddress(reqDto.getDetailAddress())
                         .useYn("Y")
                         .build();
         given(memberRepository.save(any())).willReturn(member);
@@ -89,12 +89,12 @@ public class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(MemberInsertRspDto.class))))
-                .andExpect(jsonPath("$.data.mbrEml", is(reqDto.getMbrEml())))
-                .andExpect(jsonPath("$.data.mbrPswd", is(reqDto.getMbrPswd())))
-                .andExpect(jsonPath("$.data.mbrNm", is(reqDto.getMbrNm())))
-                .andExpect(jsonPath("$.data.mbrTelno", is(reqDto.getMbrTelno())))
-                .andExpect(jsonPath("$.data.mbrRoadNmAddr", is(reqDto.getMbrRoadNmAddr())))
-                .andExpect(jsonPath("$.data.mbrDaddr", is(reqDto.getMbrDaddr())))
+                .andExpect(jsonPath("$.data.email", is(reqDto.getEmail())))
+                .andExpect(jsonPath("$.data.password", is(reqDto.getPassword())))
+                .andExpect(jsonPath("$.data.name", is(reqDto.getName())))
+                .andExpect(jsonPath("$.data.phoneNo", is(reqDto.getPhoneNo())))
+                .andExpect(jsonPath("$.data.roadNameAddress", is(reqDto.getRoadNameAddress())))
+                .andExpect(jsonPath("$.data.detailAddress", is(reqDto.getDetailAddress())))
                 .andExpect(jsonPath("$.data.useYn", is("Y")))
                 .andDo(TestAdviceUtil::printRspDto);
     }
@@ -105,12 +105,12 @@ public class MemberControllerTest {
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml("invalid.email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("name")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("road address")
-                        .mbrDaddr("detail address")
+                        .email("invalid.email.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("road address")
+                        .detailAddress("detail address")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
 
@@ -132,11 +132,11 @@ public class MemberControllerTest {
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrNm("name")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("road address")
-                        .mbrDaddr("detail address")
+                        .email("valid@email.com")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("road address")
+                        .detailAddress("detail address")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
 
@@ -158,12 +158,12 @@ public class MemberControllerTest {
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("  ")
-                        .mbrNm("name")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("road address")
-                        .mbrDaddr("detail address")
+                        .email("valid@email.com")
+                        .password("  ")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("road address")
+                        .detailAddress("detail address")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
 
@@ -185,11 +185,11 @@ public class MemberControllerTest {
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("road address")
-                        .mbrDaddr("detail address")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("road address")
+                        .detailAddress("detail address")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
 
@@ -211,12 +211,12 @@ public class MemberControllerTest {
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("  ")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("road address")
-                        .mbrDaddr("detail address")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .name("  ")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("road address")
+                        .detailAddress("detail address")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
 
@@ -239,12 +239,12 @@ public class MemberControllerTest {
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("name")
-                        .mbrTelno("012345678901")
-                        .mbrRoadNmAddr("road address")
-                        .mbrDaddr("detail address")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("012345678901")
+                        .roadNameAddress("road address")
+                        .detailAddress("detail address")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
 
@@ -266,15 +266,15 @@ public class MemberControllerTest {
         // given
         var reqDto =
                 MemberInsertReqDto.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("name")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("road address")
-                        .mbrDaddr("detail address")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("road address")
+                        .detailAddress("detail address")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
-        given(memberRepository.existsByMbrEmlAndUseYn(any(), any())).willReturn(Optional.of(true));
+        given(memberRepository.existsByEmailAndUseYn(any(), any())).willReturn(Optional.of(true));
 
         // when
         mockMvc
@@ -294,12 +294,12 @@ public class MemberControllerTest {
         // given
         var member =
                 Member.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("mbrNm")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("mbrRoadNmAddr")
-                        .mbrDaddr("mbrDaddr")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("roadNameAddress")
+                        .detailAddress("detailAddress")
                         .useYn("Y")
                         .build();
         final var ANY_MBR_ID = 1;
@@ -312,12 +312,12 @@ public class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(MemberSelectRspDto.class))))
-                .andExpect(jsonPath("$.data.mbrEml", is(member.getMbrEml())))
-                .andExpect(jsonPath("$.data.mbrPswd", is(member.getMbrPswd())))
-                .andExpect(jsonPath("$.data.mbrNm", is(member.getMbrNm())))
-                .andExpect(jsonPath("$.data.mbrTelno", is(member.getMbrTelno())))
-                .andExpect(jsonPath("$.data.mbrRoadNmAddr", is(member.getMbrRoadNmAddr())))
-                .andExpect(jsonPath("$.data.mbrDaddr", is(member.getMbrDaddr())))
+                .andExpect(jsonPath("$.data.email", is(member.getEmail())))
+                .andExpect(jsonPath("$.data.password", is(member.getPassword())))
+                .andExpect(jsonPath("$.data.name", is(member.getName())))
+                .andExpect(jsonPath("$.data.phoneNo", is(member.getPhoneNo())))
+                .andExpect(jsonPath("$.data.roadNameAddress", is(member.getRoadNameAddress())))
+                .andExpect(jsonPath("$.data.detailAddress", is(member.getDetailAddress())))
                 .andExpect(jsonPath("$.data.useYn", is("Y")))
                 .andDo(TestAdviceUtil::printRspDto);
     }
@@ -348,11 +348,11 @@ public class MemberControllerTest {
         final IntFunction<String> initEmlByNumber = number -> String.format("mock%d@email.com", number);
         var sameSaveMember =
                 Member.builder()
-                        .mbrPswd("mock-pswd")
-                        .mbrNm("sameName")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("mock-mbrRoadNmAddr")
-                        .mbrDaddr("mock-mbrDaddr")
+                        .password("mock-pswd")
+                        .name("sameName")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("mock-roadNameAddress")
+                        .detailAddress("mock-detailAddress")
                         .useYn("Y")
                         .build();
         final var SAME_COUNT = 10;
@@ -361,16 +361,16 @@ public class MemberControllerTest {
                         .mapToObj(
                                 number ->
                                         Member.builder()
-                                                .mbrEml(initEmlByNumber.apply(number))
-                                                .mbrPswd(sameSaveMember.getMbrPswd())
-                                                .mbrNm(sameSaveMember.getMbrNm())
-                                                .mbrTelno(sameSaveMember.getMbrTelno())
-                                                .mbrRoadNmAddr(sameSaveMember.getMbrRoadNmAddr())
-                                                .mbrDaddr(sameSaveMember.getMbrDaddr())
+                                                .email(initEmlByNumber.apply(number))
+                                                .password(sameSaveMember.getPassword())
+                                                .name(sameSaveMember.getName())
+                                                .phoneNo(sameSaveMember.getPhoneNo())
+                                                .roadNameAddress(sameSaveMember.getRoadNameAddress())
+                                                .detailAddress(sameSaveMember.getDetailAddress())
                                                 .useYn(sameSaveMember.getUseYn())
                                                 .build())
                         .collect(Collectors.toList());
-        given(memberRepository.findAllByMbrNm(sameSaveMember.getMbrNm()))
+        given(memberRepository.findAllByName(sameSaveMember.getName()))
                 .willReturn(Optional.of(sameMemberList));
         var specimenIdx = new Random(System.currentTimeMillis()).nextInt(SAME_COUNT);
         var specimenMember = sameMemberList.get(specimenIdx);
@@ -379,18 +379,20 @@ public class MemberControllerTest {
 
         // when
         mockMvc
-                .perform(get("/member?mbrNm=" + sameSaveMember.getMbrNm()))
+                .perform(get("/member?name=" + sameSaveMember.getName()))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(MemberSelectListRspDto.class))))
-                .andExpect(jsonPath(specimenDataExp.apply("mbrEml"), is(specimenMember.getMbrEml())))
-                .andExpect(jsonPath(specimenDataExp.apply("mbrPswd"), is(specimenMember.getMbrPswd())))
-                .andExpect(jsonPath(specimenDataExp.apply("mbrNm"), is(specimenMember.getMbrNm())))
-                .andExpect(jsonPath(specimenDataExp.apply("mbrTelno"), is(specimenMember.getMbrTelno())))
+                .andExpect(jsonPath(specimenDataExp.apply("email"), is(specimenMember.getEmail())))
+                .andExpect(jsonPath(specimenDataExp.apply("password"), is(specimenMember.getPassword())))
+                .andExpect(jsonPath(specimenDataExp.apply("name"), is(specimenMember.getName())))
+                .andExpect(jsonPath(specimenDataExp.apply("phoneNo"), is(specimenMember.getPhoneNo())))
                 .andExpect(
-                        jsonPath(specimenDataExp.apply("mbrRoadNmAddr"), is(specimenMember.getMbrRoadNmAddr())))
-                .andExpect(jsonPath(specimenDataExp.apply("mbrDaddr"), is(specimenMember.getMbrDaddr())))
+                        jsonPath(
+                                specimenDataExp.apply("roadNameAddress"), is(specimenMember.getRoadNameAddress())))
+                .andExpect(
+                        jsonPath(specimenDataExp.apply("detailAddress"), is(specimenMember.getDetailAddress())))
                 .andExpect(jsonPath(specimenDataExp.apply("useYn"), is(specimenMember.getUseYn())))
                 .andDo(TestAdviceUtil::printRspDto);
     }
@@ -401,30 +403,30 @@ public class MemberControllerTest {
         // given
         var member =
                 Member.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("mbrNm")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("mbrRoadNmAddr")
-                        .mbrDaddr("mbrDaddr")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("roadNameAddress")
+                        .detailAddress("detailAddress")
                         .useYn("Y")
                         .build();
-        given(memberRepository.findByMbrIdAndUseYn(any(), any())).willReturn(Optional.of(member));
+        given(memberRepository.findByIdAndUseYn(any(), any())).willReturn(Optional.of(member));
 
         var reqDto =
                 MemberUpdateReqDto.builder()
-                        .mbrPswd("updPswd")
-                        .mbrTelno("11111111111")
-                        .mbrRoadNmAddr("update roadNmAddr")
-                        .mbrDaddr("update detail address")
+                        .password("updPswd")
+                        .phoneNo("11111111111")
+                        .roadNameAddress("update roadNmAddr")
+                        .detailAddress("update detail address")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
         var updatedMember =
                 Member.builder()
-                        .mbrPswd(reqDto.getMbrPswd())
-                        .mbrTelno(reqDto.getMbrTelno())
-                        .mbrRoadNmAddr(reqDto.getMbrRoadNmAddr())
-                        .mbrDaddr(reqDto.getMbrDaddr())
+                        .password(reqDto.getPassword())
+                        .phoneNo(reqDto.getPhoneNo())
+                        .roadNameAddress(reqDto.getRoadNameAddress())
+                        .detailAddress(reqDto.getDetailAddress())
                         .build();
         given(memberRepository.save(any())).willReturn(updatedMember);
         final var ANY_MBR_ID = 1;
@@ -439,10 +441,10 @@ public class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name", is(TestAdviceUtil.getRspName(MemberUpdateRspDto.class))))
-                .andExpect(jsonPath("$.data.mbrPswd", is(reqDto.getMbrPswd())))
-                .andExpect(jsonPath("$.data.mbrTelno", is(reqDto.getMbrTelno())))
-                .andExpect(jsonPath("$.data.mbrRoadNmAddr", is(reqDto.getMbrRoadNmAddr())))
-                .andExpect(jsonPath("$.data.mbrDaddr", is(reqDto.getMbrDaddr())))
+                .andExpect(jsonPath("$.data.password", is(reqDto.getPassword())))
+                .andExpect(jsonPath("$.data.phoneNo", is(reqDto.getPhoneNo())))
+                .andExpect(jsonPath("$.data.roadNameAddress", is(reqDto.getRoadNameAddress())))
+                .andExpect(jsonPath("$.data.detailAddress", is(reqDto.getDetailAddress())))
                 .andDo(TestAdviceUtil::printRspDto);
     }
 
@@ -452,24 +454,24 @@ public class MemberControllerTest {
         // given
         var member =
                 Member.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("mbrNm")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("mbrRoadNmAddr")
-                        .mbrDaddr("mbrDaddr")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("roadNameAddress")
+                        .detailAddress("detailAddress")
                         .useYn("Y")
                         .build();
-        given(memberRepository.findByMbrIdAndUseYn(any(), any())).willReturn(Optional.of(member));
+        given(memberRepository.findByIdAndUseYn(any(), any())).willReturn(Optional.of(member));
 
         var delelteMember =
                 Member.builder()
-                        .mbrEml("valid@email.com")
-                        .mbrPswd("pswd")
-                        .mbrNm("mbrNm")
-                        .mbrTelno("01234567890")
-                        .mbrRoadNmAddr("mbrRoadNmAddr")
-                        .mbrDaddr("mbrDaddr")
+                        .email("valid@email.com")
+                        .password("pswd")
+                        .name("name")
+                        .phoneNo("01234567890")
+                        .roadNameAddress("roadNameAddress")
+                        .detailAddress("detailAddress")
                         .useYn("N")
                         .build();
         given(memberRepository.save(any())).willReturn(delelteMember);
@@ -490,7 +492,7 @@ public class MemberControllerTest {
     @Test
     public void delete_with_not_found_member_throw_EntityNotFoundException() throws Exception {
         // given
-        given(memberRepository.findByMbrIdAndUseYn(any(), any())).willReturn(Optional.empty());
+        given(memberRepository.findByIdAndUseYn(any(), any())).willReturn(Optional.empty());
         final var NOT_FOUND_MBR_ID = -1L;
 
         // when
