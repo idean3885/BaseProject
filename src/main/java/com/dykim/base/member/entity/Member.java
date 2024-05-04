@@ -2,6 +2,7 @@ package com.dykim.base.member.entity;
 
 import com.dykim.base.member.dto.MemberUpdateReqDto;
 import com.dykim.base.sample.hello.entity.Hello;
+import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -30,7 +31,7 @@ import org.hibernate.annotations.Comment;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Member extends MemberBaseEntity {
+public class Member extends MemberBaseEntity implements Serializable {
 
     @Comment("ID")
     @Id
@@ -64,6 +65,10 @@ public class Member extends MemberBaseEntity {
     @Column(length = 200)
     private String detailAddress;
 
+    @Comment("권한 목록")
+    @Column(nullable = false, length = 50)
+    private String roleList;
+
     @Comment("회원 여부")
     @Column(nullable = false, length = 1)
     private String useYn;
@@ -76,6 +81,7 @@ public class Member extends MemberBaseEntity {
             String phoneNo,
             String roadNameAddress,
             String detailAddress,
+            String roleList,
             String useYn) {
         this.email = email;
         this.password = password;
@@ -83,6 +89,7 @@ public class Member extends MemberBaseEntity {
         this.phoneNo = phoneNo;
         this.roadNameAddress = roadNameAddress;
         this.detailAddress = detailAddress;
+        this.roleList = roleList;
         this.useYn = useYn;
     }
 

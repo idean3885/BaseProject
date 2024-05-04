@@ -15,9 +15,8 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO: member - role 연계 필요
-        var role = "ADMIN";
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role);
+        SimpleGrantedAuthority simpleGrantedAuthority =
+                new SimpleGrantedAuthority(member.getRoleList());
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(simpleGrantedAuthority);
         return authorities;
@@ -35,21 +34,21 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return member.getRoleList().contains("ADMIN");
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return member.getRoleList().contains("ADMIN");
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return member.getRoleList().contains("ADMIN");
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return member.getRoleList().contains("ADMIN");
     }
 }
