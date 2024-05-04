@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.dykim.base.advice.common.CommonControllerAdvice;
 import com.dykim.base.advice.common.exception.InvalidSessionException;
+import com.dykim.base.interceptor.SessionValidationInterceptor;
 import com.dykim.base.sample.hello.controller.HelloController;
 import com.dykim.base.sample.hello.entity.HelloRepository;
 import com.dykim.base.sample.hello.service.HelloService;

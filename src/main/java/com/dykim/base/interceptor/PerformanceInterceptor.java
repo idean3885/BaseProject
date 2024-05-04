@@ -1,4 +1,4 @@
-package com.dykim.base.config.interceptor;
+package com.dykim.base.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -1,6 +1,6 @@
 package com.dykim.base.config.annotation;
 
-import com.dykim.base.config.interceptor.DebounceInterceptor;
+import com.dykim.base.interceptor.DebounceInterceptor;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

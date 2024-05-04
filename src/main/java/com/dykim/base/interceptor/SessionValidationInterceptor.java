@@ -1,4 +1,4 @@
-package com.dykim.base.config.interceptor;
+package com.dykim.base.interceptor;
 
 import com.dykim.base.advice.common.exception.InvalidSessionException;
 import java.util.List;

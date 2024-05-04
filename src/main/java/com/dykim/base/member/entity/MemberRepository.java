@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Optional<Boolean> existsByMbrEmlAndUseYn(String mbrEml, String useYn);
+    Optional<Boolean> existsByEmailAndUseYn(String email, String useYn);
 
-    Optional<Member> findByMbrIdAndUseYn(Long mbrId, String useYn);
+    Optional<Member> findByIdAndUseYn(Long mbrId, String useYn);
 
-    Optional<List<Member>> findAllByMbrNm(String mbrNm);
+    Optional<List<Member>> findAllByName(String name);
+
+    Optional<Member> findByEmailAndUseYn(String email, String useYn);
 }

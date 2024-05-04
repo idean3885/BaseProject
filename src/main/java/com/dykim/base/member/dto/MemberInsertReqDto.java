@@ -17,35 +17,35 @@ public class MemberInsertReqDto {
 
     @NotBlank
     @Email
-    @Schema(description = "회원이메일", required = true, example = "test@email.com")
-    private String mbrEml;
+    @Schema(description = "이메일", required = true, example = "test@email.com")
+    private String email;
 
     @NotBlank
-    @Schema(description = "회원비밀번호", required = true)
-    private String mbrPswd;
+    @Schema(description = "비밀번호", required = true)
+    private String password;
 
     @NotBlank
-    @Schema(description = "회원이름", required = true, example = "김동영")
-    private String mbrNm;
+    @Schema(description = "이름", required = true, example = "김동영")
+    private String name;
 
     @Length(min = 11, max = 11)
-    @Schema(description = "회원전화번호", example = "01012341234")
-    private String mbrTelno;
+    @Schema(description = "휴대폰 번호", example = "01012341234")
+    private String phoneNo;
 
-    @Schema(description = "회원도로명주소")
-    private String mbrRoadNmAddr;
+    @Schema(description = "도로명 주소")
+    private String roadNameAddress;
 
     @Schema(description = "회원상세주소")
-    private String mbrDaddr;
+    private String detailAddress;
 
     public Member toEntity() {
         return Member.builder()
-                .mbrEml(mbrEml)
-                .mbrPswd(mbrPswd)
-                .mbrNm(mbrNm)
-                .mbrTelno(mbrTelno)
-                .mbrRoadNmAddr(mbrRoadNmAddr)
-                .mbrDaddr(mbrDaddr)
+                .email(email)
+                .password(password)
+                .name(name)
+                .phoneNo(phoneNo)
+                .roadNameAddress(roadNameAddress)
+                .detailAddress(detailAddress)
                 .useYn("Y")
                 .build();
     }

@@ -10,38 +10,38 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberInsertRspDto {
 
-    @Schema(description = "회원ID", required = true, example = "1")
-    private Long mbrId;
+    @Schema(description = "회원 ID", required = true, example = "1")
+    private Long id;
 
-    @Schema(description = "회원이메일", required = true, example = "test@email.com")
-    private String mbrEml;
+    @Schema(description = "이메일", required = true, example = "test@email.com")
+    private String email;
 
-    @Schema(description = "회원비밀번호", required = true)
-    private String mbrPswd;
+    @Schema(description = "비밀번호", required = true)
+    private String password;
 
-    @Schema(description = "회원이름", required = true, example = "김동영")
-    private String mbrNm;
+    @Schema(description = "이름", required = true, example = "김동영")
+    private String name;
 
-    @Schema(description = "회원전화번호", example = "01012341234")
-    private String mbrTelno;
+    @Schema(description = "휴대폰 번호", example = "01012341234")
+    private String phoneNo;
 
-    @Schema(description = "회원도로명주소")
-    private String mbrRoadNmAddr;
+    @Schema(description = "도로명 주소")
+    private String roadNameAddress;
 
-    @Schema(description = "회원상세주소")
-    private String mbrDaddr;
+    @Schema(description = "상세 주소")
+    private String detailAddress;
 
-    @Schema(description = "사용여부")
+    @Schema(description = "회원 여부")
     private String useYn;
 
     public MemberInsertRspDto(Member member) {
-        this.mbrId = member.getMbrId();
-        this.mbrEml = member.getMbrEml();
-        this.mbrPswd = member.getMbrPswd();
-        this.mbrNm = member.getMbrNm();
-        this.mbrTelno = member.getMbrTelno();
-        this.mbrRoadNmAddr = member.getMbrRoadNmAddr();
-        this.mbrDaddr = member.getMbrDaddr();
+        this.id = member.getId();
+        this.email = member.getEmail();
+        this.password = member.getPassword();
+        this.name = member.getName();
+        this.phoneNo = member.getPhoneNo();
+        this.roadNameAddress = member.getRoadNameAddress();
+        this.detailAddress = member.getDetailAddress();
         this.useYn = member.getUseYn();
     }
 }

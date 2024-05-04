@@ -14,6 +14,7 @@ spring:
         highlight_sql: true
         use_sql_comments: true # 실행되는 쿼리문 HINT 표시
     database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true # for data.sql
   devtools:
     livereload:
       enabled: true

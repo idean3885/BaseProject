@@ -1,4 +1,4 @@
-package com.dykim.base.config.interceptor;
+package com.dykim.base.interceptor;
 
 import com.dykim.base.advice.common.exception.HandlerDebounceException;
 import com.dykim.base.config.annotation.Debounce;
@@ -129,7 +129,7 @@ public class DebounceInterceptor implements HandlerInterceptor {
             // 5. debounceMap header 재조회
             // 싱크로나이즈 블록에서 병렬처리로 인해 debounceMapObject 가 설정될 수 있기 때문에 다시 체크함.
             stopWatch.start("5. debounceMap header 재조회");
-            if (debounceMapObject != null) {
+            if (debounceMapObject instanceof HashMap) {
                 debounceMap = (HashMap<String, Long>) debounceMapObject; // 캐스팅 에러를 감수하고 최소한의 조건만 사용
                 // 1) 최종 호출시간 조회
                 lastCallTimeMillis = debounceMap.get(requestURI);

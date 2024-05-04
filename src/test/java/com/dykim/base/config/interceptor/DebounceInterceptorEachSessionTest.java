@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dykim.base.advice.common.CommonControllerAdvice;
+import com.dykim.base.interceptor.DebounceInterceptor;
 import com.dykim.base.sample.hello.controller.HelloController;
 import com.dykim.base.sample.hello.entity.HelloRepository;
 import com.dykim.base.sample.hello.service.HelloService;

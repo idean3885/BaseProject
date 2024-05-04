@@ -26,12 +26,12 @@ public class MemberService {
      */
     public MemberInsertRspDto insert(MemberInsertReqDto reqDto) {
         memberRepository
-                .existsByMbrEmlAndUseYn(reqDto.getMbrEml(), "Y")
+                .existsByEmailAndUseYn(reqDto.getEmail(), "Y")
                 .filter(isExists -> isExists)
                 .ifPresent(
                         isExists -> {
                             throw new AlreadyExistsException(
-                                    String.format("Member email '%s' already exists.", reqDto.getMbrEml()));
+                                    String.format("Member email '%s' already exists.", reqDto.getEmail()));
                         });
         var member = reqDto.toEntity().insert();
         return new MemberInsertRspDto(memberRepository.save(member));
@@ -63,12 +63,12 @@ public class MemberService {
      *
      * <p>조건은 Equals 로 검색한다.
      *
-     * @param mbrNm 회원이름
+     * @param name 회원이름
      * @return {@link MemberSelectRspDto 조회된 회원 List}
      */
-    public MemberSelectListRspDto selectList(String mbrNm) {
+    public MemberSelectListRspDto selectList(String name) {
         return memberRepository
-                .findAllByMbrNm(mbrNm)
+                .findAllByName(name)
                 .map(MemberSelectListRspDto::new)
                 .orElseGet(MemberSelectListRspDto::new);
     }
@@ -86,7 +86,7 @@ public class MemberService {
      */
     public MemberUpdateRspDto update(Long mbrId, MemberUpdateReqDto reqDto) {
         return memberRepository
-                .findByMbrIdAndUseYn(mbrId, "Y")
+                .findByIdAndUseYn(mbrId, "Y")
                 .map(member -> member.update(reqDto))
                 .map(memberRepository::save)
                 .map(MemberUpdateRspDto::new)
@@ -106,7 +106,7 @@ public class MemberService {
      */
     public MemberDeleteRspDto delete(Long mbrId) {
         return memberRepository
-                .findByMbrIdAndUseYn(mbrId, "Y")
+                .findByIdAndUseYn(mbrId, "Y")
                 .map(Member::delete)
                 .map(memberRepository::save)
                 .map(MemberDeleteRspDto::new)

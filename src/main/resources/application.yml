@@ -2,8 +2,8 @@ spring:
   profiles.active: internal
   jpa:
     hibernate:
-      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
       ddl-auto: validate
+    open-in-view: false
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -19,6 +19,8 @@ server:
     encoding:
       charset: UTF-8
       force: true
+    session:
+      timeout: 10m
 logging:
   charset:
     console: UTF-8
@@ -34,7 +36,7 @@ springdoc:
   description: "스프링부트 베이스 프로젝트"
   packages-to-scan: com.dykim.base
   swagger-ui:
-    path: /
+    path: /swagger-ui
     tags-sorter: alpha
     operations-sorter: alpha
   api-docs:
