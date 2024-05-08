@@ -7,10 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.dykim.base.advice.common.CommonControllerAdvice;
 import com.dykim.base.advice.common.exception.InvalidSessionException;
+import com.dykim.base.controller.api.sample.SampleRestController;
 import com.dykim.base.interceptor.SessionValidationInterceptor;
-import com.dykim.base.sample.hello.controller.HelloController;
-import com.dykim.base.sample.hello.entity.HelloRepository;
-import com.dykim.base.sample.hello.service.HelloService;
+import com.dykim.base.repository.sample.SampleRepository;
+import com.dykim.base.service.sample.SampleService;
 import com.dykim.base.util.TestAdviceUtil;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,16 +40,16 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SessionValidationInterceptorTest {
 
-    @Mock private HelloRepository helloRepository;
+    @Mock private SampleRepository sampleRepository;
 
-    @InjectMocks private HelloService helloService;
+    @InjectMocks private SampleService sampleServiceImpl;
 
     private MockMvc mockMvc;
 
     @BeforeAll
     public void setup() {
         mockMvc =
-                MockMvcBuilders.standaloneSetup(new HelloController(helloService))
+                MockMvcBuilders.standaloneSetup(new SampleRestController(sampleServiceImpl))
                         .addInterceptors(new SessionValidationInterceptor())
                         .setControllerAdvice(new CommonControllerAdvice())
                         .build();

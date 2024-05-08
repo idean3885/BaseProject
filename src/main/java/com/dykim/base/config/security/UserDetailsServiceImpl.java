@@ -1,6 +1,6 @@
 package com.dykim.base.config.security;
 
-import com.dykim.base.member.entity.MemberRepository;
+import com.dykim.base.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

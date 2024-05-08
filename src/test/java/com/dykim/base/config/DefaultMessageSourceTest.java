@@ -22,7 +22,7 @@ public class DefaultMessageSourceTest {
 
     @Order(1)
     @Test
-    public void print_message_when_invalid_email() {
+    void print_message_when_invalid_email() {
         System.out.println(messageSource.getClass().getName());
         System.out.println(messageSource.getMessage("invalid.email", null, Locale.KOREA));
     }

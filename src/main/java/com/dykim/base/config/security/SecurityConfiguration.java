@@ -1,6 +1,7 @@
 package com.dykim.base.config.security;
 
-import com.dykim.base.consts.FrontUris.Security;
+import com.dykim.base.consts.uris.SampleApiUris;
+import com.dykim.base.consts.uris.SecurityFrontUris;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
@@ -46,9 +47,9 @@ public class SecurityConfiguration {
                                                             .map(WebAuthenticationDetails.class::cast)
                                                             .map(WebAuthenticationDetails::getRemoteAddress)
                                                             .orElse(null);
-                                            response.sendRedirect(Security.LOGIN_SUCCESS);
+                                            response.sendRedirect(SecurityFrontUris.LOGIN_SUCCESS);
                                         }))
-                                .failureUrl(Security.LOGIN));
+                                .failureUrl(SecurityFrontUris.LOGIN));
         httpSecurity.userDetailsService(userDetailsService);
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.cors(configurer -> configurer.configurationSource(corsConfigurationSource()));
@@ -56,23 +57,25 @@ public class SecurityConfiguration {
         httpSecurity.authorizeHttpRequests(
                 request ->
                         request
-                                .antMatchers(HttpMethod.POST, Security.LOGIN)
+                                .antMatchers(HttpMethod.POST, SecurityFrontUris.LOGIN)
                                 .permitAll()
-                                .antMatchers(HttpMethod.GET, Security.LOGIN)
+                                .antMatchers(HttpMethod.GET, SecurityFrontUris.LOGIN)
                                 .permitAll()
                                 .mvcMatchers(String.valueOf(PathRequest.toStaticResources().atCommonLocations()))
                                 .permitAll()
                                 .antMatchers(HttpMethod.GET, "/swagger-ui/**", "/api-docs/**")
+                                .permitAll()
+                                .mvcMatchers(SampleApiUris.DEBOUNCE)
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated());
         httpSecurity.logout(
                 configurer ->
                         configurer
-                                .logoutUrl(Security.LOGOUT)
+                                .logoutUrl(SecurityFrontUris.LOGOUT)
                                 .logoutSuccessHandler(
                                         ((request, response, authentication) ->
-                                                response.sendRedirect(Security.LOGOUT_SUCCESS))));
+                                                response.sendRedirect(SecurityFrontUris.LOGOUT_SUCCESS))));
         httpSecurity.addFilterBefore(
                 new AuthenticationProcessingFilter(objectMapper),
                 UsernamePasswordAuthenticationFilter.class);
