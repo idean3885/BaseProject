@@ -1,6 +1,6 @@
 package com.dykim.base.config.security;
 
-import com.dykim.base.member.entity.Member;
+import com.dykim.base.entity.member.Member;
 import java.util.ArrayList;
 import java.util.Collection;
 import lombok.RequiredArgsConstructor;

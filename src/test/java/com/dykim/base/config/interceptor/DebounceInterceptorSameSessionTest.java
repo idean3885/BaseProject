@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import com.dykim.base.advice.common.CommonControllerAdvice;
+import com.dykim.base.controller.api.sample.SampleRestController;
 import com.dykim.base.interceptor.DebounceInterceptor;
-import com.dykim.base.sample.hello.controller.HelloController;
-import com.dykim.base.sample.hello.entity.HelloRepository;
-import com.dykim.base.sample.hello.service.HelloService;
+import com.dykim.base.repository.sample.SampleRepository;
+import com.dykim.base.service.sample.SampleService;
 import io.swagger.v3.core.util.Json;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,11 +46,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @Slf4j
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class DebounceInterceptorSameSessionTest {
+class DebounceInterceptorSameSessionTest {
 
-    @Mock private HelloRepository helloRepository;
+    @Mock private SampleRepository sampleRepository;
 
-    @InjectMocks private HelloService helloService;
+    @InjectMocks private SampleService sampleServiceImpl;
 
     private MockMvc mockMvc;
     private MockHttpSession mockHttpSession;
@@ -64,7 +64,7 @@ public class DebounceInterceptorSameSessionTest {
     @BeforeAll
     public void setupGlobalField() {
         mockMvc =
-                MockMvcBuilders.standaloneSetup(new HelloController(helloService))
+                MockMvcBuilders.standaloneSetup(new SampleRestController(sampleServiceImpl))
                         .addInterceptors(new DebounceInterceptor())
                         .setControllerAdvice(new CommonControllerAdvice())
                         .build();
@@ -84,7 +84,7 @@ public class DebounceInterceptorSameSessionTest {
 
     @Execution(ExecutionMode.CONCURRENT)
     @RepeatedTest(REPEAT_COUNT)
-    public void call_helloPrintDebounce_first_debounce() throws Exception {
+    void call_helloPrintDebounce_first_debounce() throws Exception {
         // when
         mockMvc
                 .perform(get("/sample/hello/helloPrintDebounce").session(mockHttpSession))

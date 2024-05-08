@@ -1,12 +1,12 @@
 package com.dykim.base.advice.common;
 
-import static com.dykim.base.sample.hello.dto.ApiResult.error;
+import static com.dykim.base.dto.ApiResult.error;
 
 import com.dykim.base.advice.common.exception.AlreadyExistsException;
 import com.dykim.base.advice.common.exception.EntityNotFoundException;
 import com.dykim.base.advice.common.exception.HandlerDebounceException;
 import com.dykim.base.advice.common.exception.InvalidSessionException;
-import com.dykim.base.sample.hello.dto.ApiResult;
+import com.dykim.base.dto.ApiResult;
 import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

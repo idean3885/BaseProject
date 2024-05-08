@@ -10,12 +10,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.dykim.base.advice.common.exception.AlreadyExistsException;
 import com.dykim.base.advice.common.exception.EntityNotFoundException;
-import com.dykim.base.member.controller.MemberController;
-import com.dykim.base.member.dto.MemberInsertReqDto;
-import com.dykim.base.member.service.MemberService;
+import com.dykim.base.controller.api.member.MemberController;
+import com.dykim.base.dto.member.MemberInsertReqDto;
+import com.dykim.base.service.member.MemberServiceImpl;
 import com.dykim.base.util.TestAdviceUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,7 +34,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class CommonControllerAdviceTest {
 
-    @Mock private MemberService memberService;
+    @Mock private MemberServiceImpl memberServiceImpl;
 
     @InjectMocks private MemberController memberController;
 
@@ -56,7 +61,7 @@ public class CommonControllerAdviceTest {
                         .name("testName")
                         .build();
         var reqJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reqDto);
-        given(memberService.insert(any())).willThrow(AlreadyExistsException.class);
+        given(memberServiceImpl.insert(any())).willThrow(AlreadyExistsException.class);
 
         // when
         mockMvc
@@ -75,7 +80,7 @@ public class CommonControllerAdviceTest {
     @Test
     public void not_found_member_throw_EntityNotFoundException() throws Exception {
         // given
-        given(memberService.delete(any())).willThrow(EntityNotFoundException.class);
+        given(memberServiceImpl.delete(any())).willThrow(EntityNotFoundException.class);
         final var NOT_FOUND_MBR_ID = -1L;
 
         // when

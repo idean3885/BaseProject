@@ -5,10 +5,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dykim.base.advice.common.CommonControllerAdvice;
+import com.dykim.base.controller.api.sample.SampleRestController;
 import com.dykim.base.interceptor.DebounceInterceptor;
-import com.dykim.base.sample.hello.controller.HelloController;
-import com.dykim.base.sample.hello.entity.HelloRepository;
-import com.dykim.base.sample.hello.service.HelloService;
+import com.dykim.base.repository.sample.SampleRepository;
+import com.dykim.base.service.sample.SampleServiceImpl;
 import io.swagger.v3.core.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -43,11 +43,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @Slf4j
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class DebounceInterceptorEachSessionTest {
+class DebounceInterceptorEachSessionTest {
 
-    @Mock private HelloRepository helloRepository;
+    @Mock private SampleRepository sampleRepository;
 
-    @InjectMocks private HelloService helloService;
+    @InjectMocks private SampleServiceImpl sampleServiceImpl;
 
     private MockMvc mockMvc;
     private final int REPEAT_COUNT = 100;
@@ -55,7 +55,7 @@ public class DebounceInterceptorEachSessionTest {
     @BeforeAll
     public void setupGlobalField() {
         mockMvc =
-                MockMvcBuilders.standaloneSetup(new HelloController(helloService))
+                MockMvcBuilders.standaloneSetup(new SampleRestController(sampleServiceImpl))
                         .addInterceptors(new DebounceInterceptor())
                         .setControllerAdvice(new CommonControllerAdvice())
                         .build();
@@ -63,7 +63,7 @@ public class DebounceInterceptorEachSessionTest {
 
     @Execution(ExecutionMode.CONCURRENT)
     @RepeatedTest(REPEAT_COUNT)
-    public void call_helloPrintDebounce_always_new_session() throws Exception {
+    void call_helloPrintDebounce_always_new_session() throws Exception {
         // given
         var newMockHttpSession = new MockHttpSession();
 
